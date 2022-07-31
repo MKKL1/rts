@@ -56,11 +56,11 @@ public class RTSNetworkManager : NetworkManager
     }
 
     
-    public void startGame()
+    public void startGame(bool changescene)
     {
         if (gameState != GameState.LOBBY) return;
 
-        ServerChangeScene(gameScene);
+        if (changescene) ServerChangeScene(gameScene);
         playerList.ForEach(x => x.state = PlayerState.PLAYING);
         gameState = GameState.GAME_ACTIVE;
     }

@@ -5,6 +5,7 @@ using Mirror;
 
 public class NetworkMenuManager : NetworkBehaviour
 {
+    public bool debug = false;
     public static NetworkMenuManager instance;
 
     private void Awake()
@@ -16,6 +17,6 @@ public class NetworkMenuManager : NetworkBehaviour
     public void cmdStartGame()
     {
         //TODO if all players ready
-        RTSNetworkManager.instance.startGame();
+        RTSNetworkManager.instance.startGame(!debug);
     }
 }
