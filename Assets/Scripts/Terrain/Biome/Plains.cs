@@ -5,8 +5,9 @@ namespace Assets
 {
     public class Plains : Biome
     {
+        public static RangeAttribute biomeAltitide = new RangeAttribute(0.4f, 1f);
+        public static float biomeBlendingValue = 0.02f;
         private FastNoiseLite terrainNoise;
-        private FastNoiseLite biomeGenerationNoise;
         public Plains(int seed)
         {
             terrainNoise = new FastNoiseLite(seed+1);
@@ -22,7 +23,7 @@ namespace Assets
 
         public override float GetHeight(float x, float y)
         {
-            return terrainNoise.GetNoise(x, y);
+            return terrainNoise.GetNoise(x, y)*0.1f-0.6f;
         }
     }
 }

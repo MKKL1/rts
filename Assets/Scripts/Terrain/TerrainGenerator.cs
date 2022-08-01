@@ -3,12 +3,13 @@ using UnityEngine;
 
 namespace Assets
 {
-    //TODO improve generation, generate more flat terrains while keeping hills 
+    //TODO remove hard coded biome blending
     public class TerrainGenerator
     {
         public float[,] heightmap;
         public Biome[,] biomeMap;
         public Texture2D biomeMapTexture;
+        
 
         private Vector2Int terrainSize;
         private GameGrid gameGrid;
@@ -32,42 +33,55 @@ namespace Assets
         private FastNoiseLite newBiomeNoise(int _seed)
         {
             FastNoiseLite noise = new FastNoiseLite(_seed);
-            noise.SetFrequency(0.03f);
+            noise.SetFrequency(0.003f);
 
             return noise;
+        }
+
+        private bool inRange(RangeAttribute range, float value)
+        {
+            return value >= range.min && value <= range.max;
         }
 
         private void generateBiome()
         {
             biomeMap = new Biome[gameGrid.gridSize.x, gameGrid.gridSize.y];
-            biomeHeightMap = new float[gameGrid.gridSize.x, gameGrid.gridSize.y];
+            biomeHeightMap = new float[terrainSize.x, terrainSize.y];
 
             biomeMapTexture = new Texture2D(gameGrid.gridSize.x, gameGrid.gridSize.y, TextureFormat.ARGB32, false);
 
             FastNoiseLite noise1 = newBiomeNoise(seed);
             FastNoiseLite noise2 = newBiomeNoise(seed + 1);
 
+            for (int i = 0; i < terrainSize.x; i++)
+                for (int j = 0; j < terrainSize.y; j++)
+                {
+                    biomeHeightMap[i, j] = (noise1.GetNoise(i, j) + noise2.GetNoise(i, j) + 2) * 0.25f;
+                }
+
+            Vector2Int startMiddlePoint = gameGrid.chunkGridSize / 2;
+
             for (int i = 0; i < gameGrid.gridSize.x; i++)
                 for (int j = 0; j < gameGrid.gridSize.y; j++)
                 {
-                    float noiseheight = (noise1.GetNoise(i, j) + noise2.GetNoise(i, j) + 2) * 0.25f;
-                    biomeHeightMap[i, j] = noiseheight;
+                    float noiseheight = biomeHeightMap[startMiddlePoint.x + (i*gameGrid.chunkGridSize.x), startMiddlePoint.y + (j * gameGrid.chunkGridSize.y)];
                     Biome currentbiome = null;
 
-                    if (noiseheight > 0.5f)
+                    
+
+                    if (inRange(Plains.biomeAltitide, noiseheight))
                     {
                         currentbiome = new Plains(seed);
                         biomeMapTexture.SetPixel(i, j, Color.green);
                     }
-                    else if (noiseheight <= 0.5f)
+                    else if (inRange(Water.biomeAltitide, noiseheight))
                     {
                         currentbiome = new Water(seed);
                         biomeMapTexture.SetPixel(i, j, Color.blue);
                     }
 
-                    if (currentbiome == null) return;
-
-                    biomeMap[i, j] = currentbiome;
+                    if (currentbiome != null)
+                        biomeMap[i, j] = currentbiome;
                 }
 
             biomeMapTexture.Apply();
@@ -77,7 +91,10 @@ namespace Assets
         {
             generateBiome();
 
-            for(int i = 0; i < gameGrid.gridSize.x; i++)
+            float b = (Water.biomeAltitide.max - Water.biomeBlendingValue);
+            float a = 1/(Plains.biomeAltitide.min + Plains.biomeBlendingValue - (Water.biomeAltitide.max - Water.biomeBlendingValue));
+
+            for (int i = 0; i < gameGrid.gridSize.x; i++)
                 for(int j = 0; j < gameGrid.gridSize.y; j++)
                 {
                     for(int xInChunk = 0; xInChunk < gameGrid.chunkGridSize.x; xInChunk++)
@@ -85,8 +102,8 @@ namespace Assets
                         {
                             int x = (i * gameGrid.chunkGridSize.x) + xInChunk;
                             int y = (j * gameGrid.chunkGridSize.y) + yInChunk;
-                            if (biomeHeightMap[i, j] > 0.45f && biomeHeightMap[i, j] < 0.55f)
-                                heightmap[x, y] = normalizedHeight(Mathf.Lerp(waterBiome.GetHeight(x, y), plainsBiome.GetHeight(x, y), (biomeHeightMap[i, j] - 0.45f)*10));
+                            if (biomeHeightMap[x,y] > Water.biomeAltitide.max-Water.biomeBlendingValue && biomeHeightMap[x, y] < Plains.biomeAltitide.min+ Plains.biomeBlendingValue)
+                                heightmap[x, y] = normalizedHeight(Mathf.Lerp(waterBiome.GetHeight(x, y), plainsBiome.GetHeight(x, y), (biomeHeightMap[x, y] - b) *a));
                             else
                                 heightmap[x, y] = normalizedHeight(biomeMap[i, j].GetHeight(x, y));
                         }
