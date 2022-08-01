@@ -13,6 +13,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Mirror.Components", "Mirror
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Telepathy", "Telepathy.csproj", "{F3A410BB-A72C-65AE-BC62-5F1327EF4727}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "sc.terrain.painter.runtime", "sc.terrain.painter.runtime.csproj", "{B94DCEA8-942B-1467-EFE2-509CE67A2B7E}"
+EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "kcp2k", "kcp2k.csproj", "{E6FD04E9-FA45-1455-7FE1-59FFAB18296C}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "where-allocations", "where-allocations.csproj", "{63F8E020-7359-8F15-98C9-641050116394}"
@@ -22,6 +24,8 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Mirror.Authenticators", "Mirror.Authenticators.csproj", "{D5B3CB00-950A-181A-2D01-06BD09BD1798}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Unity.Mirror.CodeGen", "Unity.Mirror.CodeGen.csproj", "{BADB7C8B-A557-F95C-F373-213266BCD646}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "sc.terrain.painter.editor", "sc.terrain.painter.editor.csproj", "{5FFC5E4B-CEBC-2821-E6C6-806BFC94032F}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Mirror.Editor", "Mirror.Editor.csproj", "{7C01505D-BBB4-980D-DB84-FB971ED21D5C}"
 EndProject
@@ -61,6 +65,10 @@ Global
 		{F3A410BB-A72C-65AE-BC62-5F1327EF4727}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F3A410BB-A72C-65AE-BC62-5F1327EF4727}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F3A410BB-A72C-65AE-BC62-5F1327EF4727}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B94DCEA8-942B-1467-EFE2-509CE67A2B7E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B94DCEA8-942B-1467-EFE2-509CE67A2B7E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B94DCEA8-942B-1467-EFE2-509CE67A2B7E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B94DCEA8-942B-1467-EFE2-509CE67A2B7E}.Release|Any CPU.Build.0 = Release|Any CPU
 		{E6FD04E9-FA45-1455-7FE1-59FFAB18296C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{E6FD04E9-FA45-1455-7FE1-59FFAB18296C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E6FD04E9-FA45-1455-7FE1-59FFAB18296C}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -81,6 +89,10 @@ Global
 		{BADB7C8B-A557-F95C-F373-213266BCD646}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{BADB7C8B-A557-F95C-F373-213266BCD646}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{BADB7C8B-A557-F95C-F373-213266BCD646}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5FFC5E4B-CEBC-2821-E6C6-806BFC94032F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5FFC5E4B-CEBC-2821-E6C6-806BFC94032F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5FFC5E4B-CEBC-2821-E6C6-806BFC94032F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5FFC5E4B-CEBC-2821-E6C6-806BFC94032F}.Release|Any CPU.Build.0 = Release|Any CPU
 		{7C01505D-BBB4-980D-DB84-FB971ED21D5C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{7C01505D-BBB4-980D-DB84-FB971ED21D5C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7C01505D-BBB4-980D-DB84-FB971ED21D5C}.Release|Any CPU.ActiveCfg = Release|Any CPU

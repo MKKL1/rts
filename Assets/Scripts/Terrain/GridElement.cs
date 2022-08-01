@@ -1,4 +1,5 @@
-﻿using UnityEditor;
+﻿using Assets.Scripts.Terrain.Biomes;
+using UnityEditor;
 using UnityEngine;
 
 namespace Assets

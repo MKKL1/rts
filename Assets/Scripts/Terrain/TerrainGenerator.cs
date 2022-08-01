@@ -1,7 +1,8 @@
-﻿using System.Collections;
+﻿using Assets.Scripts.Terrain.Biomes;
+using System.Collections;
 using UnityEngine;
 
-namespace Assets
+namespace Assets.Scripts.Terrain
 {
     //TODO remove hard coded biome blending
     public class TerrainGenerator
@@ -45,6 +46,9 @@ namespace Assets
 
         private void generateBiome()
         {
+            Plains.init();
+            Water.init();
+
             //gameGrid.grid = new GridElement[gameGrid.gridSize.x, gameGrid.gridSize.y];
             biomeHeightMap = new float[terrainSize.x, terrainSize.y];
 
@@ -89,7 +93,7 @@ namespace Assets
                         
                 }
 
-            biomeMapTexture.Apply();
+            
         }
 
         public void generateTerrain()
@@ -107,13 +111,17 @@ namespace Assets
                         {
                             int x = (i * gameGrid.chunkGridSize.x) + xInChunk;
                             int y = (j * gameGrid.chunkGridSize.y) + yInChunk;
-                            if (biomeHeightMap[x,y] >= Water.biomeAltitide.max-Water.biomeBlendingValue && biomeHeightMap[x, y] <= Plains.biomeAltitide.min+ Plains.biomeBlendingValue)
+                            if (biomeHeightMap[x, y] >= Water.biomeAltitide.max - Water.biomeBlendingValue && biomeHeightMap[x, y] <= Plains.biomeAltitide.min + Plains.biomeBlendingValue)
+                            {
                                 //Reversed x and y to match minimap
-                                heightmap[y, x] = normalizedHeight(Mathf.Lerp(waterBiome.GetHeight(x, y), plainsBiome.GetHeight(x, y), (biomeHeightMap[x, y] - b) *a));
+                                heightmap[y, x] = normalizedHeight(Mathf.SmoothStep(waterBiome.GetHeight(x, y), plainsBiome.GetHeight(x, y), (biomeHeightMap[x, y] - b) * a));
+                                biomeMapTexture.SetPixel(i, j, Color.red);
+                            }
                             else
                                 heightmap[y, x] = normalizedHeight(gameGrid.grid[i, j].biome.GetHeight(x, y));
                         }
                 }
+            biomeMapTexture.Apply();
         }
 
         private float normalizedHeight(float height)

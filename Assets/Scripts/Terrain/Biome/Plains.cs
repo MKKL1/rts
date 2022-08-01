@@ -1,13 +1,21 @@
 ﻿using UnityEditor;
 using UnityEngine;
 
-namespace Assets
+namespace Assets.Scripts.Terrain.Biomes
 {
     public class Plains : Biome
     {
-        public static RangeAttribute biomeAltitide = new RangeAttribute(0.4f, 1f);
-        public static float biomeBlendingValue = 0.02f;
+        public static RangeAttribute biomeAltitide;
+        public static float biomeBlendingValue;
         private FastNoiseLite terrainNoise;
+        private static GeneratorSettings genSettingsInstance;
+
+        public static void init()
+        {
+            genSettingsInstance = GeneratorSettings.instance;
+            biomeAltitide = new RangeAttribute(genSettingsInstance.waterTreshold, 1f);
+            biomeBlendingValue = genSettingsInstance.plainsBlending;
+        }
         public Plains(int seed)
         {
             terrainNoise = new FastNoiseLite(seed+1);
@@ -16,14 +24,15 @@ namespace Assets
             terrainNoise.SetFractalType(FastNoiseLite.FractalType.FBm);
             terrainNoise.SetFractalLacunarity(2f);
             terrainNoise.SetFractalGain(0.5f);
-            terrainNoise.SetFractalOctaves(6);
+            terrainNoise.SetFractalOctaves(4);
 
             biomeName = "Plains";
+            
         }
 
         public override float GetHeight(float x, float y)
         {
-            return terrainNoise.GetNoise(x, y)*0.1f-0.6f;
+            return terrainNoise.GetNoise(x, y)* genSettingsInstance.plainsHeightMultiplier + genSettingsInstance.plainsHeightAdd;
         }
     }
 }
