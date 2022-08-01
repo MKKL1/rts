@@ -12,6 +12,7 @@ namespace Assets
         {
             gridSize = new Vector2Int(chunksX, chunksY);
             chunkGridSize = new Vector2Int(chunkSizeX, chunkSizeY);
+            grid = new GridElement[chunksX, chunksY];
         }
     }
 }

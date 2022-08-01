@@ -7,7 +7,7 @@ namespace Assets
     public class TerrainGenerator
     {
         public float[,] heightmap;
-        public Biome[,] biomeMap;
+        //public Biome[,] biomeMap;
         public Texture2D biomeMapTexture;
         
 
@@ -19,7 +19,7 @@ namespace Assets
         private Biome waterBiome;
 
         private int seed;
-        public TerrainGenerator(GameGrid gameGrid, int seed = 69)
+        public TerrainGenerator(ref GameGrid gameGrid, int seed = 69)
         {
             this.gameGrid = gameGrid;
             terrainSize = gameGrid.gridSize * gameGrid.chunkGridSize;
@@ -45,7 +45,7 @@ namespace Assets
 
         private void generateBiome()
         {
-            biomeMap = new Biome[gameGrid.gridSize.x, gameGrid.gridSize.y];
+            //gameGrid.grid = new GridElement[gameGrid.gridSize.x, gameGrid.gridSize.y];
             biomeHeightMap = new float[terrainSize.x, terrainSize.y];
 
             biomeMapTexture = new Texture2D(gameGrid.gridSize.x, gameGrid.gridSize.y, TextureFormat.ARGB32, false);
@@ -81,7 +81,12 @@ namespace Assets
                     }
 
                     if (currentbiome != null)
-                        biomeMap[i, j] = currentbiome;
+                    {
+                        GridElement el = new GridElement();
+                        el.biome = currentbiome;
+                        gameGrid.grid[i, j] = el;
+                    }
+                        
                 }
 
             biomeMapTexture.Apply();
@@ -102,10 +107,11 @@ namespace Assets
                         {
                             int x = (i * gameGrid.chunkGridSize.x) + xInChunk;
                             int y = (j * gameGrid.chunkGridSize.y) + yInChunk;
-                            if (biomeHeightMap[x,y] > Water.biomeAltitide.max-Water.biomeBlendingValue && biomeHeightMap[x, y] < Plains.biomeAltitide.min+ Plains.biomeBlendingValue)
-                                heightmap[x, y] = normalizedHeight(Mathf.Lerp(waterBiome.GetHeight(x, y), plainsBiome.GetHeight(x, y), (biomeHeightMap[x, y] - b) *a));
+                            if (biomeHeightMap[x,y] >= Water.biomeAltitide.max-Water.biomeBlendingValue && biomeHeightMap[x, y] <= Plains.biomeAltitide.min+ Plains.biomeBlendingValue)
+                                //Reversed x and y to match minimap
+                                heightmap[y, x] = normalizedHeight(Mathf.Lerp(waterBiome.GetHeight(x, y), plainsBiome.GetHeight(x, y), (biomeHeightMap[x, y] - b) *a));
                             else
-                                heightmap[x, y] = normalizedHeight(biomeMap[i, j].GetHeight(x, y));
+                                heightmap[y, x] = normalizedHeight(gameGrid.grid[i, j].biome.GetHeight(x, y));
                         }
                 }
         }
