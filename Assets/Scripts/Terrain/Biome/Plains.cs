@@ -5,19 +5,15 @@ namespace Assets.Scripts.Terrain.Biomes
 {
     public class Plains : Biome
     {
-        public static RangeAttribute biomeAltitide;
-        public static float biomeBlendingValue;
+        
         private FastNoiseLite terrainNoise;
         private static GeneratorSettings genSettingsInstance;
-
-        public static void init()
+        public Plains(int seed)
         {
             genSettingsInstance = GeneratorSettings.instance;
             biomeAltitide = new RangeAttribute(genSettingsInstance.waterTreshold, 1f);
             biomeBlendingValue = genSettingsInstance.plainsBlending;
-        }
-        public Plains(int seed)
-        {
+
             terrainNoise = new FastNoiseLite(seed+1);
             terrainNoise.SetNoiseType(FastNoiseLite.NoiseType.OpenSimplex2);
             terrainNoise.SetFrequency(0.005f);
@@ -27,7 +23,8 @@ namespace Assets.Scripts.Terrain.Biomes
             terrainNoise.SetFractalOctaves(4);
 
             biomeName = "Plains";
-            
+            type = BiomesType.PLAINS;
+
         }
 
         public override float GetHeight(float x, float y)

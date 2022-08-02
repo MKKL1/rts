@@ -5,17 +5,12 @@ namespace Assets.Scripts.Terrain.Biomes
 {
     public class Water : Biome
     {
-        public static RangeAttribute biomeAltitide;
-        public static float biomeBlendingValue;
         private FastNoiseLite terrainNoise;
-
-        public static void init()
+        public Water(int seed)
         {
             biomeAltitide = new RangeAttribute(0f, GeneratorSettings.instance.waterTreshold);
             biomeBlendingValue = GeneratorSettings.instance.waterBlending;
-        }
-        public Water(int seed)
-        {
+
             terrainNoise = new FastNoiseLite(seed + 2);
             terrainNoise.SetNoiseType(FastNoiseLite.NoiseType.OpenSimplex2);
             terrainNoise.SetFrequency(0.002f);
@@ -25,6 +20,7 @@ namespace Assets.Scripts.Terrain.Biomes
             terrainNoise.SetFractalOctaves(2);
 
             biomeName = "Water";
+            type = BiomesType.WATER;
             buildable = false;
             walkable = false;
         }

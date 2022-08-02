@@ -1229,6 +1229,7 @@ GameObject:
   - component: {fileID: 712011508}
   - component: {fileID: 712011507}
   - component: {fileID: 712011510}
+  - component: {fileID: 712011511}
   m_Layer: 0
   m_Name: GameMain
   m_TagString: Untagged
@@ -1313,6 +1314,24 @@ MonoBehaviour:
     m_Center: {x: 500, y: 50, z: 500}
     m_Extent: {x: 500, y: 50, z: 500}
   filterShader: {fileID: 4800000, guid: 0f44df78e3d64d9cb2616cac3d84cb77, type: 3}
+--- !u!114 &712011511
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 712011506}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ca6da7876d0f82f468f573931adb5f14, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  waterTreshold: 0.4
+  waterBlending: 0
+  plainsBlending: 0
+  plainsHeightMultiplier: 0.1
+  plainsHeightAdd: -0.5
+  seed: 51
 --- !u!1 &882451578
 GameObject:
   m_ObjectHideFlags: 0
@@ -1779,7 +1798,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 918e2e51bd8f5f44580d1534c3dab89f, type: 2}
+  - {fileID: 2100000, guid: d337fc5282607644ebb2f3575513265e, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0

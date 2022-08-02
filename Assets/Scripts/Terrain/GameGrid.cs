@@ -6,12 +6,10 @@ namespace Assets.Scripts.Terrain
     {
         public GridElement[,] grid;
         public Vector2Int gridSize;
-        public Vector2Int chunkGridSize;
 
-        public GameGrid(int chunksX, int chunksY, int chunkSizeX = 10, int chunkSizeY = 10)
+        public GameGrid(int chunksX, int chunksY)
         {
             gridSize = new Vector2Int(chunksX, chunksY);
-            chunkGridSize = new Vector2Int(chunkSizeX, chunkSizeY);
             grid = new GridElement[chunksX, chunksY];
         }
     }

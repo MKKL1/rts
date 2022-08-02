@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEditor;
 using Assets.Scripts.Terrain;
 using UnityEngine.UI;
+using UnityEngine.Profiling;
 
 public class TerrainManager : MonoBehaviour
 {
@@ -20,10 +21,17 @@ public class TerrainManager : MonoBehaviour
 
     public void initTerrain()
     {
-        gameGrid = new GameGrid(100, 100, 5, 5);
+        var watch = System.Diagnostics.Stopwatch.StartNew();
+        
+        gameGrid = new GameGrid(512, 512);
         TerrainGenerator terraing = new TerrainGenerator(ref gameGrid, GeneratorSettings.instance.seed);
         terraing.generateTerrain();
         terrain.terrainData.SetHeights(0, 0, terraing.heightmap);
+
+
+        watch.Stop();
+        var elapsedMs = watch.ElapsedMilliseconds;
+        Debug.Log(elapsedMs);
         image.texture = terraing.biomeMapTexture;
     }
     void Start()
@@ -59,13 +67,13 @@ public class TerrainManager : MonoBehaviour
         for (int i = 0; i < gameGrid.gridSize.x; i++)
             for (int j = 0; j < gameGrid.gridSize.y; j++)
             {
-                float xpos = (i * gameGrid.chunkGridSize.x) * 2;
-                float zpos = (j * gameGrid.chunkGridSize.y) * 2;
+                float xpos = i * 2;
+                float zpos = j * 2;
                 Color wcolor = Color.red;
-                if (gameGrid.grid[i, j].biome.biomeName == "Plains") wcolor = Color.green;
-                else if (gameGrid.grid[i, j].biome.biomeName == "Water") wcolor = Color.blue;
+                if (gameGrid.grid[i, j].biome == BiomesType.PLAINS) wcolor = Color.green;
+                else if (gameGrid.grid[i, j].biome == BiomesType.WATER) wcolor = Color.blue;
                 Gizmos.color = wcolor;
-                Gizmos.DrawLine(new Vector3(xpos, gizmosHeight, zpos), new Vector3(xpos + (gameGrid.chunkGridSize.x * 2), gizmosHeight, zpos + (gameGrid.chunkGridSize.y * 2)));
+                Gizmos.DrawLine(new Vector3(xpos, gizmosHeight, zpos), new Vector3(xpos + 2, gizmosHeight, zpos + 2));
             }
 
     }
