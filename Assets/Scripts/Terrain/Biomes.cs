@@ -7,21 +7,27 @@ namespace Assets.Scripts.Terrain
 {
     public class BiomesManager
     {
-        private Dictionary<BiomesType, Biome> biomeList = new Dictionary<BiomesType, Biome>();
+        byte biomeCount = 4;
+        private Biome[] biomeList;
         public BiomesManager(int seed)
         {
-            biomeList.Add(BiomesType.PLAINS, new Plains(seed));
-            biomeList.Add(BiomesType.WATER, new Water(seed));
+            biomeList = new Biome[biomeCount];
+            biomeList[(byte)BiomesType.PLAINS] = new Plains(seed);
+            biomeList[(byte)BiomesType.WATER] = new Water(seed);
         }
 
         public BiomesType GetBiomeTypeFromHeight(float height)
         {
-            return biomeList.FirstOrDefault(x => inRange(x.Value.biomeAltitide, height)).Key;
+            for(byte i = 0; i < biomeCount; i++)
+            {
+                if (inRange(biomeList[i].biomeAltitide, height)) return (BiomesType)i;
+            }
+            return BiomesType.WATER;
         }
 
         public Biome GetBiomeFromBiomeType(BiomesType biomesType)
         {
-            return biomeList.GetValueOrDefault(biomesType);
+            return biomeList[(byte)biomesType];
         }
 
         private bool inRange(RangeAttribute range, float value)
