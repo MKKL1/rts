@@ -11,7 +11,7 @@ namespace Assets.Scripts.Terrain.Biomes
         public Plains(int seed)
         {
             genSettingsInstance = GeneratorSettings.instance;
-            biomeAltitide = new RangeAttribute(genSettingsInstance.waterTreshold, 1f);
+            biomeAltitide = new RangeAttribute(0.43f, 1f);
             biomeBlendingValue = genSettingsInstance.plainsBlending;
 
             terrainNoise = new FastNoiseLite(seed+1);
@@ -24,7 +24,7 @@ namespace Assets.Scripts.Terrain.Biomes
 
             biomeName = "Plains";
             type = BiomesType.PLAINS;
-
+            biomeColor = Color.green;
         }
 
         public override float GetHeight(float x, float y)

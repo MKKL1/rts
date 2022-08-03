@@ -25,7 +25,7 @@ public class TerrainManager : MonoBehaviour
         
         gameGrid = new GameGrid(512, 512);
         TerrainGenerator terraing = new TerrainGenerator(ref gameGrid, GeneratorSettings.instance.seed);
-        terraing.generateTerrain();
+        terraing.GenerateTerrain();
         terrain.terrainData.SetHeights(0, 0, terraing.heightmap);
 
 

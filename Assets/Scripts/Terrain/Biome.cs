@@ -6,6 +6,7 @@ namespace Assets.Scripts.Terrain
     public class Biome
     {
         public string biomeName;
+        public Color biomeColor;
         public bool buildable = true;
         public bool walkable = true;
         public float biomeStartPercentage = 0.09f;

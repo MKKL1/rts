@@ -7,27 +7,33 @@ namespace Assets.Scripts.Terrain
 {
     public class BiomesManager
     {
-        byte biomeCount = 4;
-        private Biome[] biomeList;
+        public readonly byte biomeCount = 3;
+        public readonly Biome[] biomeList;
         public BiomesManager(int seed)
         {
             biomeList = new Biome[biomeCount];
             biomeList[(byte)BiomesType.PLAINS] = new Plains(seed);
             biomeList[(byte)BiomesType.WATER] = new Water(seed);
+            biomeList[(byte)BiomesType.BEACH] = new Beach(seed);
         }
 
-        public BiomesType GetBiomeTypeFromHeight(float height)
+        public BiomesType GetBiomeType(float height)
         {
             for(byte i = 0; i < biomeCount; i++)
             {
-                if (inRange(biomeList[i].biomeAltitide, height)) return (BiomesType)i;
+                if (biomeList[i] != null && inRange(biomeList[i].biomeAltitide, height)) return (BiomesType)i;
             }
             return BiomesType.WATER;
         }
 
-        public Biome GetBiomeFromBiomeType(BiomesType biomesType)
+        public Biome GetBiome(BiomesType biomesType)
         {
             return biomeList[(byte)biomesType];
+        }
+
+        public Color GetBiomeColor(BiomesType biomesType)
+        {
+            return GetBiome(biomesType).biomeColor;
         }
 
         private bool inRange(RangeAttribute range, float value)
@@ -40,7 +46,6 @@ namespace Assets.Scripts.Terrain
     {
         PLAINS,
         WATER,
-        MOUNTAINS,
         BEACH
     }
 }

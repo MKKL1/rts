@@ -8,7 +8,7 @@ namespace Assets.Scripts.Terrain.Biomes
         private FastNoiseLite terrainNoise;
         public Water(int seed)
         {
-            biomeAltitide = new RangeAttribute(0f, GeneratorSettings.instance.waterTreshold);
+            biomeAltitide = new RangeAttribute(0f, 0.35f);
             biomeBlendingValue = GeneratorSettings.instance.waterBlending;
 
             terrainNoise = new FastNoiseLite(seed + 2);
@@ -23,6 +23,7 @@ namespace Assets.Scripts.Terrain.Biomes
             type = BiomesType.WATER;
             buildable = false;
             walkable = false;
+            biomeColor = Color.blue;
         }
 
         public override float GetHeight(float x, float y)
