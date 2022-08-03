@@ -5,7 +5,7 @@ namespace Assets.Scripts.Terrain
 {
     public class BiomeWeightManager
     {
-        public List<byte[,]> biomeWeightMap;
+        public List<float[,]> biomeWeightMap;
         public readonly byte biomeCount;
         public readonly Vector2Int size;
         private BiomesManager biomesManager;
@@ -17,9 +17,9 @@ namespace Assets.Scripts.Terrain
             this.biomesManager = biomesManager;
             biomeCount = biomesManager.biomeCount;
             this.size = size;
-            biomeWeightMap = new List<byte[,]>();
+            biomeWeightMap = new List<float[,]>();
             for (int i = 0; i < biomeCount; i++)
-                biomeWeightMap.Add(new byte[size.x, size.y]);
+                biomeWeightMap.Add(new float[size.x, size.y]);
 
             
         }
@@ -30,12 +30,12 @@ namespace Assets.Scripts.Terrain
         {
             if (weight > 1f) weight = 1f;
             else if (weight < 0f) weight = 0f;
-            biomeWeightMap[(byte)biomesType][x, y] = (byte)(weight * 255);
+            biomeWeightMap[(byte)biomesType][x, y] = weight;
         }
 
         public float GetWeight(BiomesType biomesType, int x, int y)
         {
-            return (float)biomeWeightMap[(byte)biomesType][x, y] / 255;
+            return biomeWeightMap[(byte)biomesType][x, y];
         }
 
         public Dictionary<BiomesType, float> GetWeight(int x, int y)
@@ -43,13 +43,13 @@ namespace Assets.Scripts.Terrain
             Dictionary<BiomesType, float> weights = new Dictionary<BiomesType, float>();
             for(byte i = 0; i < biomesManager.biomeCount; i++)
             {
-                weights.Add((BiomesType)i, (float)biomeWeightMap[i][x, y] / 255);
+                weights.Add((BiomesType)i, biomeWeightMap[i][x, y]);
             }
 
             return weights;
         }
 
-        public void SetBiomeWeightMap(List<byte[,]> newWeightMap)
+        public void SetBiomeWeightMap(List<float[,]> newWeightMap)
         {
             biomeWeightMap = newWeightMap;
         }

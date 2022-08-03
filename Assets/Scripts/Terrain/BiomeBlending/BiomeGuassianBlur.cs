@@ -45,6 +45,16 @@ namespace Assets.Scripts.Terrain
                 tasks.Add(ProcessWeightMap(biomeMap[i], destList[i], radial));
 
             tasks.ForEach(x => x.Start());
+            Task.WaitAll(tasks.ToArray());
+
+            for(int i = 0; i < destList.Count; i++)
+            {
+                for (int j = 0; j < _width; j++)
+                    for (int k = 0; k < _height; k++)
+                        biomeMap[i][j,k] = destList[i][j + (k * _width)];
+            }
+
+            biomeWeightManager.SetBiomeWeightMap(biomeMap);
             //Parallel.For(0, dest.Length, _pOptions, i =>
             //{
             //    if (newAlpha[i] > 255) newAlpha[i] = 255;

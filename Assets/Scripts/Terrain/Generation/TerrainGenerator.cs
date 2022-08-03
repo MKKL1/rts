@@ -11,6 +11,7 @@ namespace Assets.Scripts.Terrain
         public float[,] heightmap;
         //public Biome[,] biomeMap;
         public Texture2D biomeMapTexture;
+        public Texture2D plainsMapTexture;
         
 
         private Vector2Int terrainSize;
@@ -84,7 +85,7 @@ namespace Assets.Scripts.Terrain
         public void GenerateTerrain()
         {
             GenerateBiome();
-
+            plainsMapTexture = new Texture2D(gameGrid.gridSize.x, gameGrid.gridSize.y, TextureFormat.ARGB32, false);
             //float b = (waterBiome.biomeAltitide.max - waterBiome.biomeBlendingValue);
             //float a = 1/(plainsBiome.biomeAltitide.min + plainsBiome.biomeBlendingValue - (waterBiome.biomeAltitide.max - waterBiome.biomeBlendingValue));
 
@@ -103,10 +104,17 @@ namespace Assets.Scripts.Terrain
                     foreach (KeyValuePair<BiomesType, float> entry in biomeWeightManager.GetWeight(i, j))
                     {
                         heightSum += biomesManager.GetBiome(entry.Key).GetHeight(i, j) * entry.Value;
+                        if(entry.Key == BiomesType.PLAINS)
+                        {
+                            byte c = (byte)(255 * entry.Value);
+                            plainsMapTexture.SetPixel(i, j, new Color(c, c, c));
+                        }
+                            
                     }
                     heightmap[j, i] = normalizedHeight(heightSum);
                 }
             biomeMapTexture.Apply();
+            plainsMapTexture.Apply();
         }
 
         private float normalizedHeight(float height)

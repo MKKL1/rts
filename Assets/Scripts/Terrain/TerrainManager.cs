@@ -10,6 +10,7 @@ public class TerrainManager : MonoBehaviour
 {
     public Terrain terrain;
     public RawImage image;
+    public RawImage image2;
     public static GameGrid gameGrid;
     public float gizmosHeight = 0f;
 
@@ -33,6 +34,7 @@ public class TerrainManager : MonoBehaviour
         var elapsedMs = watch.ElapsedMilliseconds;
         Debug.Log(elapsedMs);
         image.texture = terraing.biomeMapTexture;
+        image2.texture = terraing.plainsMapTexture;
     }
     void Start()
     {
