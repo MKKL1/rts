@@ -22,12 +22,12 @@ namespace Assets.Scripts.Terrain.Biomes
             biomeName = "Beach";
             type = BiomeType.BEACH;
             biomeColor = Color.yellow;
-            biomeBlendingValue = 0.05f;
+            biomeBlendingValue = 0.01f;
         }
 
         public override float GetHeight(float x, float y)
         {
-            return terrainNoise.GetNoise(x, y)*0.05f-0.6f;
+            return -0.62f;
         }
     }
 }

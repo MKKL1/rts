@@ -21,7 +21,7 @@ namespace Assets.Scripts.Terrain
         {
             for(byte i = 0; i < biomeCount; i++)
             {
-                if (biomeList[i] != null && inRange(biomeList[i].biomeAltitide, height)) return (BiomeType)i;
+                if (biomeList[i] != null && Utils.inRange(biomeList[i].biomeAltitide, height)) return (BiomeType)i;
             }
             return BiomeType.WATER;
         }
@@ -36,10 +36,7 @@ namespace Assets.Scripts.Terrain
             return GetBiome(biomeType).biomeColor;
         }
 
-        private bool inRange(RangeAttribute range, float value)
-        {
-            return value >= range.min && value <= range.max;
-        }
+
     }
 
     public enum BiomeType : byte

@@ -25,7 +25,7 @@ namespace Assets.Scripts.Terrain.Biomes
             biomeName = "Plains";
             type = BiomeType.PLAINS;
             biomeColor = Color.green;
-            biomeBlendingValue = 0.05f;
+            biomeBlendingValue = 0.1f;
         }
 
         public override float GetHeight(float x, float y)
