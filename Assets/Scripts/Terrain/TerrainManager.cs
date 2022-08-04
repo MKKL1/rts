@@ -72,8 +72,8 @@ public class TerrainManager : MonoBehaviour
                 float xpos = i * 2;
                 float zpos = j * 2;
                 Color wcolor = Color.red;
-                if (gameGrid.grid[i, j].biome == BiomesType.PLAINS) wcolor = Color.green;
-                else if (gameGrid.grid[i, j].biome == BiomesType.WATER) wcolor = Color.blue;
+                if (gameGrid.grid[i, j].biome == BiomeType.PLAINS) wcolor = Color.green;
+                else if (gameGrid.grid[i, j].biome == BiomeType.WATER) wcolor = Color.blue;
                 Gizmos.color = wcolor;
                 Gizmos.DrawLine(new Vector3(xpos, gizmosHeight, zpos), new Vector3(xpos + 2, gizmosHeight, zpos + 2));
             }

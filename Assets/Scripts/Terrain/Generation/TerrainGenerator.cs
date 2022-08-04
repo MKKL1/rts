@@ -33,8 +33,8 @@ namespace Assets.Scripts.Terrain
 
             biomesManager = new BiomesManager(seed);
 
-            plainsBiome = biomesManager.GetBiome(BiomesType.PLAINS);
-            waterBiome = biomesManager.GetBiome(BiomesType.WATER);
+            plainsBiome = biomesManager.GetBiome(BiomeType.PLAINS);
+            waterBiome = biomesManager.GetBiome(BiomeType.WATER);
         }
 
         private FastNoiseLite NewBiomeNoise(int _seed)
@@ -72,7 +72,7 @@ namespace Assets.Scripts.Terrain
                 for (int j = 0; j < gameGrid.gridSize.y; j++)
                 {
                     float noiseheight = biomeHeightMap[i, j];
-                    BiomesType currentbiome =  biomesManager.GetBiomeType(noiseheight);
+                    BiomeType currentbiome =  biomesManager.GetBiomeType(noiseheight);
                     biomeWeightManager.SetWeight(currentbiome, i, j);
 
                     biomeMapTexture.SetPixel(i, j, biomesManager.GetBiomeColor(currentbiome));
@@ -105,12 +105,12 @@ namespace Assets.Scripts.Terrain
                     //}
                     //else
                     float heightSum = 0f;
-                    foreach (KeyValuePair<BiomesType, float> entry in biomeWeightManager.GetWeight(i, j))
+                    foreach (KeyValuePair<BiomeType, float> entry in biomeWeightManager.GetWeight(i, j))
                     {
                         if(entry.Value != 0f)
                             heightSum += biomesManager.GetBiome(entry.Key).GetHeight(i, j) * entry.Value;
 
-                        if(entry.Key == BiomesType.PLAINS)
+                        if(entry.Key == BiomeType.PLAINS)
                         {
                             byte c = (byte)(255 * entry.Value);
                             plainsMapTexture.SetPixel(i, j, new Color(c, c, c));

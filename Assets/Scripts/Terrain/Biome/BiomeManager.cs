@@ -12,28 +12,28 @@ namespace Assets.Scripts.Terrain
         public BiomesManager(int seed)
         {
             biomeList = new Biome[biomeCount];
-            biomeList[(byte)BiomesType.PLAINS] = new Plains(seed);
-            biomeList[(byte)BiomesType.WATER] = new Water(seed);
-            biomeList[(byte)BiomesType.BEACH] = new Beach(seed);
+            biomeList[(byte)BiomeType.PLAINS] = new Plains(seed);
+            biomeList[(byte)BiomeType.WATER] = new Water(seed);
+            biomeList[(byte)BiomeType.BEACH] = new Beach(seed);
         }
 
-        public BiomesType GetBiomeType(float height)
+        public BiomeType GetBiomeType(float height)
         {
             for(byte i = 0; i < biomeCount; i++)
             {
-                if (biomeList[i] != null && inRange(biomeList[i].biomeAltitide, height)) return (BiomesType)i;
+                if (biomeList[i] != null && inRange(biomeList[i].biomeAltitide, height)) return (BiomeType)i;
             }
-            return BiomesType.WATER;
+            return BiomeType.WATER;
         }
 
-        public Biome GetBiome(BiomesType biomesType)
+        public Biome GetBiome(BiomeType biomeType)
         {
-            return biomeList[(byte)biomesType];
+            return biomeList[(byte)biomeType];
         }
 
-        public Color GetBiomeColor(BiomesType biomesType)
+        public Color GetBiomeColor(BiomeType biomeType)
         {
-            return GetBiome(biomesType).biomeColor;
+            return GetBiome(biomeType).biomeColor;
         }
 
         private bool inRange(RangeAttribute range, float value)
@@ -42,7 +42,7 @@ namespace Assets.Scripts.Terrain
         }
     }
 
-    public enum BiomesType : byte
+    public enum BiomeType : byte
     {
         PLAINS,
         WATER,

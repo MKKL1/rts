@@ -23,7 +23,7 @@ namespace Assets.Scripts.Terrain.Biomes
             terrainNoise.SetFractalOctaves(4);
 
             biomeName = "Plains";
-            type = BiomesType.PLAINS;
+            type = BiomeType.PLAINS;
             biomeColor = Color.green;
             biomeBlendingValue = 0.05f;
         }

@@ -26,24 +26,24 @@ namespace Assets.Scripts.Terrain
 
         public BiomeWeightManager(BiomesManager biomesManager, int xsize, int ysize) : this(biomesManager, new Vector2Int(xsize, ysize)) { }
 
-        public void SetWeight(BiomesType biomesType, int x, int y, float weight = 1f)
+        public void SetWeight(BiomeType biomeType, int x, int y, float weight = 1f)
         {
             if (weight > 1f) weight = 1f;
             else if (weight < 0f) weight = 0f;
-            biomeWeightMap[(byte)biomesType][x, y] = weight;
+            biomeWeightMap[(byte)biomeType][x, y] = weight;
         }
 
-        public float GetWeight(BiomesType biomesType, int x, int y)
+        public float GetWeight(BiomeType biomeType, int x, int y)
         {
-            return biomeWeightMap[(byte)biomesType][x, y];
+            return biomeWeightMap[(byte)biomeType][x, y];
         }
 
-        public Dictionary<BiomesType, float> GetWeight(int x, int y)
+        public Dictionary<BiomeType, float> GetWeight(int x, int y)
         {
-            Dictionary<BiomesType, float> weights = new Dictionary<BiomesType, float>();
+            Dictionary<BiomeType, float> weights = new Dictionary<BiomeType, float>();
             for (byte i = 0; i < biomesManager.biomeCount; i++)
             {
-                weights.Add((BiomesType)i, biomeWeightMap[i][x, y]);
+                weights.Add((BiomeType)i, biomeWeightMap[i][x, y]);
             }
 
             return weights;

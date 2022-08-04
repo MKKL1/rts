@@ -6,6 +6,6 @@ namespace Assets
 {
     public class GridElement
     {
-        public BiomesType biome;
+        public BiomeType biome;
     }
 }

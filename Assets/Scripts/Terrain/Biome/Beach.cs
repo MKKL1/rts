@@ -20,7 +20,7 @@ namespace Assets.Scripts.Terrain.Biomes
             terrainNoise.SetFractalOctaves(1);
 
             biomeName = "Beach";
-            type = BiomesType.BEACH;
+            type = BiomeType.BEACH;
             biomeColor = Color.yellow;
             biomeBlendingValue = 0.05f;
         }

@@ -20,7 +20,7 @@ namespace Assets.Scripts.Terrain.Biomes
             terrainNoise.SetFractalOctaves(2);
 
             biomeName = "Water";
-            type = BiomesType.WATER;
+            type = BiomeType.WATER;
             buildable = false;
             walkable = false;
             biomeColor = Color.blue;
