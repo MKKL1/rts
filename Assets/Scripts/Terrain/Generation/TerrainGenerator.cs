@@ -1,4 +1,5 @@
-﻿using Assets.Scripts.Terrain.Biomes;
+﻿using Assets.Scripts.Terrain.BiomeBlending;
+using Assets.Scripts.Terrain.Biomes;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -78,6 +79,9 @@ namespace Assets.Scripts.Terrain
                     gameGrid.grid[i, j].biome = currentbiome;
                 }
 
+
+            BiomeBlendingAlgorithm blendingAlgorithm = new LerpBlending(biomesManager, biomeHeightMap);
+            blendingAlgorithm.blendBiomes(ref biomeWeightManager);
             //BiomeGuassianBlur guassianBlur = new BiomeGuassianBlur(ref biomeWeightManager);
             //guassianBlur.Process(2);
         }
@@ -103,7 +107,9 @@ namespace Assets.Scripts.Terrain
                     float heightSum = 0f;
                     foreach (KeyValuePair<BiomesType, float> entry in biomeWeightManager.GetWeight(i, j))
                     {
-                        heightSum += biomesManager.GetBiome(entry.Key).GetHeight(i, j) * entry.Value;
+                        if(entry.Value != 0f)
+                            heightSum += biomesManager.GetBiome(entry.Key).GetHeight(i, j) * entry.Value;
+
                         if(entry.Key == BiomesType.PLAINS)
                         {
                             byte c = (byte)(255 * entry.Value);

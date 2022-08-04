@@ -22,6 +22,7 @@ namespace Assets.Scripts.Terrain.Biomes
             biomeName = "Beach";
             type = BiomesType.BEACH;
             biomeColor = Color.yellow;
+            biomeBlendingValue = 0.05f;
         }
 
         public override float GetHeight(float x, float y)

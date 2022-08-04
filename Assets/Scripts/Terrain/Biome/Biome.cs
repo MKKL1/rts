@@ -12,7 +12,7 @@ namespace Assets.Scripts.Terrain
         public float biomeStartPercentage = 0.09f;
         public BiomesType type;
         public RangeAttribute biomeAltitide;
-        public float biomeBlendingValue;
+        public float biomeBlendingValue = 0.05f;
         public virtual float GetHeight(float x, float y)
         {
             return 0f;

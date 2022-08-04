@@ -10,7 +10,7 @@ namespace Assets.Scripts.Terrain
         public readonly Vector2Int size;
         private BiomesManager biomesManager;
 
-        
+
 
         public BiomeWeightManager(BiomesManager biomesManager, Vector2Int size)
         {
@@ -21,7 +21,7 @@ namespace Assets.Scripts.Terrain
             for (int i = 0; i < biomeCount; i++)
                 biomeWeightMap.Add(new float[size.x, size.y]);
 
-            
+
         }
 
         public BiomeWeightManager(BiomesManager biomesManager, int xsize, int ysize) : this(biomesManager, new Vector2Int(xsize, ysize)) { }
@@ -41,7 +41,7 @@ namespace Assets.Scripts.Terrain
         public Dictionary<BiomesType, float> GetWeight(int x, int y)
         {
             Dictionary<BiomesType, float> weights = new Dictionary<BiomesType, float>();
-            for(byte i = 0; i < biomesManager.biomeCount; i++)
+            for (byte i = 0; i < biomesManager.biomeCount; i++)
             {
                 weights.Add((BiomesType)i, biomeWeightMap[i][x, y]);
             }

@@ -1,7 +1,7 @@
 ﻿using System.Collections;
 using UnityEngine;
 
-namespace Assets.Scripts.Terrain
+namespace Assets.Scripts.Terrain.BiomeBlending
 {
     public class GaussianBlurBlending : BiomeBlendingAlgorithm
     {

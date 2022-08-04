@@ -24,6 +24,7 @@ namespace Assets.Scripts.Terrain.Biomes
             buildable = false;
             walkable = false;
             biomeColor = Color.blue;
+            biomeBlendingValue = 0.05f;
         }
 
         public override float GetHeight(float x, float y)
