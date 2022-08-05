@@ -9,7 +9,6 @@ namespace Assets.Scripts.Terrain.Biomes
         public Beach(int seed)
         {
             biomeAltitide = new RangeAttribute(0.35f, 0.43f);
-            biomeBlendingValue = GeneratorSettings.instance.plainsBlending;
 
             terrainNoise = new FastNoiseLite(seed + 2);
             terrainNoise.SetNoiseType(FastNoiseLite.NoiseType.OpenSimplex2);
@@ -22,7 +21,8 @@ namespace Assets.Scripts.Terrain.Biomes
             biomeName = "Beach";
             type = BiomeType.BEACH;
             biomeColor = Color.yellow;
-            biomeBlendingValue = 0.01f;
+            blendingValueStart = 0.01f;
+            blendingValueEnd = 0.01f;
         }
 
         public override float GetHeight(float x, float y)

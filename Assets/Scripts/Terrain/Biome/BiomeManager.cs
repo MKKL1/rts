@@ -7,7 +7,7 @@ namespace Assets.Scripts.Terrain
 {
     public class BiomesManager
     {
-        public readonly byte biomeCount = 3;
+        public readonly byte biomeCount = 4;
         public readonly Biome[] biomeList;
         public BiomesManager(int seed)
         {
@@ -15,6 +15,7 @@ namespace Assets.Scripts.Terrain
             biomeList[(byte)BiomeType.PLAINS] = new Plains(seed);
             biomeList[(byte)BiomeType.WATER] = new Water(seed);
             biomeList[(byte)BiomeType.BEACH] = new Beach(seed);
+            biomeList[(byte)BiomeType.MOUNTAINS] = new Mountains(seed);
         }
 
         public BiomeType GetBiomeType(float height)
@@ -43,6 +44,7 @@ namespace Assets.Scripts.Terrain
     {
         PLAINS,
         WATER,
-        BEACH
+        BEACH,
+        MOUNTAINS
     }
 }

@@ -70,7 +70,7 @@ namespace Assets.Scripts.Terrain.BiomeBlending
             {
                 if (lastMax != 0f)
                 {
-                    float newMax = biome.biomeAltitide.min + biome.biomeBlendingValue;
+                    float newMax = biome.biomeAltitide.min + biome.blendingValueStart;
                     blendingRanges.Add(new RangeAttribute(lastMax, newMax), new BlendingValues
                     {
                         minBiome = biome.type,
@@ -78,7 +78,7 @@ namespace Assets.Scripts.Terrain.BiomeBlending
                         a = 1 / (newMax - lastMax)
                     });
                 }
-                lastMax = biome.biomeAltitide.max - biome.biomeBlendingValue;
+                lastMax = biome.biomeAltitide.max - biome.blendingValueEnd;
                 lastBiomeType = biome.type;
             }
         }

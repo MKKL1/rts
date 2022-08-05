@@ -11,11 +11,10 @@ namespace Assets.Scripts.Terrain.Biomes
         public Plains(int seed)
         {
             genSettingsInstance = GeneratorSettings.instance;
-            biomeAltitide = new RangeAttribute(0.43f, 1f);
-            biomeBlendingValue = genSettingsInstance.plainsBlending;
+            biomeAltitide = new RangeAttribute(0.43f, 0.8f);
 
             terrainNoise = new FastNoiseLite(seed+1);
-            terrainNoise.SetNoiseType(FastNoiseLite.NoiseType.OpenSimplex2);
+            terrainNoise.SetNoiseType(FastNoiseLite.NoiseType.OpenSimplex2S);
             terrainNoise.SetFrequency(0.005f);
             terrainNoise.SetFractalType(FastNoiseLite.FractalType.FBm);
             terrainNoise.SetFractalLacunarity(2f);
@@ -25,7 +24,8 @@ namespace Assets.Scripts.Terrain.Biomes
             biomeName = "Plains";
             type = BiomeType.PLAINS;
             biomeColor = Color.green;
-            biomeBlendingValue = 0.1f;
+            blendingValueStart = 0.08f;
+            blendingValueEnd = 0.08f;
         }
 
         public override float GetHeight(float x, float y)

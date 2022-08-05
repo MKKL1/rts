@@ -9,7 +9,6 @@ namespace Assets.Scripts.Terrain.Biomes
         public Water(int seed)
         {
             biomeAltitide = new RangeAttribute(0f, 0.35f);
-            biomeBlendingValue = GeneratorSettings.instance.waterBlending;
 
             terrainNoise = new FastNoiseLite(seed + 2);
             terrainNoise.SetNoiseType(FastNoiseLite.NoiseType.OpenSimplex2);
@@ -24,7 +23,8 @@ namespace Assets.Scripts.Terrain.Biomes
             buildable = false;
             walkable = false;
             biomeColor = Color.blue;
-            biomeBlendingValue = 0.07f;
+            blendingValueStart = 0.08f;
+            blendingValueEnd = 0.08f;
         }
 
         public override float GetHeight(float x, float y)
