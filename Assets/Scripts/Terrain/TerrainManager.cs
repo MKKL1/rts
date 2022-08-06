@@ -9,9 +9,15 @@ using UnityEngine.Profiling;
 public class TerrainManager : MonoBehaviour
 {
     public Terrain terrain;
+    public Transform waterTransform;
+    
+
     public RawImage image;
     public RawImage image2;
     public static GameGrid gameGrid;
+    public static float waterLevel;
+    public static Vector2 terrainCornerBottomLeft;
+    public static Vector2 terrainCornerTopRight;
     public float gizmosHeight = 0f;
 
     public static TerrainManager instance;
@@ -35,10 +41,16 @@ public class TerrainManager : MonoBehaviour
         Debug.Log(elapsedMs);
         image.texture = terraing.biomeMapTexture;
         image2.texture = terraing.plainsMapTexture;
+
+        
     }
     void Start()
     {
+        
         initTerrain();
+        terrainCornerBottomLeft = new Vector2(terrain.transform.position.x, terrain.transform.position.z);
+        terrainCornerTopRight = new Vector2(terrainCornerBottomLeft.x + terrain.terrainData.size.x, terrainCornerBottomLeft.y + terrain.terrainData.size.z);
+        waterLevel = waterTransform.position.y;
     }
 
     private void OnDrawGizmosSelected()

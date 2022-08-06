@@ -24,7 +24,7 @@ namespace Assets.Scripts.Terrain.Biomes
             biomeName = "Plains";
             type = BiomeType.PLAINS;
             biomeColor = Color.green;
-            blendingValueStart = 0.08f;
+            blendingValueStart = 0.1f;
             blendingValueEnd = 0.08f;
         }
 

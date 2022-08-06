@@ -21,7 +21,7 @@ namespace Assets.Scripts.Terrain.Biomes
             biomeName = "Beach";
             type = BiomeType.BEACH;
             biomeColor = Color.yellow;
-            blendingValueStart = 0.01f;
+            blendingValueStart = 0.05f;
             blendingValueEnd = 0.01f;
         }
 

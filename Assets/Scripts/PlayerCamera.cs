@@ -20,6 +20,8 @@ public class PlayerCamera : MonoBehaviour
     public float distanceFromTerrain = 15f;
     public float maxHeight = 100f;
 
+    public float minDistFromBorders = 30f;
+
     public Terrain terrain;
 
     private bool buttonhold = false;
@@ -33,6 +35,11 @@ public class PlayerCamera : MonoBehaviour
     private float _currentzoom = 0f;
     private Vector3 cameravelocity = Vector3.zero;
     private Vector3 targetPosition;
+
+    private Vector2 terrainCornerBottomLeft;
+    private Vector2 terrainCornerTopRight;
+
+    private float terrainPositionY;
     public float currentzoom
     {
         set
@@ -46,6 +53,10 @@ public class PlayerCamera : MonoBehaviour
     void Start()
     {
         if(terrain == null) terrain = GameMain.instance.mainTerrain;
+
+        terrainCornerBottomLeft = new Vector2(terrain.transform.position.x, terrain.transform.position.z);
+        terrainCornerTopRight = new Vector2(terrainCornerBottomLeft.x + terrain.terrainData.size.x, terrainCornerBottomLeft.y + terrain.terrainData.size.z);
+        terrainPositionY = terrain.transform.position.y;
 
         targetPosition = transform.position;
 
@@ -88,7 +99,7 @@ public class PlayerCamera : MonoBehaviour
 
     private void checkCameraDistanceFromTerrain()
     {
-        float currentheight = terrain.SampleHeight(targetPosition) + distanceFromTerrain;
+        float currentheight = terrain.SampleHeight(targetPosition) + distanceFromTerrain + terrainPositionY;
         if (targetPosition.y < currentheight) currentzoom = currentheight - maxHeight;
     }
 
@@ -106,6 +117,7 @@ public class PlayerCamera : MonoBehaviour
         mousemovevector.z = Input.GetAxis("Mouse Y");
         if (mousemovevector != Vector3.zero)
         {
+            Debug.Log($"zoom {currentzoom} speed {mousespeedchange * currentzoom + mouseSpeedMax}");
             targetPosition -= mousemovevector * Time.deltaTime * (mousespeedchange * currentzoom + mouseSpeedMax);
             checkCameraDistanceFromTerrain();
         }
@@ -157,6 +169,7 @@ public class PlayerCamera : MonoBehaviour
             float _speed = ((keyboardspeedchange * currentzoom + mouseSpeedMax) + currspeedadd);
             if (_speed > keyboardMaxSpeed)
                 _speed = keyboardMaxSpeed;
+            
             float movevalue = Time.deltaTime * _speed;
             targetPosition += Vector3.Normalize(addPos) * movevalue;
             checkCameraDistanceFromTerrain();

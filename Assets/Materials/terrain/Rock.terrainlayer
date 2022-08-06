@@ -9,8 +9,8 @@ TerrainLayer:
   m_Name: Rock
   m_DiffuseTexture: {fileID: 2800000, guid: 44988b286d360204493278c3da7f60ca, type: 3}
   m_NormalMapTexture: {fileID: 2800000, guid: 6415ff5fde25d2e408cc540bb2e9fa9b, type: 3}
-  m_MaskMapTexture: {fileID: 2800000, guid: 8d215c6ae20b4ce4d84524ea26e15444, type: 3}
-  m_TileSize: {x: 10, y: 10}
+  m_MaskMapTexture: {fileID: 0}
+  m_TileSize: {x: 20, y: 20}
   m_TileOffset: {x: 0, y: 0}
   m_Specular: {r: 0, g: 0, b: 0, a: 0}
   m_Metallic: 0

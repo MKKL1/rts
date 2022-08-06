@@ -91,9 +91,9 @@ Material:
     - _IntersectionWaterBlend: 0.259
     - _LightingHardness: 0
     - _LightingSmoothness: 0.71
-    - _NormalsStrength: 0.42
+    - _NormalsStrength: 0.62
     - _PlanarReflectionFresnel: 2.5
-    - _PlanarReflectionStrength: 0.82
+    - _PlanarReflectionStrength: 2.29
     - _QueueControl: 1
     - _QueueOffset: 0
     - _RefractionStrength: 0.022
@@ -105,7 +105,7 @@ Material:
     - _ShoreFoamFrequency: 0
     - _ShoreFoamSpeed: 0
     - _ShoreFoamWidth: 0
-    - _SurfaceFoamBlend: 1
+    - _SurfaceFoamBlend: 22
     - _SurfaceFoamHeightMask: 0
     - _SurfaceFoamHeightMaskSmoothness: 0
     - _SurfaceFoamShadowProjection: 15
@@ -120,8 +120,8 @@ Material:
     - _LightingSpecularColor: {r: 1, g: 1, b: 1, a: 0}
     - _NormalsMovement: {r: 0.04, g: 0.36, b: 0, a: 0}
     - _ShoreColor: {r: 0, g: 0.98039216, b: 0.3019098, a: 0}
-    - _SurfaceFoamColor1: {r: 1, g: 1, b: 1, a: 0.3215686}
-    - _SurfaceFoamColor2: {r: 1, g: 1, b: 1, a: 0.7294118}
+    - _SurfaceFoamColor1: {r: 1, g: 1, b: 1, a: 0.23529412}
+    - _SurfaceFoamColor2: {r: 1, g: 1, b: 1, a: 0.41960785}
     - _SurfaceFoamMovement: {r: 0.7, g: 0, b: 0.47, a: 0.01}
     - _SurfaceFoamSampling: {r: 0.62, g: 0, b: 0, a: 0}
     - _SurfaceFoamTilingAndOffset: {r: -1, g: -1, b: 0.57, a: 0.22}

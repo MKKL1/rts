@@ -195,7 +195,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 107236305}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -70.47917, y: 869.4792, z: -552.93616}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -980,7 +980,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 616231785}
-  m_Enabled: 0
+  m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a87f19baa791b044786e368558742375, type: 3}
   m_Name: 
@@ -1367,6 +1367,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   terrain: {fileID: 107236307}
+  waterTransform: {fileID: 1532452277}
   image: {fileID: 1690108614}
   image2: {fileID: 578999832}
   gizmosHeight: 20
@@ -1402,6 +1403,11 @@ MonoBehaviour:
   splatmapResolution: 256
   colorMapResolution: 256
   layerSettings:
+  - enabled: 1
+    layer: {fileID: 8574412962073106934, guid: 2936e2b4239f51b4394e0c808bd737f5, type: 2}
+    modifierStack:
+    - {fileID: 1931004021}
+    - {fileID: 2110778642}
   - enabled: 1
     layer: {fileID: 8574412962073106934, guid: 42f6d61d709170f4cb7ff7baee1dfeba, type: 2}
     modifierStack:
@@ -1649,7 +1655,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1075746888}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 70.47917, y: -852.2, z: 552.93616}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -1821,8 +1827,8 @@ MonoBehaviour:
   blendMode: 0
   opacity: 100
   passIndex: 0
-  min: 21.66
-  minFalloff: 6.6
+  min: 22.21
+  minFalloff: 6.7
   max: 100
   maxFalloff: 23.57
 --- !u!1 &1437449067
@@ -2051,7 +2057,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1532452273}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 424.5208, y: 887.4792, z: -57.936157}
+  m_LocalPosition: {x: 500, y: 18, z: 500}
   m_LocalScale: {x: 100, y: 1, z: 100}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -2131,6 +2137,27 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1690108612}
   m_CullTransparentMesh: 1
+--- !u!114 &1931004021
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b1d046e3917e4d8580903c69758b6558, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  enabled: 1
+  label: Height
+  blendMode: 0
+  opacity: 100
+  passIndex: 0
+  min: 30.93
+  minFalloff: 0.59
+  max: 2000
+  maxFalloff: 4.3
 --- !u!1001 &1952910869
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -2297,6 +2324,26 @@ Canvas:
   m_SortingLayerID: 0
   m_SortingOrder: 0
   m_TargetDisplay: 0
+--- !u!114 &2110778642
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2562637f396e4c10acd3fa9926b53a12, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  enabled: 1
+  label: Slope
+  blendMode: 0
+  opacity: 100
+  passIndex: 1
+  minMax: {x: 19.396551, y: 90}
+  minFalloff: 10
+  maxFalloff: 60.3
 --- !u!81 &6605040748449310632
 AudioListener:
   m_ObjectHideFlags: 0
@@ -2360,6 +2407,8 @@ GameObject:
   - component: {fileID: 6605040748449310633}
   - component: {fileID: 6605040748449310632}
   - component: {fileID: 6605040748449310639}
+  - component: {fileID: 6605040748449310640}
+  - component: {fileID: 6605040748449310641}
   m_Layer: 0
   m_Name: PlayerCamera
   m_TagString: Untagged
@@ -2389,19 +2438,72 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6605040748449310635}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: c7f9ebb65b7ab2b4d96749fb1ad2d6ed, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   keyboardMinSpeed: 30
-  keyboardMaxSpeed: 50
-  keyboardAcceleration: 5
+  keyboardMaxSpeed: 100
+  keyboardAcceleration: 15
   keyboardTimeBeforeAcceleration: 1
   mouseSpeedMax: 600
-  mouseSpeedMin: 150
+  mouseSpeedMin: 70
   zoomSpeed: 30
   smoothTime: 0.3
   distanceFromTerrain: 15
   maxHeight: 200
+  minDistFromBorders: 30
   terrain: {fileID: 0}
+--- !u!114 &6605040748449310640
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6605040748449310635}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a79441f348de89743a2939f4d699eac1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_RenderShadows: 1
+  m_RequiresDepthTextureOption: 2
+  m_RequiresOpaqueTextureOption: 2
+  m_CameraType: 0
+  m_Cameras: []
+  m_RendererIndex: -1
+  m_VolumeLayerMask:
+    serializedVersion: 2
+    m_Bits: 1
+  m_VolumeTrigger: {fileID: 0}
+  m_VolumeFrameworkUpdateModeOption: 2
+  m_RenderPostProcessing: 0
+  m_Antialiasing: 0
+  m_AntialiasingQuality: 2
+  m_StopNaN: 0
+  m_Dithering: 0
+  m_ClearDepth: 1
+  m_AllowXRRendering: 1
+  m_RequiresDepthTexture: 0
+  m_RequiresColorTexture: 0
+  m_Version: 2
+--- !u!114 &6605040748449310641
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6605040748449310635}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d4ab6fbde8a09e14e864c735664942e8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  keyboardMoveSpeedMax: 100
+  keyboardMoveSpeedMin: 20
+  mouseMoveSpeedMax: 2000
+  mouseMoveSpeedMin: 2
+  zoomSpeed: 400
+  zoomMinDistFromTerrain: 15
+  smoothTime: 0.3
