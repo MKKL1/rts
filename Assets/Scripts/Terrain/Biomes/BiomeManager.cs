@@ -22,7 +22,7 @@ namespace Assets.Scripts.Terrain
         {
             for(byte i = 0; i < biomeCount; i++)
             {
-                if (biomeList[i] != null && Utils.inRange(biomeList[i].biomeAltitide, height)) return (BiomeType)i;
+                if (biomeList[i] != null && Utils.inRange(biomeList[i].biomeData.biomeAltitideMin, biomeList[i].biomeData.biomeAltitideMax, height)) return (BiomeType)i;
             }
             return BiomeType.WATER;
         }
@@ -34,7 +34,7 @@ namespace Assets.Scripts.Terrain
 
         public Color GetBiomeColor(BiomeType biomeType)
         {
-            return GetBiome(biomeType).biomeColor;
+            return GetBiome(biomeType).biomeData.biomeColor;
         }
 
 

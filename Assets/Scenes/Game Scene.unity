@@ -1439,7 +1439,7 @@ MonoBehaviour:
   plainsBlending: 0
   plainsHeightMultiplier: 0.1
   plainsHeightAdd: -0.4
-  seed: 51
+  seed: 52
 --- !u!1 &882451578
 GameObject:
   m_ObjectHideFlags: 0
@@ -2506,4 +2506,5 @@ MonoBehaviour:
   mouseMoveSpeedMin: 2
   zoomSpeed: 400
   zoomMinDistFromTerrain: 15
+  minDistFromTerrainBorder: 30
   smoothTime: 0.3

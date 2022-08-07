@@ -6,6 +6,7 @@ using Assets.Scripts.Terrain;
 using UnityEngine.UI;
 using UnityEngine.Profiling;
 using Assets.Scripts.Terrain.BiomeBlending;
+using Assets.Scripts.Terrain.Biomes;
 
 public class TerrainManager : MonoBehaviour
 {
@@ -16,8 +17,6 @@ public class TerrainManager : MonoBehaviour
     public RawImage image;
     public RawImage image2;
     //
-
-
     public static TerrainGrid gameGrid;
     public static float waterLevel;
     public static Vector2 terrainCornerBottomLeft;

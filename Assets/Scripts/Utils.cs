@@ -12,6 +12,11 @@ namespace Assets.Scripts
 
     public class Utils
     {
+        public static bool inRange(float min, float max, float value)
+        {
+            return value >= min && value <= max;
+        }
+
         public static bool inRange(RangeAttribute range, float value)
         {
             return value >= range.min && value <= range.max;
