@@ -19,7 +19,7 @@ namespace Assets.Scripts.Terrain.Biomes
 
         public override float GetHeight(float x, float y)
         {
-            return terrainNoise.GetNoise(x, y)*0.15f-0.9f;
+            return Utils.normalizedHeight(terrainNoise.GetNoise(x, y)*0.15f-0.9f);
         }
     }
 }

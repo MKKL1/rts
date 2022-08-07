@@ -140,7 +140,7 @@ namespace Assets.Scripts.Terrain
                             if (entry.Value != 0f)
                                 heightSum += biomesManager.GetBiome(entry.Key).GetHeight(x, y) * entry.Value;
                         }
-                        heightmap[y, x] = Utils.normalizedHeight(heightSum);
+                        heightmap[y, x] = heightSum;
                     }
             });
             biomeMapTexture.Apply();

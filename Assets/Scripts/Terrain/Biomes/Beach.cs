@@ -19,7 +19,7 @@ namespace Assets.Scripts.Terrain.Biomes
 
         public override float GetHeight(float x, float y)
         {
-            return -0.62f;
+            return Utils.normalizedHeight(-0.62f);
         }
     }
 }
