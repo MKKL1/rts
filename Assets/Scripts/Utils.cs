@@ -34,5 +34,10 @@ namespace Assets.Scripts
             lineEquation.b = Ay - (Ax * lineEquation.a);
             return lineEquation;
         }
+
+        public static float normalizedHeight(float height)
+        {
+            return (height + 1) * 0.5f;
+        }
     }
 }
