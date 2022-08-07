@@ -2,6 +2,8 @@
 using Assets.Scripts.Terrain.Biomes;
 using System.Collections;
 using System.Collections.Generic;
+using System.Threading;
+using System.Threading.Tasks;
 using UnityEngine;
 
 namespace Assets.Scripts.Terrain
@@ -9,39 +11,35 @@ namespace Assets.Scripts.Terrain
     //TODO remove hard coded biome blending
     public class TerrainGenerator
     {
-        public float[,] heightmap;
-        //public Biome[,] biomeMap;
+        public float[,] heightmap { get; }
+        public BlendingMethod blendingMethod = BlendingMethod.LerpBlending;
+        public float biomeAltitudeNoiseFrequency = 0.003f;
+
         public Texture2D biomeMapTexture;
-        public Texture2D plainsMapTexture;
         
 
         private Vector2Int terrainSize;
-        private GameGrid gameGrid;
+        private TerrainGrid terrainGrid;
 
         private BiomesManager biomesManager;
         private BiomeWeightManager biomeWeightManager;
-        private Biome plainsBiome;
-        private Biome waterBiome;
 
         private int seed;
-        public TerrainGenerator(ref GameGrid gameGrid, int seed = 69)
+        public TerrainGenerator(ref TerrainGrid terrainGrid, int seed = 69)
         {
-            this.gameGrid = gameGrid;
+            this.terrainGrid = terrainGrid;
             this.seed = seed;
-            terrainSize = gameGrid.gridSize;
+            terrainSize = terrainGrid.gridSize;
             heightmap = new float[terrainSize.x, terrainSize.y];
 
             biomesManager = new BiomesManager(seed);
-
-            plainsBiome = biomesManager.GetBiome(BiomeType.PLAINS);
-            waterBiome = biomesManager.GetBiome(BiomeType.WATER);
         }
 
         private FastNoiseLite NewBiomeNoise(int _seed)
         {
             FastNoiseLite noise = new FastNoiseLite(_seed);
             noise.SetNoiseType(FastNoiseLite.NoiseType.OpenSimplex2);
-            noise.SetFrequency(0.003f);
+            noise.SetFrequency(biomeAltitudeNoiseFrequency);
 
             return noise;
         }
@@ -63,24 +61,52 @@ namespace Assets.Scripts.Terrain
         }
         private void GenerateBiome()
         {
-            biomeWeightManager = new BiomeWeightManager(biomesManager, gameGrid.gridSize);
+            biomeWeightManager = new BiomeWeightManager(biomesManager, terrainGrid.gridSize);
 
-            float[,] biomeHeightMap = GetBiomeAltitudeMap(gameGrid.gridSize.x, gameGrid.gridSize.y);
-            biomeMapTexture = new Texture2D(gameGrid.gridSize.x, gameGrid.gridSize.y, TextureFormat.ARGB32, false);
+            float[,] biomeHeightMap = GetBiomeAltitudeMap(terrainGrid.gridSize.x, terrainGrid.gridSize.y);
+            biomeMapTexture = new Texture2D(terrainGrid.gridSize.x, terrainGrid.gridSize.y, TextureFormat.ARGB32, false);
 
-            for (int i = 0; i < gameGrid.gridSize.x; i++)
-                for (int j = 0; j < gameGrid.gridSize.y; j++)
+            Color[,] colorMap = new Color[terrainGrid.gridSize.x, terrainGrid.gridSize.y];
+
+            //Spliting into chunks instead of just making new task for each height map point
+            int chunksxsize = Mathf.CeilToInt((float)terrainGrid.gridSize.x / 16f);
+            int chunksysize = Mathf.CeilToInt((float)terrainGrid.gridSize.y / 16f);
+
+            Parallel.For(0, chunksxsize, i =>
+            {
+                Parallel.For(0, chunksysize, j =>
                 {
-                    float noiseheight = biomeHeightMap[i, j];
-                    BiomeType currentbiome =  biomesManager.GetBiomeType(noiseheight);
-                    biomeWeightManager.SetWeight(currentbiome, i, j);
+                    for (int x = i * 16; x < (i + 1) * 16 && x < terrainGrid.gridSize.x; x++)
+                        for (int y = j * 16; y < (j + 1) * 16 && y < terrainGrid.gridSize.y; y++)
+                        {
+                            BiomeType currentbiome = biomesManager.GetBiomeType(biomeHeightMap[x, y]);
+                            biomeWeightManager.SetWeight(currentbiome, x, y);
 
-                    biomeMapTexture.SetPixel(i, j, biomesManager.GetBiomeColor(currentbiome));
-                    gameGrid.grid[i, j].biome = currentbiome;
+                            colorMap[x, y] = biomesManager.GetBiomeColor(currentbiome);
+                            terrainGrid.grid[x, y].biome = currentbiome;
+                        }
+                });
+            });
+
+            for (int i = 0; i < terrainGrid.gridSize.x; i++)
+                for (int j = 0; j < terrainGrid.gridSize.y; j++)
+                {
+                    biomeMapTexture.SetPixel(i, j, colorMap[i, j]);
                 }
 
 
-            BiomeBlendingAlgorithm blendingAlgorithm = new LerpBlending(biomesManager, biomeHeightMap);
+            BiomeBlendingAlgorithm blendingAlgorithm = null;
+            switch (blendingMethod)
+            {
+                case BlendingMethod.LerpBlending:
+                    blendingAlgorithm = new LerpBlending(biomesManager, biomeHeightMap);
+                    break;
+            }
+            if(blendingAlgorithm == null)
+            {
+                throw new System.Exception("Blending algorithm was not found");
+            }
+
             blendingAlgorithm.blendBiomes(ref biomeWeightManager);
             //BiomeGuassianBlur guassianBlur = new BiomeGuassianBlur(ref biomeWeightManager);
             //guassianBlur.Process(2);
@@ -89,38 +115,20 @@ namespace Assets.Scripts.Terrain
         public void GenerateTerrain()
         {
             GenerateBiome();
-            plainsMapTexture = new Texture2D(gameGrid.gridSize.x, gameGrid.gridSize.y, TextureFormat.ARGB32, false);
-            //float b = (waterBiome.biomeAltitide.max - waterBiome.biomeBlendingValue);
-            //float a = 1/(plainsBiome.biomeAltitide.min + plainsBiome.biomeBlendingValue - (waterBiome.biomeAltitide.max - waterBiome.biomeBlendingValue));
 
-            for (int i = 0; i < gameGrid.gridSize.x; i++)
-                for(int j = 0; j < gameGrid.gridSize.y; j++)
+            //TODO async
+            for (int i = 0; i < terrainGrid.gridSize.x; i++)
+                for(int j = 0; j < terrainGrid.gridSize.y; j++)
                 {
-
-                    //if (biomeHeightMap[i, j] >= waterBiome.biomeAltitide.max - waterBiome.biomeBlendingValue && biomeHeightMap[i,j] <= plainsBiome.biomeAltitide.min + plainsBiome.biomeBlendingValue)
-                    //{
-                    //    //Reversed x and y to match minimap
-                    //    heightmap[j, i] = normalizedHeight(Mathf.SmoothStep(waterBiome.GetHeight(i, j), plainsBiome.GetHeight(i, j), (biomeHeightMap[i, j] - b) * a));
-                    //    biomeMapTexture.SetPixel(i, j, Color.red);
-                    //}
-                    //else
                     float heightSum = 0f;
                     foreach (KeyValuePair<BiomeType, float> entry in biomeWeightManager.GetWeight(i, j))
                     {
                         if(entry.Value != 0f)
                             heightSum += biomesManager.GetBiome(entry.Key).GetHeight(i, j) * entry.Value;
-
-                        if(entry.Key == BiomeType.PLAINS)
-                        {
-                            byte c = (byte)(255 * entry.Value);
-                            plainsMapTexture.SetPixel(i, j, new Color(c, c, c));
-                        }
-                            
                     }
                     heightmap[j, i] = normalizedHeight(heightSum);
                 }
             biomeMapTexture.Apply();
-            plainsMapTexture.Apply();
         }
 
         private float normalizedHeight(float height)

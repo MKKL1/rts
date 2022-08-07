@@ -5,16 +5,20 @@ using UnityEditor;
 using Assets.Scripts.Terrain;
 using UnityEngine.UI;
 using UnityEngine.Profiling;
+using Assets.Scripts.Terrain.BiomeBlending;
 
 public class TerrainManager : MonoBehaviour
 {
     public Terrain terrain;
     public Transform waterTransform;
-    
 
+    //TODO remove
     public RawImage image;
     public RawImage image2;
-    public static GameGrid gameGrid;
+    //
+
+
+    public static TerrainGrid gameGrid;
     public static float waterLevel;
     public static Vector2 terrainCornerBottomLeft;
     public static Vector2 terrainCornerTopRight;
@@ -30,17 +34,19 @@ public class TerrainManager : MonoBehaviour
     {
         var watch = System.Diagnostics.Stopwatch.StartNew();
         
-        gameGrid = new GameGrid(512, 512);
-        TerrainGenerator terraing = new TerrainGenerator(ref gameGrid, GeneratorSettings.instance.seed);
-        terraing.GenerateTerrain();
-        terrain.terrainData.SetHeights(0, 0, terraing.heightmap);
+        gameGrid = new TerrainGrid(512, 512);
+        TerrainGenerator terrainGenerator = new TerrainGenerator(ref gameGrid, GeneratorSettings.instance.seed);
+        terrainGenerator.blendingMethod = BlendingMethod.LerpBlending;
+
+        terrainGenerator.GenerateTerrain();
+
+        terrain.terrainData.SetHeights(0, 0, terrainGenerator.heightmap);
 
 
         watch.Stop();
         var elapsedMs = watch.ElapsedMilliseconds;
         Debug.Log(elapsedMs);
-        image.texture = terraing.biomeMapTexture;
-        image2.texture = terraing.plainsMapTexture;
+        image.texture = terrainGenerator.biomeMapTexture;
 
         
     }
@@ -55,28 +61,8 @@ public class TerrainManager : MonoBehaviour
 
     private void OnDrawGizmosSelected()
     {
+        //TODO fix positioning
         if (!EditorApplication.isPlaying) return;
-        //Vector3 bottomRightCorner = terrain.transform.position + new Vector3(terrain.terrainData.size.x, 0, 0);
-        //Vector3 topleftCorner = terrain.transform.position + new Vector3(0, 0, terrain.terrainData.size.z);
-        //Vector3 topRightCorner = terrain.transform.position + new Vector3(terrain.terrainData.size.x, 0, terrain.terrainData.size.z);
-
-        //Gizmos.color = Color.red;
-        //DrawThickLine(terrain.transform.position, topleftCorner, 10f);
-        //DrawThickLine(terrain.transform.position, bottomRightCorner, 10f);
-        //DrawThickLine(topRightCorner, topleftCorner, 2f, Color.red);
-        //DrawThickLine(topRightCorner, bottomRightCorner, 2f, Color.red);
-
-        //for(int i = 0; i < gameGrid.gridSize.x; i++)
-        //{
-        //    float xpos = (i*gameGrid.gridSize.x) / (2*gameGrid.chunkGridSize.x);
-        //    DrawThickLine(terrain.transform.position+new Vector3(xpos, 0, 0), terrain.transform.position + new Vector3(xpos, 0, terrain.terrainData.size.z), 2f, Color.red);
-        //}
-
-        //for (int j = 0; j < gameGrid.gridSize.y; j++)
-        //{
-        //    float zpos = (j * gameGrid.gridSize.y) / (2 * gameGrid.chunkGridSize.y);
-        //    DrawThickLine(terrain.transform.position + new Vector3(0, 0, zpos), terrain.transform.position + new Vector3(terrain.terrainData.size.x, 0, zpos), 2f, Color.red);
-        //}
 
         for (int i = 0; i < gameGrid.gridSize.x; i++)
             for (int j = 0; j < gameGrid.gridSize.y; j++)
@@ -90,10 +76,5 @@ public class TerrainManager : MonoBehaviour
                 Gizmos.DrawLine(new Vector3(xpos, gizmosHeight, zpos), new Vector3(xpos + 2, gizmosHeight, zpos + 2));
             }
 
-    }
-
-    private void DrawThickLine(Vector3 start, Vector3 end, float thickness, Color color)
-    {
-        Handles.DrawBezier(start, end, start, end, color, null, thickness);
     }
 }
