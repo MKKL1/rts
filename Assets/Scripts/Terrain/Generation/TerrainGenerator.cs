@@ -23,6 +23,9 @@ namespace Assets.Scripts.Terrain
 
         private BiomesManager biomesManager;
         private BiomeWeightManager biomeWeightManager;
+        private readonly int chunksize = 128;
+
+        private readonly ParallelOptions parallelOptions = new ParallelOptions { MaxDegreeOfParallelism = 8 };
 
         private int seed;
         public TerrainGenerator(ref TerrainGrid terrainGrid, int seed = 69)
@@ -51,11 +54,14 @@ namespace Assets.Scripts.Terrain
             FastNoiseLite noise1 = NewBiomeNoise(seed);
             FastNoiseLite noise2 = NewBiomeNoise(seed + 1);
 
-            for (int i = 0; i < x; i++)
+            //TODO chunks
+            Parallel.For(0, x, parallelOptions, i =>
+            {
                 for (int j = 0; j < y; j++)
                 {
                     biomeHeightMap[i, j] = (noise1.GetNoise(i, j) + noise2.GetNoise(i, j) + 2) * 0.25f;
                 }
+            });
 
             return biomeHeightMap;
         }
@@ -69,23 +75,22 @@ namespace Assets.Scripts.Terrain
             Color[,] colorMap = new Color[terrainGrid.gridSize.x, terrainGrid.gridSize.y];
 
             //Spliting into chunks instead of just making new task for each height map point
-            int chunksxsize = Mathf.CeilToInt((float)terrainGrid.gridSize.x / 16f);
-            int chunksysize = Mathf.CeilToInt((float)terrainGrid.gridSize.y / 16f);
+            int chunksxcount = Mathf.CeilToInt((float)terrainGrid.gridSize.x / chunksize);
+            int chunksycount = Mathf.CeilToInt((float)terrainGrid.gridSize.y / chunksize);
 
-            Parallel.For(0, chunksxsize, i =>
+            Parallel.For(0, chunksxcount * chunksycount, parallelOptions, k =>
             {
-                Parallel.For(0, chunksysize, j =>
-                {
-                    for (int x = i * 16; x < (i + 1) * 16 && x < terrainGrid.gridSize.x; x++)
-                        for (int y = j * 16; y < (j + 1) * 16 && y < terrainGrid.gridSize.y; y++)
-                        {
-                            BiomeType currentbiome = biomesManager.GetBiomeType(biomeHeightMap[x, y]);
-                            biomeWeightManager.SetWeight(currentbiome, x, y);
+                int i = k / chunksxcount;
+                int j = k % chunksycount;
+                for (int x = i * chunksize; x < (i + 1) * chunksize && x < terrainGrid.gridSize.x; x++)
+                    for (int y = j * chunksize; y < (j + 1) * chunksize && y < terrainGrid.gridSize.y; y++)
+                    {
+                        BiomeType currentbiome = biomesManager.GetBiomeType(biomeHeightMap[x, y]);
+                        biomeWeightManager.SetWeight(currentbiome, x, y);
 
-                            colorMap[x, y] = biomesManager.GetBiomeColor(currentbiome);
-                            terrainGrid.grid[x, y].biome = currentbiome;
-                        }
-                });
+                        colorMap[x, y] = biomesManager.GetBiomeColor(currentbiome);
+                        terrainGrid.grid[x, y].biome = currentbiome;
+                    }
             });
 
             for (int i = 0; i < terrainGrid.gridSize.x; i++)
@@ -114,20 +119,30 @@ namespace Assets.Scripts.Terrain
 
         public void GenerateTerrain()
         {
+            //TODO fix paraller for using not async methods
             GenerateBiome();
 
-            //TODO async
-            for (int i = 0; i < terrainGrid.gridSize.x; i++)
-                for(int j = 0; j < terrainGrid.gridSize.y; j++)
-                {
-                    float heightSum = 0f;
-                    foreach (KeyValuePair<BiomeType, float> entry in biomeWeightManager.GetWeight(i, j))
+            //Copied from GenerateBiome()
+
+            int chunksxcount = Mathf.CeilToInt((float)terrainGrid.gridSize.x / chunksize);
+            int chunksycount = Mathf.CeilToInt((float)terrainGrid.gridSize.y / chunksize);
+
+            Parallel.For(0, chunksxcount * chunksycount, parallelOptions, k =>
+            {
+                int i = k / chunksxcount;
+                int j = k % chunksycount;
+                for (int x = i * chunksize; x < (i + 1) * chunksize && x < terrainGrid.gridSize.x; x++)
+                    for (int y = j * chunksize; y < (j + 1) * chunksize && y < terrainGrid.gridSize.y; y++)
                     {
-                        if(entry.Value != 0f)
-                            heightSum += biomesManager.GetBiome(entry.Key).GetHeight(i, j) * entry.Value;
+                        float heightSum = 0f;
+                        foreach (KeyValuePair<BiomeType, float> entry in biomeWeightManager.GetWeight(x, y))
+                        {
+                            if (entry.Value != 0f)
+                                heightSum += biomesManager.GetBiome(entry.Key).GetHeight(x, y) * entry.Value;
+                        }
+                        heightmap[y, x] = normalizedHeight(heightSum);
                     }
-                    heightmap[j, i] = normalizedHeight(heightSum);
-                }
+            });
             biomeMapTexture.Apply();
         }
 

@@ -1,11 +1,12 @@
-﻿using System.Collections.Generic;
+﻿using System.Collections.Concurrent;
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace Assets.Scripts.Terrain
 {
     public class BiomeWeightManager
     {
-        public List<float[,]> biomeWeightMap;
+        public float[,,] biomeWeightMap;
         public readonly byte biomeCount;
         public readonly Vector2Int size;
         private BiomesManager biomesManager;
@@ -17,9 +18,7 @@ namespace Assets.Scripts.Terrain
             this.biomesManager = biomesManager;
             biomeCount = biomesManager.biomeCount;
             this.size = size;
-            biomeWeightMap = new List<float[,]>();
-            for (int i = 0; i < biomeCount; i++)
-                biomeWeightMap.Add(new float[size.x, size.y]);
+            biomeWeightMap = new float[biomeCount,size.x, size.y];
 
 
         }
@@ -30,12 +29,12 @@ namespace Assets.Scripts.Terrain
         {
             if (weight > 1f) weight = 1f;
             else if (weight < 0f) weight = 0f;
-            biomeWeightMap[(byte)biomeType][x, y] = weight;
+            biomeWeightMap[(byte)biomeType,x, y] = weight;
         }
 
         public float GetWeight(BiomeType biomeType, int x, int y)
         {
-            return biomeWeightMap[(byte)biomeType][x, y];
+            return biomeWeightMap[(byte)biomeType,x, y];
         }
 
         public Dictionary<BiomeType, float> GetWeight(int x, int y)
@@ -43,13 +42,13 @@ namespace Assets.Scripts.Terrain
             Dictionary<BiomeType, float> weights = new Dictionary<BiomeType, float>();
             for (byte i = 0; i < biomesManager.biomeCount; i++)
             {
-                weights.Add((BiomeType)i, biomeWeightMap[i][x, y]);
+                weights.Add((BiomeType)i, biomeWeightMap[i,x, y]);
             }
 
             return weights;
         }
 
-        public void SetBiomeWeightMap(List<float[,]> newWeightMap)
+        public void SetBiomeWeightMap(float[,,] newWeightMap)
         {
             biomeWeightMap = newWeightMap;
         }
