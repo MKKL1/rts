@@ -11,6 +11,7 @@ namespace Assets.Scripts
         public float mouseMoveSpeedMin = 2f;
         public float zoomSpeed = 5f;
         public float zoomMinDistFromTerrain = 15f;
+        public float minDistFromTerrainBorder = 30f;
         public float smoothTime = 0.3f;
 
         private UnityEngine.Terrain terrain;
@@ -60,6 +61,7 @@ namespace Assets.Scripts
             maxCameraY = transform.position.y;
             minCameraY = TerrainManager.waterLevel;
 
+            //Calculating proportion of speed change based on zoom
             keyboardSpeedEq = Utils.lineThruTwoPoints(minCameraY, keyboardMoveSpeedMin, maxCameraY, keyboardMoveSpeedMax);
             mouseSpeedEq = Utils.lineThruTwoPoints(minCameraY, mouseMoveSpeedMin, maxCameraY, mouseMoveSpeedMax);
         }
@@ -105,6 +107,12 @@ namespace Assets.Scripts
                 zoomValue = height;
         }
 
+        private void FixTerrainBorder()
+        {
+            targetPosition.x = Mathf.Clamp(targetPosition.x, terrainCornerBottomLeft.x + minDistFromTerrainBorder, terrainCornerTopRight.x - minDistFromTerrainBorder);
+            targetPosition.z = Mathf.Clamp(targetPosition.z, terrainCornerBottomLeft.y + minDistFromTerrainBorder, terrainCornerTopRight.y - minDistFromTerrainBorder);
+        }
+
         private void KeyboardControl()
         {
             Vector3 addPos = Vector3.zero;
@@ -123,6 +131,7 @@ namespace Assets.Scripts
                 float _speed = keyboardSpeedEq.a * zoomValue + keyboardSpeedEq.b;
                 targetPosition += Vector3.Normalize(addPos) * _speed * Time.deltaTime;
                 FixDistFromTerrain();
+                FixTerrainBorder();
             }
             
         }
@@ -150,6 +159,7 @@ namespace Assets.Scripts
                 float _speed = mouseSpeedEq.a * zoomValue + mouseSpeedEq.b;
                 targetPosition -= mousemovevector * Time.deltaTime * _speed;
                 FixDistFromTerrain();
+                FixTerrainBorder();
             }
         }
     }
