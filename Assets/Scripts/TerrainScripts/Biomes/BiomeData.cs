@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace Assets.Scripts.Terrain.Biomes
+namespace Assets.Scripts.TerrainScripts.Biomes
 {
     [CreateAssetMenu]
     public class BiomeData : ScriptableObject

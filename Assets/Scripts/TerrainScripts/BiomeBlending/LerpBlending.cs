@@ -2,9 +2,9 @@
 using System.Linq;
 using System.Collections.Generic;
 using UnityEngine;
-using Assets.Scripts.Terrain.Biomes;
+using Assets.Scripts.TerrainScripts.Biomes;
 
-namespace Assets.Scripts.Terrain.BiomeBlending
+namespace Assets.Scripts.TerrainScripts.BiomeBlending
 {
     public struct BlendingValues
     {

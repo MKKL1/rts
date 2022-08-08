@@ -2,11 +2,11 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEditor;
-using Assets.Scripts.Terrain;
+using Assets.Scripts.TerrainScripts;
 using UnityEngine.UI;
 using UnityEngine.Profiling;
-using Assets.Scripts.Terrain.BiomeBlending;
-using Assets.Scripts.Terrain.Biomes;
+using Assets.Scripts.TerrainScripts.BiomeBlending;
+using Assets.Scripts.TerrainScripts.Biomes;
 
 public class TerrainManager : MonoBehaviour
 {
@@ -32,8 +32,8 @@ public class TerrainManager : MonoBehaviour
     public void initTerrain()
     {
         var watch = System.Diagnostics.Stopwatch.StartNew();
-        
-        gameGrid = new TerrainGrid(512, 512);
+
+        gameGrid = new TerrainGrid(512, 512, terrain);
         TerrainGenerator terrainGenerator = new TerrainGenerator(ref gameGrid, GeneratorSettings.instance.seed);
         terrainGenerator.blendingMethod = BlendingMethod.LerpBlending;
 

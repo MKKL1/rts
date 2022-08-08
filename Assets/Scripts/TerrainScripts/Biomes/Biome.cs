@@ -1,7 +1,7 @@
 ﻿using UnityEditor;
 using UnityEngine;
 
-namespace Assets.Scripts.Terrain.Biomes
+namespace Assets.Scripts.TerrainScripts.Biomes
 {
     public class Biome
     {

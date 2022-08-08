@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace Assets.Scripts.Terrain
+namespace Assets.Scripts.TerrainScripts
 {
     public class BiomeWeightManager
     {

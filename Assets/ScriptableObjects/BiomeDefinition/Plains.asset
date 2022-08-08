@@ -18,8 +18,10 @@ MonoBehaviour:
   walkable: 1
   type: 0
   biomeAltitideMin: 0.43
-  biomeAltitideMax: 0.8
+  biomeAltitideMax: 0.7
   blendingValueStart: 0.1
   blendingValueEnd: 0.05
   heightMultiplier: 0.1
   baseHeight: -0.4
+  featureList:
+  - {fileID: 114240, guid: 6d29a20042cbcc14faad58c20a191901, type: 3}

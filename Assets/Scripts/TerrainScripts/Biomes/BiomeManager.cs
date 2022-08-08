@@ -1,9 +1,9 @@
-﻿using Assets.Scripts.Terrain.Biomes;
+﻿using Assets.Scripts.TerrainScripts.Biomes;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
-namespace Assets.Scripts.Terrain
+namespace Assets.Scripts.TerrainScripts
 {
     public class BiomesManager
     {

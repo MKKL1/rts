@@ -1,7 +1,7 @@
 ﻿using System.Collections;
 using UnityEngine;
 
-namespace Assets.Scripts.Terrain.BiomeBlending
+namespace Assets.Scripts.TerrainScripts.BiomeBlending
 {
     public enum BlendingMethod
     {

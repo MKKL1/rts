@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-namespace Assets.Scripts.Terrain
+namespace Assets.Scripts.TerrainScripts
 {
     public class GeneratorSettings: MonoBehaviour
     {

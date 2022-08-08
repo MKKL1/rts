@@ -1,12 +1,12 @@
-﻿using Assets.Scripts.Terrain.BiomeBlending;
-using Assets.Scripts.Terrain.Biomes;
+﻿using Assets.Scripts.TerrainScripts.BiomeBlending;
+using Assets.Scripts.TerrainScripts.Biomes;
 using System.Collections;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using UnityEngine;
 
-namespace Assets.Scripts.Terrain
+namespace Assets.Scripts.TerrainScripts
 {
     //TODO remove hard coded biome blending
     public class TerrainGenerator
@@ -113,8 +113,6 @@ namespace Assets.Scripts.Terrain
             }
 
             blendingAlgorithm.blendBiomes(ref biomeWeightManager);
-            //BiomeGuassianBlur guassianBlur = new BiomeGuassianBlur(ref biomeWeightManager);
-            //guassianBlur.Process(2);
         }
 
         public void GenerateTerrain()

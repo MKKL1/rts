@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using UnityEngine;
 
-namespace Assets.Scripts.Terrain
+namespace Assets.Scripts.TerrainScripts
 {
     //Modified from https://github.com/mdymel/superfastblur
     public class BiomeGuassianBlur
