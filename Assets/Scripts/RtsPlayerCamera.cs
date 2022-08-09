@@ -102,6 +102,7 @@ namespace Assets.Scripts
         /// </summary>
         private void FixDistFromTerrain()
         {
+            Debug.Log($"pos {transform.position} height {terrain.SampleHeight(transform.position)}");
             float height = terrain.SampleHeight(transform.position) + zoomMinDistFromTerrain;
             if (targetPosition.y < height)
                 zoomValue = height;

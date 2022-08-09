@@ -1,3 +1,4 @@
+using Assets.Scripts.TerrainScripts;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -10,6 +11,8 @@ public class GameMain : MonoBehaviour
     public Terrain mainTerrain;
     public Camera localCamera;
     public SelectionTool localSelectionTool;
+
+    public MainGrid mainGrid;
 
     private void Awake()
     {

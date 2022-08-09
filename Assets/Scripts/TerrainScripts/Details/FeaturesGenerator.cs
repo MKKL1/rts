@@ -7,10 +7,12 @@ namespace Assets.Scripts.TerrainScripts.Details
     {
         private TerrainGenSettings terrainGenSettings;
         private FastNoiseLite treeNoise;
+        private System.Random rnd = new System.Random();
         public FeaturesGenerator(TerrainGenSettings data, int seed)
         {
             terrainGenSettings = data;
             treeNoise = new FastNoiseLite(seed+5);
+            treeNoise.SetNoiseType(FastNoiseLite.NoiseType.OpenSimplex2); 
             treeNoise.SetFrequency(0.01f);
         }
 
@@ -18,7 +20,7 @@ namespace Assets.Scripts.TerrainScripts.Details
         {
             if(treeNoise.GetNoise(x, y) > 0.8f)
             {
-                return terrainGenSettings.trees[Random.Range(0, terrainGenSettings.trees.Count - 1)];
+                return terrainGenSettings.trees[rnd.Next(0, terrainGenSettings.trees.Count)];
             }
             return null;
         }

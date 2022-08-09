@@ -13,6 +13,7 @@ public class TerrainManager : MonoBehaviour
 {
     public Terrain terrain;
     public Transform waterTransform;
+    public TerrainGenSettings terrainGenSettings;
 
     //TODO remove
     public RawImage image;
@@ -35,13 +36,17 @@ public class TerrainManager : MonoBehaviour
         var watch = System.Diagnostics.Stopwatch.StartNew();
 
         gameGrid = new TerrainGrid(512, 512, terrain);
-        TerrainGenSettings terrainGenSettings = new TerrainGenSettings();
+        GameMain.instance.mainGrid = new MainGrid(256, 256);
+        GameMain.instance.mainGrid.CalculateCellSize(terrain);
+
         TerrainGenerator terrainGenerator = new TerrainGenerator(ref gameGrid, terrainGenSettings, GeneratorSettings.instance.seed);
+
         terrainGenerator.blendingMethod = BlendingMethod.LerpBlending;
-
         terrainGenerator.GenerateTerrain();
-
         terrain.terrainData.SetHeights(0, 0, terrainGenerator.heightmap);
+        terrainGenerator.GenerateFeatures(terrain); 
+
+        
 
 
         watch.Stop();

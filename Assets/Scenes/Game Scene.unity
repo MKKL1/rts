@@ -1425,6 +1425,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   terrain: {fileID: 107236307}
   waterTransform: {fileID: 1532452277}
+  terrainGenSettings: {fileID: 11400000, guid: 7c1043674e1e22744a9baef0efbe9fc4, type: 2}
   image: {fileID: 1690108614}
   image2: {fileID: 578999832}
   gizmosHeight: 20
