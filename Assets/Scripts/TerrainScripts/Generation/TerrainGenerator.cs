@@ -109,14 +109,14 @@ namespace Assets.Scripts.TerrainScripts
 
         public void GenerateFeatures()
         {
-            FeaturesGenerator featuresGenerator = new FeaturesGenerator(generatorData, seed);
+            ResourceGenerator resourceGenerator = new ResourceGenerator(generatorData, seed);
             for(int x = 1; x < mainGrid.size.x-1; x++)
                 for (int y = 1; y < mainGrid.size.y-1 ; y++)
                 {
                     Vector2 worldPosition = mainGrid.GetWorldPosition(x, y);
                     if (biomesManager.GetBiome(terrainGrid.GetCellAtWorldPos(worldPosition).biome).biomeData.resources)
                     {
-                        GameObject tmpObj = featuresGenerator.GetFeature(x, y, worldPosition);
+                        GameObject tmpObj = resourceGenerator.GetResource(x, y, worldPosition);
                         if (tmpObj != null)
                         {
                             Object.Instantiate(tmpObj);
@@ -132,10 +132,8 @@ namespace Assets.Scripts.TerrainScripts
 
         public void GenerateTerrain()
         {
-            //TODO fix paraller for using not async methods
             GenerateBiome();
 
-            //Copied from GenerateBiome()
             IterateChunks(chunksize, terrainGrid.gridSize.x, terrainGrid.gridSize.y, (x, y) =>
             {
                 float heightSum = 0f;

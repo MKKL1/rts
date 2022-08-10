@@ -3,14 +3,14 @@ using UnityEngine;
 
 namespace Assets.Scripts.TerrainScripts.Details
 {
-    public class FeaturesGenerator
+    public class ResourceGenerator
     {
         private TerrainGenSettings terrainGenSettings;
         private FastNoiseLite treeNoise;
         private System.Random rnd = new System.Random();
         private MainGrid mainGrid = GameMain.instance.mainGrid;
         private Terrain terrain = GameMain.instance.mainTerrain;
-        public FeaturesGenerator(TerrainGenSettings data, int seed)
+        public ResourceGenerator(TerrainGenSettings data, int seed)
         {
             terrainGenSettings = data;
             treeNoise = new FastNoiseLite(seed+5);
@@ -18,7 +18,7 @@ namespace Assets.Scripts.TerrainScripts.Details
             treeNoise.SetFrequency(0.01f);
         }
 
-        public GameObject GetFeature(int x, int y, Vector2 worldPosition)
+        public GameObject GetResource(int x, int y, Vector2 worldPosition)
         {
             if(treeNoise.GetNoise(x, y) > 0.8f)
             {

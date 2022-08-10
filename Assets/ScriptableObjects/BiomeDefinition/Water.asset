@@ -16,6 +16,7 @@ MonoBehaviour:
   biomeColor: {r: 0, g: 0.6859784, b: 1, a: 0}
   buildable: 0
   walkable: 0
+  resources: 0
   type: 1
   biomeAltitideMin: 0
   biomeAltitideMax: 0.35

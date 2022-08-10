@@ -16,11 +16,11 @@ MonoBehaviour:
   biomeColor: {r: 0.5377358, g: 0.5377358, b: 0.5377358, a: 0}
   buildable: 0
   walkable: 0
+  resources: 0
   type: 3
   biomeAltitideMin: 0.7
   biomeAltitideMax: 1
   blendingValueStart: 0.08
   blendingValueEnd: 0.08
-  heightMultiplier: 0.6
-  baseHeight: -0.1
-  featureList: []
+  heightMultiplier: 0.7
+  baseHeight: -0.15
