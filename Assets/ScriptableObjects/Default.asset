@@ -9,9 +9,10 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d43122adb0de7da41a1d2f0b9a709b08, type: 3}
+  m_Script: {fileID: 11500000, guid: 792d31fe6e4cd7749b9959e59a63f1b0, type: 3}
   m_Name: Default
   m_EditorClassIdentifier: 
+  biomeAltitudeFrequency: 0.006
   trees:
   - {fileID: 114240, guid: 6d29a20042cbcc14faad58c20a191901, type: 3}
   - {fileID: 199576, guid: b06557ebaf0cf854795ad8c6f1f25fa3, type: 3}

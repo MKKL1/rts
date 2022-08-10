@@ -28,7 +28,7 @@ namespace Assets.Scripts.TerrainScripts
             grid = new TerrainCell[terrainSizeX, terrainSizeY];
 
             gridPosition = terrain.transform.position;
-            cellSize = new Vector2(terrain.terrainData.size.x/terrainSizeX, terrain.terrainData.size.y / terrainSizeY);
+            cellSize = new Vector2(terrain.terrainData.size.x/terrainSizeX, terrain.terrainData.size.z / terrainSizeY);
 
             for (int i = 0; i < gridSize.x; i++)
                 for (int j = 0; j < gridSize.y; j++)
@@ -40,6 +40,11 @@ namespace Assets.Scripts.TerrainScripts
         public TerrainCell GetCellAtWorldPos(float x, float y)
         {
             return grid[Mathf.CeilToInt(x / cellSize.x), Mathf.CeilToInt(y / cellSize.y)];
+        }
+
+        public TerrainCell GetCellAtWorldPos(Vector2 vector)
+        {
+            return GetCellAtWorldPos(vector.x, vector.y);
         }
     }
 }

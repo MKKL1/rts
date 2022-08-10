@@ -20,7 +20,6 @@ namespace Assets.Scripts.TerrainScripts
 
         public float[,] heightmap { get; }
         public BlendingMethod blendingMethod = BlendingMethod.LerpBlending;
-        public float biomeAltitudeNoiseFrequency = 0.003f;
 
         public Texture2D biomeMapTexture;
         
@@ -51,7 +50,7 @@ namespace Assets.Scripts.TerrainScripts
         {
             FastNoiseLite noise = new FastNoiseLite(_seed);
             noise.SetNoiseType(FastNoiseLite.NoiseType.OpenSimplex2);
-            noise.SetFrequency(biomeAltitudeNoiseFrequency);
+            noise.SetFrequency(generatorData.biomeAltitudeFrequency);
 
             return noise;
         }
@@ -73,11 +72,10 @@ namespace Assets.Scripts.TerrainScripts
         private void GenerateBiome()
         {
             biomeWeightManager = new BiomeWeightManager(biomesManager, terrainGrid.gridSize);
-
             float[,] biomeHeightMap = GetBiomeAltitudeMap(terrainGrid.gridSize.x, terrainGrid.gridSize.y);
             biomeMapTexture = new Texture2D(terrainGrid.gridSize.x, terrainGrid.gridSize.y, TextureFormat.ARGB32, false);
-
             Color[,] colorMap = new Color[terrainGrid.gridSize.x, terrainGrid.gridSize.y];
+
 
             IterateChunks(chunksize, terrainGrid.gridSize.x, terrainGrid.gridSize.y, (x, y) =>
             {
@@ -94,7 +92,7 @@ namespace Assets.Scripts.TerrainScripts
                     biomeMapTexture.SetPixel(i, j, colorMap[i, j]);
                 }
 
-
+            //Blending
             BiomeBlendingAlgorithm blendingAlgorithm = null;
             switch (blendingMethod)
             {
@@ -102,32 +100,32 @@ namespace Assets.Scripts.TerrainScripts
                     blendingAlgorithm = new LerpBlending(biomesManager, biomeHeightMap);
                     break;
             }
+
             if(blendingAlgorithm == null)
-            {
                 throw new System.Exception("Blending algorithm was not found");
-            }
 
             blendingAlgorithm.blendBiomes(ref biomeWeightManager);
         }
 
-        public void GenerateFeatures(Terrain terrain)
+        public void GenerateFeatures()
         {
             FeaturesGenerator featuresGenerator = new FeaturesGenerator(generatorData, seed);
             for(int x = 1; x < mainGrid.size.x-1; x++)
-                for (int y = 1; y < mainGrid.size.y-1; y++)
+                for (int y = 1; y < mainGrid.size.y-1 ; y++)
                 {
-                    GameObject tmpObj = featuresGenerator.GetFeature(x, y);
-                    if (tmpObj != null)
+                    Vector2 worldPosition = mainGrid.GetWorldPosition(x, y);
+                    if (biomesManager.GetBiome(terrainGrid.GetCellAtWorldPos(worldPosition).biome).biomeData.resources)
                     {
-                        Vector2 featurePos2 = Utils.RandomMove(mainGrid.GetScenePosition(x, y), mainGrid.cellSize.x * 0.5f, mainGrid.cellSize.y * 0.5f);
-                        
-                        Vector3 featurePos = new Vector3(featurePos2.x, terrain.SampleHeight(new Vector3(featurePos2.x, 0, featurePos2.y)), featurePos2.y);
-                        GameObject featureObject = Object.Instantiate(tmpObj, featurePos, Quaternion.Euler(0, Random.Range(0, 360), 0));
-                        TerrainResource terrainResource = featureObject.GetComponent<TerrainResource>();
-                        terrainResource.gridPosX = (short)x;
-                        terrainResource.gridPosY = (short)y;
+                        GameObject tmpObj = featuresGenerator.GetFeature(x, y, worldPosition);
+                        if (tmpObj != null)
+                        {
+                            Object.Instantiate(tmpObj);
+                            TerrainResource terrainResource = tmpObj.GetComponent<TerrainResource>();
+                            terrainResource.gridPosX = (short)x;
+                            terrainResource.gridPosY = (short)y;
 
-                        mainGrid.terrainResourceMap[x, y] = terrainResource;
+                            mainGrid.terrainResourceMap[x, y] = terrainResource;
+                        }
                     }
                 }
         }

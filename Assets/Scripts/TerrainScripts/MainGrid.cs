@@ -23,7 +23,7 @@ namespace Assets.Scripts.TerrainScripts
             terrainPos = terrain.transform.position;
         }
 
-        public Vector2 GetScenePosition(int x, int y)
+        public Vector2 GetWorldPosition(int x, int y)
         {
             return new Vector2(terrainPos.x + (x * cellSize.x), terrainPos.y + (y * cellSize.y));
         }

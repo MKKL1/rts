@@ -19,7 +19,7 @@ public class TerrainManager : MonoBehaviour
     public RawImage image;
     public RawImage image2;
     //
-    public static TerrainGrid gameGrid;
+    public static TerrainGrid terrainGrid;
     public static float waterLevel;
     public static Vector2 terrainCornerBottomLeft;
     public static Vector2 terrainCornerTopRight;
@@ -35,16 +35,16 @@ public class TerrainManager : MonoBehaviour
     {
         var watch = System.Diagnostics.Stopwatch.StartNew();
 
-        gameGrid = new TerrainGrid(256, 256, terrain);
+        terrainGrid = new TerrainGrid(256, 256, terrain);
         GameMain.instance.mainGrid = new MainGrid(256, 256);
         GameMain.instance.mainGrid.CalculateCellSize(terrain);
 
-        TerrainGenerator terrainGenerator = new TerrainGenerator(ref gameGrid, terrainGenSettings, GeneratorSettings.instance.seed);
+        TerrainGenerator terrainGenerator = new TerrainGenerator(ref terrainGrid, terrainGenSettings, 51);
 
         terrainGenerator.blendingMethod = BlendingMethod.LerpBlending;
         terrainGenerator.GenerateTerrain();
         terrain.terrainData.SetHeights(0, 0, terrainGenerator.heightmap);
-        terrainGenerator.GenerateFeatures(terrain); 
+        terrainGenerator.GenerateFeatures(); 
 
         
 
@@ -70,16 +70,17 @@ public class TerrainManager : MonoBehaviour
         //TODO fix positioning
         if (!EditorApplication.isPlaying) return;
 
-        for (int i = 0; i < gameGrid.gridSize.x; i++)
-            for (int j = 0; j < gameGrid.gridSize.y; j++)
+        for (int i = 0; i < terrainGrid.gridSize.x; i++)
+            for (int j = 0; j < terrainGrid.gridSize.y; j++)
             {
-                float xpos = i * 2;
-                float zpos = j * 2;
+                float xpos = i * terrainGrid.cellSize.x;
+                float zpos = j * terrainGrid.cellSize.y;
                 Color wcolor = Color.red;
-                if (gameGrid.grid[i, j].biome == BiomeType.PLAINS) wcolor = Color.green;
-                else if (gameGrid.grid[i, j].biome == BiomeType.WATER) wcolor = Color.blue;
+                if (terrainGrid.grid[i, j].biome == BiomeType.PLAINS) wcolor = Color.green;
+                else if (terrainGrid.grid[i, j].biome == BiomeType.WATER) wcolor = Color.blue;
+                else if (terrainGrid.grid[i, j].biome == BiomeType.MOUNTAINS) wcolor = Color.gray;
                 Gizmos.color = wcolor;
-                Gizmos.DrawLine(new Vector3(xpos, gizmosHeight, zpos), new Vector3(xpos + 2, gizmosHeight, zpos + 2));
+                Gizmos.DrawLine(new Vector3(xpos, gizmosHeight, zpos), new Vector3(xpos + terrainGrid.cellSize.x, gizmosHeight, zpos + terrainGrid.cellSize.y));
             }
 
     }

@@ -1219,7 +1219,7 @@ GameObject:
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
+  m_StaticEditorFlags: 2147483647
   m_IsActive: 1
 --- !u!108 &705507994
 Light:
@@ -1330,7 +1330,6 @@ GameObject:
   - component: {fileID: 712011508}
   - component: {fileID: 712011507}
   - component: {fileID: 712011510}
-  - component: {fileID: 712011511}
   m_Layer: 0
   m_Name: GameMain
   m_TagString: Untagged
@@ -1423,24 +1422,6 @@ MonoBehaviour:
     m_Center: {x: 500, y: 50, z: 500}
     m_Extent: {x: 500, y: 50, z: 500}
   filterShader: {fileID: 4800000, guid: 0f44df78e3d64d9cb2616cac3d84cb77, type: 3}
---- !u!114 &712011511
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 712011506}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ca6da7876d0f82f468f573931adb5f14, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  waterTreshold: 0.4
-  waterBlending: 0
-  plainsBlending: 0
-  plainsHeightMultiplier: 0.1
-  plainsHeightAdd: -0.4
-  seed: 52
 --- !u!1 &882451578
 GameObject:
   m_ObjectHideFlags: 0
@@ -1984,7 +1965,7 @@ GameObject:
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
+  m_StaticEditorFlags: 2147483647
   m_IsActive: 1
 --- !u!64 &1532452274
 MeshCollider:

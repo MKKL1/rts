@@ -11,6 +11,7 @@ namespace Assets.Scripts.TerrainScripts.Biomes
         public Color biomeColor;
         public bool buildable = true;
         public bool walkable = true;
+        public bool resources = true;
         public BiomeType type;
         public float biomeAltitideMin;
         public float biomeAltitideMax;
@@ -18,6 +19,5 @@ namespace Assets.Scripts.TerrainScripts.Biomes
         public float blendingValueEnd = 0.05f;
         public float heightMultiplier = 0.3f;
         public float baseHeight = 0f;
-        public List<GameObject> featureList = new List<GameObject>();
     }
 }

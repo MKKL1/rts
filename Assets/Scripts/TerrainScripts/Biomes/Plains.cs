@@ -7,11 +7,9 @@ namespace Assets.Scripts.TerrainScripts.Biomes
     {
         
         private FastNoiseLite terrainNoise;
-        private static GeneratorSettings genSettingsInstance;
         public Plains(int seed):base("Plains")
         {
             
-            genSettingsInstance = GeneratorSettings.instance;
 
             terrainNoise = new FastNoiseLite(seed+1);
             terrainNoise.SetNoiseType(FastNoiseLite.NoiseType.OpenSimplex2S);
@@ -24,7 +22,7 @@ namespace Assets.Scripts.TerrainScripts.Biomes
 
         public override float GetHeight(float x, float y)
         {
-            return Utils.normalizedHeight(terrainNoise.GetNoise(x, y)* genSettingsInstance.plainsHeightMultiplier + genSettingsInstance.plainsHeightAdd);
+            return Utils.normalizedHeight(terrainNoise.GetNoise(x, y)* biomeData.heightMultiplier + biomeData.baseHeight);
         }
 
         public override GameObject GetFeature(float x, float y)
