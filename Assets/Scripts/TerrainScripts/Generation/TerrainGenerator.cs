@@ -113,16 +113,16 @@ namespace Assets.Scripts.TerrainScripts
         public void GenerateFeatures(Terrain terrain)
         {
             FeaturesGenerator featuresGenerator = new FeaturesGenerator(generatorData, seed);
-            for(int x = 0; x < mainGrid.size.x; x++)
-                for (int y = 0; y < mainGrid.size.y; y++)
+            for(int x = 1; x < mainGrid.size.x-1; x++)
+                for (int y = 1; y < mainGrid.size.y-1; y++)
                 {
                     GameObject tmpObj = featuresGenerator.GetFeature(x, y);
                     if (tmpObj != null)
                     {
-                        Vector2 featurePos2 = mainGrid.GetScenePosition(x, y);
+                        Vector2 featurePos2 = Utils.RandomMove(mainGrid.GetScenePosition(x, y), mainGrid.cellSize.x * 0.5f, mainGrid.cellSize.y * 0.5f);
                         
                         Vector3 featurePos = new Vector3(featurePos2.x, terrain.SampleHeight(new Vector3(featurePos2.x, 0, featurePos2.y)), featurePos2.y);
-                        GameObject featureObject = Object.Instantiate(tmpObj, featurePos, new Quaternion());
+                        GameObject featureObject = Object.Instantiate(tmpObj, featurePos, Quaternion.Euler(0, Random.Range(0, 360), 0));
                         TerrainResource terrainResource = featureObject.GetComponent<TerrainResource>();
                         terrainResource.gridPosX = (short)x;
                         terrainResource.gridPosY = (short)y;

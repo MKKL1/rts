@@ -20,7 +20,7 @@ namespace Assets.Scripts.TerrainScripts.Details
         {
             if(treeNoise.GetNoise(x, y) > 0.8f)
             {
-                return terrainGenSettings.trees[rnd.Next(0, terrainGenSettings.trees.Count)];
+                return terrainGenSettings.trees[2];
             }
             return null;
         }

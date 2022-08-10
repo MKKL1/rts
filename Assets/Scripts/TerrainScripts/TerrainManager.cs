@@ -35,7 +35,7 @@ public class TerrainManager : MonoBehaviour
     {
         var watch = System.Diagnostics.Stopwatch.StartNew();
 
-        gameGrid = new TerrainGrid(512, 512, terrain);
+        gameGrid = new TerrainGrid(256, 256, terrain);
         GameMain.instance.mainGrid = new MainGrid(256, 256);
         GameMain.instance.mainGrid.CalculateCellSize(terrain);
 
