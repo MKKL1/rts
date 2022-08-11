@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using Assets.Scripts.TerrainScripts.Generation.Noise;
+using System.Collections;
 using UnityEngine;
 
 namespace Assets.Scripts.TerrainScripts.Details
@@ -16,6 +17,8 @@ namespace Assets.Scripts.TerrainScripts.Details
             treeNoise = new FastNoiseLite(seed+5);
             treeNoise.SetNoiseType(FastNoiseLite.NoiseType.OpenSimplex2); 
             treeNoise.SetFrequency(0.01f);
+
+            
         }
 
         public GameObject GetResource(int x, int y, Vector2 worldPosition)

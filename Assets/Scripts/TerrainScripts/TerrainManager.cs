@@ -8,6 +8,7 @@ using UnityEngine.Profiling;
 using Assets.Scripts.TerrainScripts.BiomeBlending;
 using Assets.Scripts.TerrainScripts.Biomes;
 using Assets.Scripts.TerrainScripts.Details;
+using Assets.Scripts.TerrainScripts.Generation.Noise;
 
 public class TerrainManager : MonoBehaviour
 {
@@ -24,6 +25,22 @@ public class TerrainManager : MonoBehaviour
     public static Vector2 terrainCornerBottomLeft;
     public static Vector2 terrainCornerTopRight;
     public float gizmosHeight = 0f;
+
+    public int seed = 69;
+    public bool reloadInitialData = false;
+
+    private void OnValidate()
+    {
+        if (reloadInitialData)
+        {
+            // Your function here
+            ForestNoise forestNoise = new ForestNoise(32, 32, seed);
+
+            //When its done set this bool to false
+            //This is useful if you want to do some stuff only when clicking this "button"
+            reloadInitialData = false;
+        }
+    }
 
     public static TerrainManager instance;
     private void Awake()
@@ -59,7 +76,7 @@ public class TerrainManager : MonoBehaviour
     void Start()
     {
         
-        initTerrain();
+        //initTerrain();
         terrainCornerBottomLeft = new Vector2(terrain.transform.position.x, terrain.transform.position.z);
         terrainCornerTopRight = new Vector2(terrainCornerBottomLeft.x + terrain.terrainData.size.x, terrainCornerBottomLeft.y + terrain.terrainData.size.z);
         waterLevel = waterTransform.position.y;
