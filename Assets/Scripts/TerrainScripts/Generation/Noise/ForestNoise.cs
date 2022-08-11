@@ -1,14 +1,20 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.IO;
 using UnityEngine;
 
 namespace Assets.Scripts.TerrainScripts.Generation.Noise
 {
-    class ForestNoiseNode
+    class ForestNoiseNode : ICloneable
     {
         public bool isForest = false;
         public byte expensionValue = 0;
         public byte age = 0;
+
+        public object Clone()
+        {
+            return this.MemberwiseClone();
+        }
     }
 
     public class ForestNoise
@@ -18,13 +24,17 @@ namespace Assets.Scripts.TerrainScripts.Generation.Noise
         public int forestAge = 7;
         private ForestNoiseNode[,] noiseGrid;
         private int[,] neighbourNodes = new int[4, 2] { { 0, 1 }, { 0, -1 }, { 1, 0 }, { -1, 0 } };
+        private FastNoiseLite noise;
 
         public ForestNoise(int sizeX, int sizeY, int seed = 69)
         {
+            noise = new FastNoiseLite(seed + 1);
+            noise.SetNoiseType(FastNoiseLite.NoiseType.OpenSimplex2);
+            noise.SetFrequency(0.01f);
+
             random = new System.Random(seed);
             size = new Vector2Int(sizeX, sizeY);
             noiseGrid = new ForestNoiseNode[sizeX, sizeY];
-            Generate();
         }
 
         private bool isOccupied(int x, int y)
@@ -34,65 +44,101 @@ namespace Assets.Scripts.TerrainScripts.Generation.Noise
 
 
 
-        private void Generate()
+        public void Generate()
         {
             //TODO Remove
             //Debugging
             Texture2D texture = new Texture2D(size.x, size.y, TextureFormat.RGB24, false);
-            
+            //
 
 
             for (int x = 0; x < size.x; x++)
                 for (int y = 0; y < size.y; y++)
                 {
+
                     ForestNoiseNode node = new ForestNoiseNode();
-                    if (random.Next(0, 100) < 1)
+                    float height = noise.GetNoise(x, y);
+                    if (height > 0.5f && random.Next(0, 100) < 5)
+                    {
+                        
+                        node.isForest = true;
+                        node.expensionValue = (byte)random.Next(3, 6);
+                        
+                    } 
+                    else if(height > 0.1f && random.Next(0, 100) < 2)
                     {
                         node.isForest = true;
-                        node.expensionValue = (byte)random.Next(5, 10);
+                        node.expensionValue = (byte)random.Next(0, 4);
                     }
-                    else node.isForest = false;
                     noiseGrid[x, y] = node;
+
                 }
 
+            //New grid to save changes to while processing old grid
+            ForestNoiseNode[,] newNoiseGrid = new ForestNoiseNode[size.x, size.y];
 
+            //Copying to new grid
+            for (int x = 0; x < size.x; x++)
+                for (int y = 0; y < size.y; y++)
+                    newNoiseGrid[x, y] = (ForestNoiseNode)noiseGrid[x, y].Clone();
 
-            for(int i = forestAge; i >= 0; i--)
+            //Using bool to check if any changes happend to save processing time
+            bool isAnyExpendable = true;
+            for (int i = forestAge; i > 0 && isAnyExpendable; i--)
+            {
+                isAnyExpendable = false;
                 for (int x = 0; x < size.x; x++)
                     for (int y = 0; y < size.y; y++)
                     {
                         ForestNoiseNode node = noiseGrid[x, y];
-                        if(node.expensionValue > 0)
+                        if (node.expensionValue > 0)
                         {
-                            
+                            isAnyExpendable = true;
+                            //Expanding costs 1 point
                             node.expensionValue--;
-                            for(int a = 0; a < 4; a++)
+                            for (int a = 0; a < 4; a++)
                             {
+                                //Expanding in each direction (top, bottom, right, left)
                                 int eX = x + neighbourNodes[a, 0];
                                 int eY = y + neighbourNodes[a, 1];
+                                //Checking if there is already forest on node
                                 if (isOccupied(eX, eY)) continue;
 
-                                ForestNoiseNode exnode = noiseGrid[eX, eY];
+                                //If node is empty create new child node
+                                ForestNoiseNode exnode = (ForestNoiseNode)noiseGrid[eX, eY].Clone();
                                 exnode.expensionValue = node.expensionValue;
                                 exnode.isForest = true;
 
-                                Debug.Log($"{eX} {eY} {exnode.expensionValue}");
-
-                                noiseGrid[eX, eY] = exnode;
+                                newNoiseGrid[eX, eY] = exnode;
                             }
                         }
-                        node.age++;
-                        noiseGrid[x, y] = node;
                     }
 
 
+                for (int x = 0; x < size.x; x++)
+                    for (int y = 0; y < size.y; y++)
+                    {
+                        //Aging all forest nodes
+                        if (newNoiseGrid[x, y].isForest) newNoiseGrid[x, y].age++;
+                        //Copying to old grid
+                        noiseGrid[x, y] = (ForestNoiseNode)newNoiseGrid[x, y].Clone();
+                    }
+                        
+
+            }
 
 
-                    //TODO Remove
-                    for (int x = 0; x < size.x; x++)
+            
+
+            //TODO Remove
+            for (int x = 0; x < size.x; x++)
                 for (int y = 0; y < size.y; y++)
                 {
-                    if (noiseGrid[x, y].isForest) texture.SetPixel(x, y, Color.green);
+
+                    if (noiseGrid[x, y].isForest)
+                    {
+                        texture.SetPixel(x, y, new Color(0, noiseGrid[x, y].age * 0.2f, 0));
+                    }
                     else texture.SetPixel(x, y, Color.white);
                 }
 
@@ -100,7 +146,7 @@ namespace Assets.Scripts.TerrainScripts.Generation.Noise
 
             Debug.Log("Generated");
             byte[] bytes = texture.EncodeToPNG();
-            var dirPath = @"C:\Users\\Desktop\";
+            var dirPath = @"C:\Users\krystian\Desktop\";
             if (!Directory.Exists(dirPath))
             {
                 Directory.CreateDirectory(dirPath);
@@ -110,9 +156,10 @@ namespace Assets.Scripts.TerrainScripts.Generation.Noise
 
         }
 
+        /// <returns>Age of tree on grid node given by x and y</returns>
         public byte GetNoise(int x, int y)
         {
-            return 0;
+            return noiseGrid[x,y].age;
         }
 
     }

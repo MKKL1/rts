@@ -1,4 +1,5 @@
 ﻿
+using System;
 using System.Collections;
 using UnityEngine;
 
@@ -42,7 +43,7 @@ namespace Assets.Scripts
 
         public static Vector2 RandomMove(Vector2 position, float maxX, float maxY)
         {
-            return new Vector2(position.x + Random.Range(-maxX, maxX), position.y + Random.Range(-maxY, maxY));
+            return new Vector2(position.x + UnityEngine.Random.Range(-maxX, maxX), position.y + UnityEngine.Random.Range(-maxY, maxY));
         }
     }
 }

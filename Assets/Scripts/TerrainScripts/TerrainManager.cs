@@ -27,6 +27,7 @@ public class TerrainManager : MonoBehaviour
     public float gizmosHeight = 0f;
 
     public int seed = 69;
+    public int fage = 5;
     public bool reloadInitialData = false;
 
     private void OnValidate()
@@ -34,8 +35,13 @@ public class TerrainManager : MonoBehaviour
         if (reloadInitialData)
         {
             // Your function here
-            ForestNoise forestNoise = new ForestNoise(32, 32, seed);
-
+            var watch = System.Diagnostics.Stopwatch.StartNew();
+            ForestNoise forestNoise = new ForestNoise(128, 128, seed);
+            forestNoise.forestAge = fage;
+            forestNoise.Generate();
+            watch.Stop();
+            var elapsedMs = watch.ElapsedMilliseconds;
+            Debug.Log(elapsedMs);
             //When its done set this bool to false
             //This is useful if you want to do some stuff only when clicking this "button"
             reloadInitialData = false;
