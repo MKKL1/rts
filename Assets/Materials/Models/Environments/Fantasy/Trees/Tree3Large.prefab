@@ -26,8 +26,8 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 171450}
-  m_LocalRotation: {x: 0, y: 0.8616291, z: 0, w: 0.5075384}
-  m_LocalPosition: {x: 992.0901, y: 19.390694, z: 910.1162}
+  m_LocalRotation: {x: 0, y: 0.94832367, z: 0, w: -0.31730467}
+  m_LocalPosition: {x: 993.43896, y: 19.4083, z: 544.68036}
   m_LocalScale: {x: 0.01, y: 0.01, z: 0.01}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -97,6 +97,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   gridPosX: 254
-  gridPosY: 233
+  gridPosY: 139
   type: 0
   resourceCount: 200

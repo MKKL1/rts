@@ -14,6 +14,7 @@ public class TerrainManager : MonoBehaviour
 {
     public Terrain terrain;
     public Transform waterTransform;
+    public Transform detailsTransform;
     public TerrainGenSettings terrainGenSettings;
 
     //TODO remove
@@ -42,12 +43,12 @@ public class TerrainManager : MonoBehaviour
         GameMain.instance.mainGrid = new MainGrid(256, 256);
         GameMain.instance.mainGrid.CalculateCellSize(terrain);
 
-        TerrainGenerator terrainGenerator = new TerrainGenerator(ref terrainGrid, terrainGenSettings, 2137);
+        TerrainGenerator terrainGenerator = new TerrainGenerator(ref terrainGrid, terrainGenSettings, seed);
 
         terrainGenerator.blendingMethod = BlendingMethod.LerpBlending;
         terrainGenerator.GenerateTerrain();
         terrain.terrainData.SetHeights(0, 0, terrainGenerator.heightmap);
-        terrainGenerator.GenerateFeatures(); 
+        terrainGenerator.GenerateFeatures(detailsTransform); 
 
         
 

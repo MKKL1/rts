@@ -107,7 +107,7 @@ namespace Assets.Scripts.TerrainScripts
             blendingAlgorithm.blendBiomes(ref biomeWeightManager);
         }
 
-        public void GenerateFeatures()
+        public void GenerateFeatures(Transform baseTransform = null)
         {
             ResourceGenerator resourceGenerator = new ResourceGenerator(generatorData, seed);
             for(int x = 1; x < mainGrid.size.x-1; x++)
@@ -119,7 +119,10 @@ namespace Assets.Scripts.TerrainScripts
                         GameObject tmpObj = resourceGenerator.GetResource(x, y, worldPosition);
                         if (tmpObj != null)
                         {
-                            Object.Instantiate(tmpObj);
+                            
+                            GameObject spawned = Object.Instantiate(tmpObj);
+                            if (baseTransform != null) spawned.transform.parent = baseTransform;
+
                             TerrainResource terrainResource = tmpObj.GetComponent<TerrainResource>();
                             terrainResource.gridPosX = (short)x;
                             terrainResource.gridPosY = (short)y;
