@@ -1371,6 +1371,9 @@ MonoBehaviour:
   image: {fileID: 1690108614}
   image2: {fileID: 578999832}
   gizmosHeight: 20
+  seed: 103
+  fage: 10
+  reloadInitialData: 0
 --- !u!4 &712011509
 Transform:
   m_ObjectHideFlags: 0
@@ -1663,7 +1666,7 @@ GameObject:
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
+  m_StaticEditorFlags: 2147483647
   m_IsActive: 1
 --- !u!4 &1145723806
 Transform:

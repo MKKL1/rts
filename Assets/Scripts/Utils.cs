@@ -45,5 +45,31 @@ namespace Assets.Scripts
         {
             return new Vector2(position.x + UnityEngine.Random.Range(-maxX, maxX), position.y + UnityEngine.Random.Range(-maxY, maxY));
         }
+
+        public static int[] randomOrder(int count, System.Random random)
+        {
+            int[] elements = new int[count];
+            //Generated sorted list (0,1,2,3)
+            for (int i = 0; i < count; i++)
+                elements[i] = i;
+
+            //Fisher-Yates shuffle
+            for (int i = count - 1; i >= 0; i--)
+            {
+                int j = random.Next(0, i + 1);
+                Utils.Swap(ref elements, i, j);
+            }
+            return elements;
+        }
+
+        public static int[] randomOrder(int count, int seed)
+        {
+            return randomOrder(count, new System.Random(seed));
+        }
+
+        public static void Swap<T>(ref T[] arr, int p1, int p2)
+        {
+            (arr[p1], arr[p2]) = (arr[p2], arr[p1]);
+        }
     }
 }

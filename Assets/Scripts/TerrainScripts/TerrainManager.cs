@@ -27,7 +27,7 @@ public class TerrainManager : MonoBehaviour
     public float gizmosHeight = 0f;
 
     public int seed = 69;
-    public int fage = 5;
+    public byte fage = 5;
     public bool reloadInitialData = false;
 
     private void OnValidate()
@@ -36,7 +36,7 @@ public class TerrainManager : MonoBehaviour
         {
             // Your function here
             var watch = System.Diagnostics.Stopwatch.StartNew();
-            ForestNoise forestNoise = new ForestNoise(128, 128, seed);
+            ForestNoise forestNoise = new ForestNoise(256, 256, seed);
             forestNoise.forestAge = fage;
             forestNoise.Generate();
             watch.Stop();
