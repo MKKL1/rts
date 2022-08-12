@@ -46,9 +46,10 @@ public class TerrainManager : MonoBehaviour
         TerrainGenerator terrainGenerator = new TerrainGenerator(ref terrainGrid, terrainGenSettings, seed);
 
         terrainGenerator.blendingMethod = BlendingMethod.LerpBlending;
-        terrainGenerator.GenerateTerrain();
-        terrain.terrainData.SetHeights(0, 0, terrainGenerator.heightmap);
-        terrainGenerator.GenerateFeatures(detailsTransform); 
+        terrainGenerator.Generate();
+
+
+        //terrain.terrainData.SetHeights(0, 0, terrainGenerator.heightmap);
 
         
 
@@ -56,7 +57,6 @@ public class TerrainManager : MonoBehaviour
         watch.Stop();
         var elapsedMs = watch.ElapsedMilliseconds;
         Debug.Log(elapsedMs);
-        image.texture = terrainGenerator.biomeMapTexture;
 
         
     }

@@ -9,10 +9,10 @@ using UnityEngine;
 
 namespace Assets.Scripts.TerrainScripts
 {
-    public struct TerrainGeneratorData
+    public struct TerrainGeneratorMsg
     {
         public byte[,] heightMap;
-        public TerrainResource[,] terrainResourceMap;
+        public byte[,] terrainResourceMap;
     }
     public class TerrainGenerator
     {
@@ -20,9 +20,7 @@ namespace Assets.Scripts.TerrainScripts
 
         public float[,] heightmap { get; }
         public BlendingMethod blendingMethod = BlendingMethod.LerpBlending;
-
-        public Texture2D biomeMapTexture;
-        
+        public Transform detailTransform = null;     
 
         private Vector2Int terrainSize;
         private TerrainGrid terrainGrid;
@@ -30,7 +28,9 @@ namespace Assets.Scripts.TerrainScripts
         private BiomesManager biomesManager;
         private BiomeWeightManager biomeWeightManager;
         private TerrainGenSettings generatorData;
-        
+
+        private TerrainGeneratorMsg terrainGeneratorMsg = new TerrainGeneratorMsg();
+
 
         private readonly ParallelOptions parallelOptions = new ParallelOptions { MaxDegreeOfParallelism = 8 };
 
@@ -73,24 +73,14 @@ namespace Assets.Scripts.TerrainScripts
         {
             biomeWeightManager = new BiomeWeightManager(biomesManager, terrainGrid.gridSize);
             float[,] biomeHeightMap = GetBiomeAltitudeMap(terrainGrid.gridSize.x, terrainGrid.gridSize.y);
-            biomeMapTexture = new Texture2D(terrainGrid.gridSize.x, terrainGrid.gridSize.y, TextureFormat.ARGB32, false);
-            Color[,] colorMap = new Color[terrainGrid.gridSize.x, terrainGrid.gridSize.y];
-
 
             IterateChunks(chunksize, terrainGrid.gridSize.x, terrainGrid.gridSize.y, (x, y) =>
             {
                 BiomeType currentbiome = biomesManager.GetBiomeType(biomeHeightMap[x, y]);
                 biomeWeightManager.SetWeight(currentbiome, x, y);
 
-                colorMap[x, y] = biomesManager.GetBiomeColor(currentbiome);
                 terrainGrid.grid[x, y].biome = currentbiome;
             });
-
-            for (int i = 0; i < terrainGrid.gridSize.x; i++)
-                for (int j = 0; j < terrainGrid.gridSize.y; j++)
-                {
-                    biomeMapTexture.SetPixel(i, j, colorMap[i, j]);
-                }
 
             //Blending
             BiomeBlendingAlgorithm blendingAlgorithm = null;
@@ -107,8 +97,9 @@ namespace Assets.Scripts.TerrainScripts
             blendingAlgorithm.blendBiomes(ref biomeWeightManager);
         }
 
-        public void GenerateFeatures(Transform baseTransform = null)
+        private void GenerateFeatures()
         {
+            byte[,] resourceMap = new byte[mainGrid.size.x, mainGrid.size.y];
             ResourceGenerator resourceGenerator = new ResourceGenerator(generatorData, seed);
             for(int x = 1; x < mainGrid.size.x-1; x++)
                 for (int y = 1; y < mainGrid.size.y-1 ; y++)
@@ -116,27 +107,30 @@ namespace Assets.Scripts.TerrainScripts
                     Vector2 worldPosition = mainGrid.GetWorldPosition(x, y);
                     if (biomesManager.GetBiome(terrainGrid.GetCellAtWorldPos(worldPosition).biome).biomeData.resources)
                     {
-                        GameObject tmpObj = resourceGenerator.GetResource(x, y, worldPosition);
-                        if (tmpObj != null)
-                        {
+                        int resourceID = resourceGenerator.GetResourceID(x, y);
+                        if (resourceID != -1)
+                            resourceMap[x, y] = (byte)resourceID;
+
+                        //if (tmpObj != null)
+                        //{
                             
-                            GameObject spawned = Object.Instantiate(tmpObj);
-                            if (baseTransform != null) spawned.transform.parent = baseTransform;
+                        //    GameObject spawned = Object.Instantiate(tmpObj);
+                        //    if (baseTransform != null) spawned.transform.parent = baseTransform;
 
-                            TerrainResource terrainResource = tmpObj.GetComponent<TerrainResource>();
-                            terrainResource.gridPosX = (short)x;
-                            terrainResource.gridPosY = (short)y;
+                        //    TerrainResource terrainResource = tmpObj.GetComponent<TerrainResource>();
+                        //    terrainResource.gridPosX = (short)x;
+                        //    terrainResource.gridPosY = (short)y;
 
-                            mainGrid.terrainResourceMap[x, y] = terrainResource;
-                        }
+                        //    mainGrid.terrainResourceMap[x, y] = terrainResource;
+                        //}
                     }
                 }
+            terrainGeneratorMsg.terrainResourceMap = resourceMap;
         }
 
         public void GenerateTerrain()
         {
-            GenerateBiome();
-
+            terrainGeneratorMsg.heightMap = new byte[terrainGrid.gridSize.x, terrainGrid.gridSize.y];
             IterateChunks(chunksize, terrainGrid.gridSize.x, terrainGrid.gridSize.y, (x, y) =>
             {
                 float heightSum = 0f;
@@ -146,9 +140,18 @@ namespace Assets.Scripts.TerrainScripts
                         heightSum += biomesManager.GetBiome(entry.Key).GetHeight(x, y) * entry.Value;
                 }
                 heightmap[y, x] = heightSum;
+                terrainGeneratorMsg.heightMap[x, y] = (byte)(heightSum * 255);
             });
-                        
-            biomeMapTexture.Apply();
+            
+        }
+
+        public TerrainGeneratorMsg Generate()
+        {
+            GenerateBiome();
+            GenerateTerrain();
+            GameMain.instance.mainTerrain.terrainData.SetHeights(0, 0, heightmap);
+            GenerateFeatures();
+            return terrainGeneratorMsg;
         }
 
         /// <summary>

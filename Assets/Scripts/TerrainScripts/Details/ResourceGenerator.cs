@@ -1,5 +1,6 @@
 ﻿using Assets.Scripts.TerrainScripts.Generation.Noise;
 using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace Assets.Scripts.TerrainScripts.Details
@@ -14,24 +15,26 @@ namespace Assets.Scripts.TerrainScripts.Details
         public ResourceGenerator(TerrainGenSettings data, int seed)
         {
             terrainGenSettings = data;
-            forestNoise = new ForestNoise(256, 256, seed);
-            forestNoise.forestAge = 10;
+            forestNoise = new ForestNoise(mainGrid.size.x, mainGrid.size.y, seed)
+            {
+                forestAge = 10
+            };
             forestNoise.Generate();
 
         }
 
-        public GameObject GetResource(int x, int y, Vector2 worldPosition)
+        public int GetResourceID(int x, int y)
         {
             if(forestNoise.GetNoise(x, y) > 0)
             {
-                return GetTree(x, y, worldPosition);
+                return 4;
             }
-            return null;
+            return -1;
         }
 
-        private GameObject GetTree(int x, int y, Vector2 worldPosition)
+        private GameObject GetTree(Vector2 worldPosition, int id)
         {
-            GameObject tmp = terrainGenSettings.trees[4];
+            GameObject tmp = terrainGenSettings.trees[id];
             Vector2 v1 = Utils.RandomMove(worldPosition, mainGrid.cellSize.x * 0.5f, mainGrid.cellSize.y * 0.5f);
             Vector3 pos = new Vector3(v1.x, terrain.SampleHeight(new Vector3(v1.x, 0, v1.y)), v1.y);
             tmp.transform.position = pos;
