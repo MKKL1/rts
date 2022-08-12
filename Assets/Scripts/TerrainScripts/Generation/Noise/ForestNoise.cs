@@ -84,13 +84,8 @@ namespace Assets.Scripts.TerrainScripts.Generation.Noise
 
         public void Generate()
         {
-            //TODO Remove
-            //Debugging
-            Texture2D texture = new Texture2D(size.x, size.y, TextureFormat.RGB24, false);
-            //
-
+            //Descending sorting
             forestLevels.Sort((a, b) => b.CompareTo(a));
-            Debug.Log(String.Join("; ", forestLevels));
 
             //Initial forest grid positioning
             for (int x = 0; x < size.x; x++)
@@ -112,19 +107,6 @@ namespace Assets.Scripts.TerrainScripts.Generation.Noise
                             break;
                         }
                     }
-
-                    //if (height > 0.5f && random.Next(0, 100) < 7)
-                    //{
-                        
-                    //    node.isForest = true;
-                    //    node.expensionValue = (byte)random.Next(3, 13);
-                        
-                    //} 
-                    //else if(height > 0f && random.Next(0, 100) < 4)
-                    //{
-                    //    node.isForest = true;
-                    //    node.expensionValue = (byte)random.Next(0, 6);
-                    //}
                     noiseGrid[x, y] = node;
 
                 }
@@ -195,33 +177,6 @@ namespace Assets.Scripts.TerrainScripts.Generation.Noise
                         
 
             }
-
-
-            
-
-            //TODO Remove
-            for (int x = 0; x < size.x; x++)
-                for (int y = 0; y < size.y; y++)
-                {
-
-                    if (noiseGrid[x, y].isForest)
-                    {
-                        texture.SetPixel(x, y, new Color(0, noiseGrid[x, y].age * 0.1f, 0));
-                    }
-                    else texture.SetPixel(x, y, Color.white);
-                }
-
-            texture.Apply();
-
-            Debug.Log("Generated");
-            byte[] bytes = texture.EncodeToPNG();
-            var dirPath = @"C:\Users\krystian\Desktop\";
-            if (!Directory.Exists(dirPath))
-            {
-                Directory.CreateDirectory(dirPath);
-            }
-            File.WriteAllBytes(dirPath + "image" + ".png", bytes);
-            //
 
         }
 

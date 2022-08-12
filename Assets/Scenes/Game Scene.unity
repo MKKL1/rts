@@ -1371,9 +1371,7 @@ MonoBehaviour:
   image: {fileID: 1690108614}
   image2: {fileID: 578999832}
   gizmosHeight: 20
-  seed: 103
-  fage: 10
-  reloadInitialData: 0
+  seed: 2137
 --- !u!4 &712011509
 Transform:
   m_ObjectHideFlags: 0

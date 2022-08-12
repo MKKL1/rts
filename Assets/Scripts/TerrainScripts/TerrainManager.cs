@@ -27,26 +27,6 @@ public class TerrainManager : MonoBehaviour
     public float gizmosHeight = 0f;
 
     public int seed = 69;
-    public byte fage = 5;
-    public bool reloadInitialData = false;
-
-    private void OnValidate()
-    {
-        if (reloadInitialData)
-        {
-            // Your function here
-            var watch = System.Diagnostics.Stopwatch.StartNew();
-            ForestNoise forestNoise = new ForestNoise(256, 256, seed);
-            forestNoise.forestAge = fage;
-            forestNoise.Generate();
-            watch.Stop();
-            var elapsedMs = watch.ElapsedMilliseconds;
-            Debug.Log(elapsedMs);
-            //When its done set this bool to false
-            //This is useful if you want to do some stuff only when clicking this "button"
-            reloadInitialData = false;
-        }
-    }
 
     public static TerrainManager instance;
     private void Awake()
@@ -62,7 +42,7 @@ public class TerrainManager : MonoBehaviour
         GameMain.instance.mainGrid = new MainGrid(256, 256);
         GameMain.instance.mainGrid.CalculateCellSize(terrain);
 
-        TerrainGenerator terrainGenerator = new TerrainGenerator(ref terrainGrid, terrainGenSettings, 51);
+        TerrainGenerator terrainGenerator = new TerrainGenerator(ref terrainGrid, terrainGenSettings, 2137);
 
         terrainGenerator.blendingMethod = BlendingMethod.LerpBlending;
         terrainGenerator.GenerateTerrain();
@@ -82,7 +62,7 @@ public class TerrainManager : MonoBehaviour
     void Start()
     {
         
-        //initTerrain();
+        initTerrain();
         terrainCornerBottomLeft = new Vector2(terrain.transform.position.x, terrain.transform.position.z);
         terrainCornerTopRight = new Vector2(terrainCornerBottomLeft.x + terrain.terrainData.size.x, terrainCornerBottomLeft.y + terrain.terrainData.size.z);
         waterLevel = waterTransform.position.y;

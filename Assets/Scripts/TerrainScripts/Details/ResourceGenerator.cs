@@ -7,23 +7,22 @@ namespace Assets.Scripts.TerrainScripts.Details
     public class ResourceGenerator
     {
         private TerrainGenSettings terrainGenSettings;
-        private FastNoiseLite treeNoise;
+        private ForestNoise forestNoise;
         private System.Random rnd = new System.Random();
         private MainGrid mainGrid = GameMain.instance.mainGrid;
         private Terrain terrain = GameMain.instance.mainTerrain;
         public ResourceGenerator(TerrainGenSettings data, int seed)
         {
             terrainGenSettings = data;
-            treeNoise = new FastNoiseLite(seed+5);
-            treeNoise.SetNoiseType(FastNoiseLite.NoiseType.OpenSimplex2); 
-            treeNoise.SetFrequency(0.01f);
+            forestNoise = new ForestNoise(256, 256, seed);
+            forestNoise.forestAge = 10;
+            forestNoise.Generate();
 
-            
         }
 
         public GameObject GetResource(int x, int y, Vector2 worldPosition)
         {
-            if(treeNoise.GetNoise(x, y) > 0.8f)
+            if(forestNoise.GetNoise(x, y) > 0)
             {
                 return GetTree(x, y, worldPosition);
             }
