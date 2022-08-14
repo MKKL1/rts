@@ -22,19 +22,25 @@ namespace Assets.Scripts.TerrainScripts.Details
             forestNoise.Generate();
 
         }
-
-        public int GetResourceID(int x, int y)
+        /// <param name="x">x on main grid</param>
+        /// <param name="y">y on main grid</param>
+        /// <returns>Returns -1 if no resource is on x and y</returns>
+        public TerrainResourceNode GetResourceID(int x, int y)
         {
             if(forestNoise.GetNoise(x, y) > 0)
             {
-                return 4;
+                return new TerrainResourceNode()
+                {
+                    terrainDetailList = TerrainDetailListType.TREE,
+                    resourceTypeID = 4
+                };
             }
-            return -1;
+            return null;
         }
 
         private GameObject GetTree(Vector2 worldPosition, int id)
         {
-            GameObject tmp = terrainGenSettings.trees[id];
+            GameObject tmp = terrainGenSettings.terrainResourceIDManager.GetResourceByID(id);
             Vector2 v1 = Utils.RandomMove(worldPosition, mainGrid.cellSize.x * 0.5f, mainGrid.cellSize.y * 0.5f);
             Vector3 pos = new Vector3(v1.x, terrain.SampleHeight(new Vector3(v1.x, 0, v1.y)), v1.y);
             tmp.transform.position = pos;

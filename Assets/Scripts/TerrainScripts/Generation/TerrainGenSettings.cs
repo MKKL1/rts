@@ -8,6 +8,6 @@ namespace Assets.Scripts.TerrainScripts.Details
     public class TerrainGenSettings : ScriptableObject
     {
         public float biomeAltitudeFrequency = 0.006f;
-        public List<GameObject> trees = new List<GameObject>();
+        public TerrainResourceIDManager terrainResourceIDManager;
     }
 }

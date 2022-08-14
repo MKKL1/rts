@@ -99,7 +99,7 @@ namespace Assets.Scripts.TerrainScripts
 
         private void GenerateFeatures()
         {
-            byte[,] resourceMap = new byte[mainGrid.size.x, mainGrid.size.y];
+            TerrainResourceNode[,] resourceMap = new TerrainResourceNode[mainGrid.size.x, mainGrid.size.y];
             ResourceGenerator resourceGenerator = new ResourceGenerator(generatorData, seed);
             for(int x = 1; x < mainGrid.size.x-1; x++)
                 for (int y = 1; y < mainGrid.size.y-1 ; y++)
@@ -107,25 +107,13 @@ namespace Assets.Scripts.TerrainScripts
                     Vector2 worldPosition = mainGrid.GetWorldPosition(x, y);
                     if (biomesManager.GetBiome(terrainGrid.GetCellAtWorldPos(worldPosition).biome).biomeData.resources)
                     {
-                        int resourceID = resourceGenerator.GetResourceID(x, y);
-                        if (resourceID != -1)
-                            resourceMap[x, y] = (byte)resourceID;
-
-                        //if (tmpObj != null)
-                        //{
-                            
-                        //    GameObject spawned = Object.Instantiate(tmpObj);
-                        //    if (baseTransform != null) spawned.transform.parent = baseTransform;
-
-                        //    TerrainResource terrainResource = tmpObj.GetComponent<TerrainResource>();
-                        //    terrainResource.gridPosX = (short)x;
-                        //    terrainResource.gridPosY = (short)y;
-
-                        //    mainGrid.terrainResourceMap[x, y] = terrainResource;
-                        //}
+                        TerrainResourceNode resourceID = resourceGenerator.GetResourceID(x, y);
+                        if (resourceID != null)
+                            resourceMap[x, y] = resourceID;
                     }
                 }
-            terrainGeneratorMsg.terrainResourceMap = resourceMap;
+            //TODO
+            //terrainGeneratorMsg.terrainResourceMap = resourceMap;
         }
 
         public void GenerateTerrain()
