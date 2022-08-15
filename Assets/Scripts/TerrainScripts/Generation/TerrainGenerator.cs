@@ -123,8 +123,7 @@ namespace Assets.Scripts.TerrainScripts
                     if (entry.Value != 0f)
                         heightSum += biomesManager.GetBiome(entry.Key).GetHeight(x, y) * entry.Value;
                 }
-                heightmap[y, x] = heightSum;
-                terrainGeneratorMsg.heightMap[x, y] = (byte)(heightSum * 255);
+                terrainGeneratorMsg.heightMap[y, x] = (byte)(heightSum * 255);
             });
         }
 
@@ -132,7 +131,6 @@ namespace Assets.Scripts.TerrainScripts
         {
             GenerateBiome();
             GenerateTerrain();
-            GameMain.instance.mainTerrain.terrainData.SetHeights(0, 0, heightmap);
             GenerateFeatures();
             return terrainGeneratorMsg;
         }

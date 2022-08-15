@@ -11,7 +11,6 @@ namespace Assets.Scripts.TerrainScripts.Details
 
         public GameObject GetDetailByID(ResourcePrefabsList type, int id)
         {
-            //TODO
             switch (type) {
                 case ResourcePrefabsList.TREE:
                     return trees[id];

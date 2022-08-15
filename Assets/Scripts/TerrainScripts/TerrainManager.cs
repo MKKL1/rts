@@ -44,15 +44,11 @@ public class TerrainManager : MonoBehaviour
         GameMain.instance.mainGrid.CalculateCellSize(terrain);
 
         TerrainGenerator terrainGenerator = new TerrainGenerator(ref terrainGrid, terrainGenSettings, seed);
+        terrainGenerator.blendingMethod = BlendingMethod.LerpBlending; 
 
-        terrainGenerator.blendingMethod = BlendingMethod.LerpBlending;
-        terrainGenerator.Generate();
-
-
-        //terrain.terrainData.SetHeights(0, 0, terrainGenerator.heightmap);
-
-        
-
+        //TODO move to client
+        TerrainBuilder terrainBuilder = new TerrainBuilder(terrainGenSettings, terrain, GameMain.instance.mainGrid);
+        terrainBuilder.BuildTerrain(terrainGenerator.Generate(), detailsTransform);
 
         watch.Stop();
         var elapsedMs = watch.ElapsedMilliseconds;
@@ -69,23 +65,23 @@ public class TerrainManager : MonoBehaviour
         waterLevel = waterTransform.position.y;
     }
 
-    private void OnDrawGizmosSelected()
-    {
-        //TODO fix positioning
-        if (!EditorApplication.isPlaying) return;
+    //private void OnDrawGizmosSelected()
+    //{
+    //    //TODO fix positioning
+    //    if (!EditorApplication.isPlaying) return;
 
-        for (int i = 0; i < terrainGrid.gridSize.x; i++)
-            for (int j = 0; j < terrainGrid.gridSize.y; j++)
-            {
-                float xpos = i * terrainGrid.cellSize.x;
-                float zpos = j * terrainGrid.cellSize.y;
-                Color wcolor = Color.red;
-                if (terrainGrid.grid[i, j].biome == BiomeType.PLAINS) wcolor = Color.green;
-                else if (terrainGrid.grid[i, j].biome == BiomeType.WATER) wcolor = Color.blue;
-                else if (terrainGrid.grid[i, j].biome == BiomeType.MOUNTAINS) wcolor = Color.gray;
-                Gizmos.color = wcolor;
-                Gizmos.DrawLine(new Vector3(xpos, gizmosHeight, zpos), new Vector3(xpos + terrainGrid.cellSize.x, gizmosHeight, zpos + terrainGrid.cellSize.y));
-            }
+    //    for (int i = 0; i < terrainGrid.gridSize.x; i++)
+    //        for (int j = 0; j < terrainGrid.gridSize.y; j++)
+    //        {
+    //            float xpos = i * terrainGrid.cellSize.x;
+    //            float zpos = j * terrainGrid.cellSize.y;
+    //            Color wcolor = Color.red;
+    //            if (terrainGrid.grid[i, j].biome == BiomeType.PLAINS) wcolor = Color.green;
+    //            else if (terrainGrid.grid[i, j].biome == BiomeType.WATER) wcolor = Color.blue;
+    //            else if (terrainGrid.grid[i, j].biome == BiomeType.MOUNTAINS) wcolor = Color.gray;
+    //            Gizmos.color = wcolor;
+    //            Gizmos.DrawLine(new Vector3(xpos, gizmosHeight, zpos), new Vector3(xpos + terrainGrid.cellSize.x, gizmosHeight, zpos + terrainGrid.cellSize.y));
+    //        }
 
-    }
+    //}
 }

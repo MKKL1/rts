@@ -32,19 +32,29 @@ namespace Assets.Scripts.TerrainScripts
             terrain.terrainData.SetHeights(0, 0, heightMap);
         }
 
-        public void SetResources(Transform featuresTransform, TerrainResourceNode[,] terrainResourceMap)
+        public void SetResources(TerrainResourceNode[,] terrainResourceMap, Transform featuresTransform)
         {
             for (int i = 0; i < terrainResourceMap.GetLength(0); i++)
                 for (int j = 0; j < terrainResourceMap.GetLength(1); j++)
                 {
-                    TerrainResourceNode prefabsList = terrainResourceMap[i, j];
-                    GameObject tmp = settings.resourceIDManager.GetDetailByID(ResourcePrefabsList.TREE, prefabsList.resourceTypeID);
-                    Vector2 v1 = Utils.RandomMove(mainGrid.GetWorldPosition(i, j), mainGrid.cellSize.x * 0.5f, mainGrid.cellSize.y * 0.5f);
-                    Vector3 pos = new Vector3(v1.x, terrain.SampleHeight(new Vector3(v1.x, 0, v1.y)), v1.y);
+                    TerrainResourceNode resourceNode = terrainResourceMap[i, j];
+                    if (resourceNode != null)
+                    {
 
-                    GameObject ins = Object.Instantiate(tmp, pos, Quaternion.Euler(0, Random.Range(0, 359), 0));
-                    ins.transform.parent = featuresTransform;
+                        GameObject tmp = settings.resourceIDManager.GetDetailByID(ResourcePrefabsList.TREE, resourceNode.resourceTypeID);
+                        Vector2 v1 = Utils.RandomMove(mainGrid.GetWorldPosition(i, j), mainGrid.cellSize.x * 0.5f, mainGrid.cellSize.y * 0.5f);
+                        Vector3 pos = new Vector3(v1.x, terrain.SampleHeight(new Vector3(v1.x, 0, v1.y)), v1.y);
+
+                        GameObject ins = Object.Instantiate(tmp, pos, Quaternion.Euler(0, Random.Range(0, 359), 0));
+                        ins.transform.parent = featuresTransform;
+                    }
                 }
+        }
+
+        public void BuildTerrain(TerrainGeneratorMsg terrainGenMsg, Transform featuresTransform)
+        {
+            SetHeightMap(terrainGenMsg.heightMap);
+            SetResources(terrainGenMsg.resourceMap, featuresTransform);
         }
     }
 }

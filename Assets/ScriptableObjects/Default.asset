@@ -13,4 +13,4 @@ MonoBehaviour:
   m_Name: Default
   m_EditorClassIdentifier: 
   biomeAltitudeFrequency: 0.006
-  terrainDetailIDManager: {fileID: 11400000, guid: 4c173b9d5a068c84a929788b44095186, type: 2}
+  resourceIDManager: {fileID: 11400000, guid: 4c173b9d5a068c84a929788b44095186, type: 2}
