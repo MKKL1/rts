@@ -6,7 +6,7 @@ namespace Assets.Scripts.TerrainScripts.Details
 {
     public class TerrainResourceNode
     {
-        public TerrainDetailListType terrainDetailList;
+        public ResourcePrefabsList prefabsList;
         public int resourceTypeID;
     }
 }

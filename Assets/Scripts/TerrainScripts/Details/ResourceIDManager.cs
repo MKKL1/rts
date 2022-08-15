@@ -4,26 +4,17 @@ using UnityEngine;
 
 namespace Assets.Scripts.TerrainScripts.Details
 {
-    public enum TerrainDetailListType
-    {
-        TREE,
-        BUSH,
-        ROCK,
-        GOLD
-    }
-
     [CreateAssetMenu]
-    public class TerrainResourceIDManager : ScriptableObject
+    public class ResourceIDManager : ScriptableObject
     {
         public List<GameObject> trees = new List<GameObject>();
 
-        public GameObject GetResourceByID(TerrainDetailListType type, int id)
+        public GameObject GetDetailByID(ResourcePrefabsList type, int id)
         {
             //TODO
             switch (type) {
-                case TerrainDetailListType.TREE:
+                case ResourcePrefabsList.TREE:
                     return trees[id];
-                    break;
             }
             return null;
         }

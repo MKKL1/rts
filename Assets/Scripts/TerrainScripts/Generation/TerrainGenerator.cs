@@ -12,7 +12,7 @@ namespace Assets.Scripts.TerrainScripts
     public struct TerrainGeneratorMsg
     {
         public byte[,] heightMap;
-        public byte[,] terrainResourceMap;
+        public TerrainResourceNode[,] resourceMap;
     }
     public class TerrainGenerator
     {
@@ -99,7 +99,7 @@ namespace Assets.Scripts.TerrainScripts
 
         private void GenerateFeatures()
         {
-            TerrainResourceNode[,] resourceMap = new TerrainResourceNode[mainGrid.size.x, mainGrid.size.y];
+            terrainGeneratorMsg.resourceMap = new TerrainResourceNode[mainGrid.size.x, mainGrid.size.y];
             ResourceGenerator resourceGenerator = new ResourceGenerator(generatorData, seed);
             for(int x = 1; x < mainGrid.size.x-1; x++)
                 for (int y = 1; y < mainGrid.size.y-1 ; y++)
@@ -107,13 +107,9 @@ namespace Assets.Scripts.TerrainScripts
                     Vector2 worldPosition = mainGrid.GetWorldPosition(x, y);
                     if (biomesManager.GetBiome(terrainGrid.GetCellAtWorldPos(worldPosition).biome).biomeData.resources)
                     {
-                        TerrainResourceNode resourceID = resourceGenerator.GetResourceID(x, y);
-                        if (resourceID != null)
-                            resourceMap[x, y] = resourceID;
+                        terrainGeneratorMsg.resourceMap[x, y] = resourceGenerator.GetResourceID(x, y);
                     }
                 }
-            //TODO
-            //terrainGeneratorMsg.terrainResourceMap = resourceMap;
         }
 
         public void GenerateTerrain()
@@ -130,7 +126,6 @@ namespace Assets.Scripts.TerrainScripts
                 heightmap[y, x] = heightSum;
                 terrainGeneratorMsg.heightMap[x, y] = (byte)(heightSum * 255);
             });
-            
         }
 
         public TerrainGeneratorMsg Generate()
