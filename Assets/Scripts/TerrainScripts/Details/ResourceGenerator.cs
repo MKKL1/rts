@@ -27,14 +27,16 @@ namespace Assets.Scripts.TerrainScripts.Details
         /// <returns>Returns null if no resource is on x and y</returns>
         public TerrainResourceNode GetResourceID(int x, int y)
         {
-            float forestHeight = forestNoise.GetNoise(x, y);
-            if (forestHeight > 0)
+            float treeAge = forestNoise.GetNoise(x, y);
+            if (treeAge > 0)
             {
                 byte treeid = 0;
-                if (forestHeight > 0 && forestHeight <= 3) treeid = 3;
-                else if (forestHeight >= 4 && forestHeight <= 6) treeid = 2;
-                else if (forestHeight >= 7 && forestHeight <= 9) treeid = 1;
-                else if (forestHeight >= 10 && forestHeight <= 13) treeid = 0;
+                if (treeAge > 0 && treeAge <= 3) treeid = 0;
+                else if (treeAge >= 4 && treeAge <= 6) treeid = 1;
+                else if (treeAge >= 7 && treeAge <= 9) treeid = 2;
+                else if (treeAge >= 10 && treeAge <= 11) treeid = 3;
+                else if (treeAge >= 12) treeid = 4;
+
                 return new TerrainResourceNode()
                 {
                     prefabsList = ResourcePrefabsList.TREE,

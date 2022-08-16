@@ -17,10 +17,6 @@ public class TerrainManager : MonoBehaviour
     public Transform detailsTransform;
     public TerrainGenSettings terrainGenSettings;
 
-    //TODO remove
-    public RawImage image;
-    public RawImage image2;
-    //
     public static TerrainGrid terrainGrid;
     public static float waterLevel;
     public static Vector2 terrainCornerBottomLeft;
