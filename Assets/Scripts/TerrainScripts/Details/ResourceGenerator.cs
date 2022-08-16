@@ -12,9 +12,11 @@ namespace Assets.Scripts.TerrainScripts.Details
         private System.Random rnd = new System.Random();
         private MainGrid mainGrid = GameMain.instance.mainGrid;
         private Terrain terrain = GameMain.instance.mainTerrain;
-        public ResourceGenerator(TerrainGenSettings data, int seed)
+        private BiomesManager biomesManager;
+        public ResourceGenerator(TerrainGenSettings data, BiomesManager biomesManager, int seed)
         {
             terrainGenSettings = data;
+            this.biomesManager = biomesManager;
             forestNoise = new ForestNoise(mainGrid.size.x, mainGrid.size.y, seed)
             {
                 forestAge = 10
