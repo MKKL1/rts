@@ -17,9 +17,14 @@ namespace Assets.Scripts.TerrainScripts.Details
         //TODO remove?
         private BiomesManager biomesManager;
         private TerrainGrid terrainGrid;
+        private int rockCount;
+        private int goldOreCount;
         public ResourceGenerator(TerrainGenSettings data, BiomesManager biomesManager,TerrainGrid terrainGrid, int seed)
         {
             terrainGenSettings = data;
+            rockCount = terrainGenSettings.resourceIDManager.rocks.Count;
+            goldOreCount = terrainGenSettings.resourceIDManager.goldOre.Count;
+
             this.biomesManager = biomesManager;
             this.terrainGrid = terrainGrid;
             forestNoise = new ForestNoise(mainGrid.size.x, mainGrid.size.y, seed)
@@ -32,6 +37,9 @@ namespace Assets.Scripts.TerrainScripts.Details
             rockVeins.canPlaceVein = canPlaceVein;
             rockVeins.Generate(50);
 
+            goldVeins = new VeinNoise(mainGrid.size.x, mainGrid.size.y, seed+1);
+            goldVeins.canPlaceVein = canPlaceVein;
+            goldVeins.Generate(50);
         }
 
         private bool canPlaceVein(Vector2Int pos)
@@ -45,7 +53,6 @@ namespace Assets.Scripts.TerrainScripts.Details
         public TerrainResourceNode GetResourceID(int x, int y)
         {
             int treeAge = forestNoise.GetNoise(x, y);
-            int rockSize = rockVeins.GetNoise(x, y);
             if (treeAge > 0)
             {
                 byte treeid = 0;
@@ -60,15 +67,29 @@ namespace Assets.Scripts.TerrainScripts.Details
                     prefabsList = ResourcePrefabsList.TREE,
                     resourceTypeID = treeid
                 };
-            } 
-            else if(rockSize > 0)
+            }
+
+            int goldSize = goldVeins.GetNoise(x, y);
+            if (goldSize > 0)
+            {
+                return new TerrainResourceNode()
+                {
+                    prefabsList = ResourcePrefabsList.GOLD,
+                    resourceTypeID = (byte)rnd.Next(0, goldOreCount)
+                };
+            }
+
+            int rockSize = rockVeins.GetNoise(x, y);
+            if(rockSize > 0)
             {
                 return new TerrainResourceNode()
                 {
                     prefabsList = ResourcePrefabsList.ROCK,
-                    resourceTypeID = 0
+                    resourceTypeID = (byte)rnd.Next(0, rockCount)
                 };
             }
+
+            
             return null;
         }
     }

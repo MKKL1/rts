@@ -105,9 +105,12 @@ namespace Assets.Scripts.TerrainScripts
                 for (int y = 1; y < mainGrid.size.y-1 ; y++)
                 {
                     Vector2 worldPosition = mainGrid.GetWorldPosition(x, y);
-                    if (biomesManager.GetBiome(terrainGrid.GetCellAtWorldPos(worldPosition).biome).biomeData.resources)
+                    BiomeType biomeType = terrainGrid.GetCellAtWorldPos(worldPosition).biome;
+                    if (biomesManager.GetBiome(biomeType).biomeData.resources)
                     {
-                        terrainGeneratorMsg.resourceMap[x, y] = resourceGenerator.GetResourceID(x, y);
+                        float percentageSpawn = biomeWeightManager.GetWeight(biomeType, x, y);
+                        if(percentageSpawn == 1f || percentageSpawn > Random.value)
+                            terrainGeneratorMsg.resourceMap[x, y] = resourceGenerator.GetResourceID(x, y);
                     }
                 }
         }

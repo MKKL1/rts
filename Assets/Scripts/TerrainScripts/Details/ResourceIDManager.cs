@@ -9,6 +9,7 @@ namespace Assets.Scripts.TerrainScripts.Details
     {
         public List<GameObject> trees = new List<GameObject>();
         public List<GameObject> rocks = new List<GameObject>();
+        public List<GameObject> goldOre = new List<GameObject>();
 
         public GameObject GetDetailByID(ResourcePrefabsList type, int id)
         {
@@ -17,6 +18,8 @@ namespace Assets.Scripts.TerrainScripts.Details
                     return trees[id];
                 case ResourcePrefabsList.ROCK:
                     return rocks[id];
+                case ResourcePrefabsList.GOLD:
+                    return goldOre[id];
             }
             return null;
         }

@@ -44,7 +44,9 @@ public class TerrainManager : MonoBehaviour
 
         //TODO move to client
         TerrainBuilder terrainBuilder = new TerrainBuilder(terrainGenSettings, terrain, GameMain.instance.mainGrid);
-        terrainBuilder.BuildTerrain(terrainGenerator.Generate(), detailsTransform);
+        //TODO use compression
+        TerrainGeneratorMsg msg = terrainGenerator.Generate();
+        terrainBuilder.BuildTerrain(msg, detailsTransform);
 
         watch.Stop();
         var elapsedMs = watch.ElapsedMilliseconds;
