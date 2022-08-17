@@ -18,3 +18,8 @@ MonoBehaviour:
   - {fileID: 115020, guid: a0c53a09e4a37b5409b1248ebce2c376, type: 3}
   - {fileID: 166856, guid: 99a48108c5a1932488c06e519f6097f4, type: 3}
   - {fileID: 184622, guid: c7bcf19bbfa57ed4ea9147dff66d5542, type: 3}
+  rocks:
+  - {fileID: 108756, guid: 2d521608fcf07c346b5e2ed4049aa717, type: 3}
+  - {fileID: 174596, guid: 41dcf1459594f434a8a9bae6ae03eab0, type: 3}
+  - {fileID: 160260, guid: 36cf43d46aeb7494b82aa54d61da3bd7, type: 3}
+  - {fileID: 119512, guid: 5578b82f17c954843901e8b68ca21dcc, type: 3}

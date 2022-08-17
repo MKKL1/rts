@@ -18,6 +18,7 @@ namespace Assets.Scripts.TerrainScripts.Generation.Noise
         private System.Random rnd;
         private int[,] neighbourNodes = new int[4, 2] { { 0, 1 }, { 0, -1 }, { 1, 0 }, { -1, 0 } };
 
+        public Func<Vector2Int, bool> canPlaceVein = null;
         public Vector2Int size;
         public int veinSizeMin = 4;
         public int veinSizeMax = 10;
@@ -48,12 +49,32 @@ namespace Assets.Scripts.TerrainScripts.Generation.Noise
             };
         }
 
+        private bool insideTerrainBounds(int x, int y)
+        {
+            return x >= 0 && y >= 0 && x < size.x && y < size.y;
+        }
+
+        //TODO doesn't seem to work
+        //TODO needs to be faster and guarantee that solution is found
+        private Vector2Int GetRandomNode()
+        {
+            int i = 0;
+            Vector2Int rndPos = default;
+            while(i < 5)
+            {
+                rndPos = new Vector2Int(rnd.Next(0, size.x), rnd.Next(0, size.y));
+                if (canPlaceVein == null || canPlaceVein.Invoke(rndPos)) break;
+                i++;
+            }
+            return rndPos;
+        }
+
         public void Generate(int count)
         {
             for(int i = 0; i < count; i++)
             {
                 int currentSize = rnd.Next(veinSizeMin, veinSizeMax + 1);
-                Vector2Int pos = new Vector2Int(rnd.Next(0, size.x), rnd.Next(0, size.y));
+                Vector2Int pos = GetRandomNode();
                 List<Vector2Int> currentVein = new List<Vector2Int>();
                 currentVein.Add(pos);
                 SetNewNode(pos);
@@ -66,14 +87,14 @@ namespace Assets.Scripts.TerrainScripts.Generation.Noise
                     {
                         choosenNode = currentVein[rnd.Next(0, currentVein.Count)];
                         if (!noiseGrid[choosenNode.x, choosenNode.y].surrounded) break;
-                    }                    
+                    }
                     //Chose random neighbour of choosen node
                     int[] randomNodeOrder = Utils.randomOrder(4, rnd);
                     for(int j = 0; j < 4; j++)
                     {
                         int x = choosenNode.x + neighbourNodes[randomNodeOrder[j], 0];
                         int y = choosenNode.y + neighbourNodes[randomNodeOrder[j], 1];
-                        
+                        if (!insideTerrainBounds(x, y)) break;
                         if (noiseGrid[x, y].value == 0)
                         {
                             currentVein.Add(new Vector2Int(x, y));

@@ -16,10 +16,12 @@ namespace Assets.Scripts.TerrainScripts.Details
         private Terrain terrain = GameMain.instance.mainTerrain;
         //TODO remove?
         private BiomesManager biomesManager;
-        public ResourceGenerator(TerrainGenSettings data, BiomesManager biomesManager, int seed)
+        private TerrainGrid terrainGrid;
+        public ResourceGenerator(TerrainGenSettings data, BiomesManager biomesManager,TerrainGrid terrainGrid, int seed)
         {
             terrainGenSettings = data;
             this.biomesManager = biomesManager;
+            this.terrainGrid = terrainGrid;
             forestNoise = new ForestNoise(mainGrid.size.x, mainGrid.size.y, seed)
             {
                 forestAge = 10
@@ -27,8 +29,15 @@ namespace Assets.Scripts.TerrainScripts.Details
             forestNoise.Generate();
 
             rockVeins = new VeinNoise(mainGrid.size.x, mainGrid.size.y, seed);
-            rockVeins.Generate(30);
+            rockVeins.canPlaceVein = canPlaceVein;
+            rockVeins.Generate(50);
 
+        }
+
+        private bool canPlaceVein(Vector2Int pos)
+        {
+            return forestNoise.GetNoise(pos.x, pos.y) == 0 || 
+                !biomesManager.GetBiome(terrainGrid.GetCellAtWorldPos(mainGrid.GetWorldPosition(pos.x, pos.y)).biome).biomeData.resources;
         }
         /// <param name="x">x on main grid</param>
         /// <param name="y">y on main grid</param>
