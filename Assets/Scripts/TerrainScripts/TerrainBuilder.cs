@@ -41,7 +41,7 @@ namespace Assets.Scripts.TerrainScripts
                     if (resourceNode != null)
                     {
 
-                        GameObject tmp = settings.resourceIDManager.GetDetailByID(ResourcePrefabsList.TREE, resourceNode.resourceTypeID);
+                        GameObject tmp = settings.resourceIDManager.GetDetailByID(resourceNode.prefabsList, resourceNode.resourceTypeID);
                         Vector2 v1 = Utils.RandomMove(mainGrid.GetWorldPosition(i, j), mainGrid.cellSize.x * 0.5f, mainGrid.cellSize.y * 0.5f);
                         Vector3 pos = new Vector3(v1.x, terrain.SampleHeight(new Vector3(v1.x, 0, v1.y)), v1.y);
 

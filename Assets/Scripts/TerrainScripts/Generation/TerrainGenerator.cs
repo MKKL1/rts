@@ -100,7 +100,7 @@ namespace Assets.Scripts.TerrainScripts
         private void GenerateFeatures()
         {
             terrainGeneratorMsg.resourceMap = new TerrainResourceNode[mainGrid.size.x, mainGrid.size.y];
-            ResourceGenerator resourceGenerator = new ResourceGenerator(generatorData, seed);
+            ResourceGenerator resourceGenerator = new ResourceGenerator(generatorData, biomesManager, seed);
             for(int x = 1; x < mainGrid.size.x-1; x++)
                 for (int y = 1; y < mainGrid.size.y-1 ; y++)
                 {

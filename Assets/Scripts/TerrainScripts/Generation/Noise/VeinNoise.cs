@@ -76,7 +76,8 @@ namespace Assets.Scripts.TerrainScripts.Generation.Noise
                         
                         if (noiseGrid[x, y].value == 0)
                         {
-                            noiseGrid[x, y].value = 1;
+                            currentVein.Add(new Vector2Int(x, y));
+                            SetNewNode(x,y);
                             break;
                         }
                         if (j == 3)
