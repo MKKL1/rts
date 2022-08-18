@@ -115,7 +115,7 @@ namespace Assets.Scripts.TerrainScripts
                 }
         }
 
-        public void GenerateTerrain()
+        private void GenerateTerrain()
         {
             terrainGeneratorMsg.heightMap = new byte[terrainGrid.gridSize.x, terrainGrid.gridSize.y];
             IterateChunks(chunksize, terrainGrid.gridSize.x, terrainGrid.gridSize.y, (x, y) =>
@@ -128,6 +128,13 @@ namespace Assets.Scripts.TerrainScripts
                 }
                 terrainGeneratorMsg.heightMap[y, x] = (byte)(heightSum * 255);
             });
+        }
+
+        //TODO find big enough area for each player, if not generate area
+        //      ensure that there is at least single path between all player bases
+        public List<Vector3> GenerateStartingAreas(int playerCount)
+        {
+            return null;
         }
 
         public TerrainGeneratorMsg Generate()

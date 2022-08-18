@@ -23,3 +23,8 @@ MonoBehaviour:
   - {fileID: 174596, guid: 41dcf1459594f434a8a9bae6ae03eab0, type: 3}
   - {fileID: 160260, guid: 36cf43d46aeb7494b82aa54d61da3bd7, type: 3}
   - {fileID: 119512, guid: 5578b82f17c954843901e8b68ca21dcc, type: 3}
+  goldOre:
+  - {fileID: 121128, guid: b73c6c1069411b947aaaa9d12c37c652, type: 3}
+  - {fileID: 120164, guid: 61b490990a08faa419b1bb6a6708ad09, type: 3}
+  - {fileID: 126190, guid: be320b6d231cacc4894038f2c3375674, type: 3}
+  - {fileID: 199114, guid: ace40d2a4a1290f4f96f01a7e4ecd7f7, type: 3}
