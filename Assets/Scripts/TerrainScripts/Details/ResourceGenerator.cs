@@ -13,7 +13,6 @@ namespace Assets.Scripts.TerrainScripts.Details
         private VeinNoise goldVeins;
         private System.Random rnd = new System.Random();
         private MainGrid mainGrid = GameMain.instance.mainGrid;
-        private Terrain terrain = GameMain.instance.mainTerrain;
         //TODO remove?
         private BiomesManager biomesManager;
         private TerrainGrid terrainGrid;

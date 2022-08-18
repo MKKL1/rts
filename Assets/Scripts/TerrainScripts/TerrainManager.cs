@@ -17,6 +17,9 @@ public class TerrainManager : MonoBehaviour
     public Transform detailsTransform;
     public TerrainGenSettings terrainGenSettings;
 
+    //TODO remove
+    public MeshRenderer walkable;
+
     public static float waterLevel;
     public static Vector2 terrainCornerBottomLeft;
     public static Vector2 terrainCornerTopRight;
@@ -33,7 +36,6 @@ public class TerrainManager : MonoBehaviour
     public void initTerrain()
     {
         var watch = System.Diagnostics.Stopwatch.StartNew();
-
         TerrainGenerator terrainGenerator = new TerrainGenerator(257, 257, 4, terrainGenSettings, seed);
         GameMain.instance.mainGrid = terrainGenerator.CreateMainGrid(257, 257);
         terrainGenerator.blendingMethod = BlendingMethod.LerpBlending; 
@@ -48,7 +50,7 @@ public class TerrainManager : MonoBehaviour
         var elapsedMs = watch.ElapsedMilliseconds;
         Debug.Log(elapsedMs);
 
-        
+        walkable.material.SetTexture("_Buildable_Mask", GameMain.instance.mainGrid.GetWalkable());
     }
     void Start()
     {

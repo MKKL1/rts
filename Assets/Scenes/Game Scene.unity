@@ -746,7 +746,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!65 &391970348
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -818,7 +818,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 391970347}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 507, y: -25, z: 492}
+  m_LocalPosition: {x: 507, y: -19.15, z: 492}
   m_LocalScale: {x: 1028, y: 100, z: 1028}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -1372,6 +1372,7 @@ MonoBehaviour:
   waterTransform: {fileID: 1532452277}
   detailsTransform: {fileID: 1145723806}
   terrainGenSettings: {fileID: 11400000, guid: 7c1043674e1e22744a9baef0efbe9fc4, type: 2}
+  walkable: {fileID: 391970349}
   gizmosHeight: 20
   seed: 2095
 --- !u!4 &712011509
@@ -2049,7 +2050,7 @@ Transform:
   m_GameObject: {fileID: 1532452273}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 500, y: 18, z: 500}
-  m_LocalScale: {x: 100, y: 1, z: 100}
+  m_LocalScale: {x: 200, y: 1, z: 200}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 1075746889}

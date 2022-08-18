@@ -71,5 +71,20 @@ namespace Assets.Scripts
         {
             (arr[p1], arr[p2]) = (arr[p2], arr[p1]);
         }
+
+        public static void SetArrayTo<T>(ref T[,] arr, T value)
+        {
+            for(int i = 0; i < arr.GetLength(0); i++)
+                for(int j = 0; j < arr.GetLength(1); j++)
+                {
+                    arr[i, j] = value;
+                }
+        }
+
+        public static void SetArrayTo<T>(ref T[] arr, T value)
+        {
+            for (int i = 0; i < arr.GetLength(0); i++)
+                arr[i] = value;
+        }
     }
 }

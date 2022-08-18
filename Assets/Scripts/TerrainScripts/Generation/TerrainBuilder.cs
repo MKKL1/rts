@@ -55,6 +55,7 @@ namespace Assets.Scripts.TerrainScripts
                             res.gridPosY = (short)j;
                             mainGrid.terrainResourceMap[i, j] = res;
                         }
+                        mainGrid.walkable[i, j] = false;
                     }
                 }
         }
