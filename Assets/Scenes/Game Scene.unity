@@ -818,8 +818,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 391970347}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 507, y: 27.8, z: 492}
-  m_LocalScale: {x: 1000, y: 20, z: 1000}
+  m_LocalPosition: {x: 507, y: -25, z: 492}
+  m_LocalScale: {x: 1028, y: 100, z: 1028}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
@@ -1422,8 +1422,8 @@ MonoBehaviour:
   terrainListeners:
   - {fileID: 107236309}
   bounds:
-    m_Center: {x: 500, y: 50, z: 500}
-    m_Extent: {x: 500, y: 50, z: 500}
+    m_Center: {x: 514, y: 50, z: 514}
+    m_Extent: {x: 514, y: 50, z: 514}
   filterShader: {fileID: 4800000, guid: 0f44df78e3d64d9cb2616cac3d84cb77, type: 3}
 --- !u!1 &882451578
 GameObject:
@@ -1585,7 +1585,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 1030442202}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 0c212b63fadb1a34fb3e9f8334a8513f, type: 3}
+  m_Script: {fileID: 11500000, guid: 389a1c5d754dc5f43bf87bdabf9fe5e3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   holdMinDistance: 3
@@ -1756,11 +1756,17 @@ MonoBehaviour:
   m_GameObject: {fileID: 1357005831}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 332aaaedf0293ac4e937df61aec96943, type: 3}
+  m_Script: {fileID: 0}
   m_Name: 
   m_EditorClassIdentifier: 
   syncMode: 0
   syncInterval: 0.1
+  lastSyncTime: 0
+  <netIdentity>k__BackingField: {fileID: 0}
+  <ComponentIndex>k__BackingField: 0
+  <syncVarDirtyBits>k__BackingField: 0
+  syncObjectDirtyBits: 0
+  syncVarHookGuard: 0
   debug: 1
 --- !u!114 &1357005833
 MonoBehaviour:
@@ -2409,14 +2415,14 @@ MonoBehaviour:
   m_GameObject: {fileID: 6605040748449310635}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d4ab6fbde8a09e14e864c735664942e8, type: 3}
+  m_Script: {fileID: 11500000, guid: f2cd4e047eabc534dab755588d3e4c1a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  keyboardMoveSpeedMax: 100
-  keyboardMoveSpeedMin: 20
-  mouseMoveSpeedMax: 2000
-  mouseMoveSpeedMin: 2
-  zoomSpeed: 400
+  keyboardMoveSpeedMax: 200
+  keyboardMoveSpeedMin: 60
+  mouseMoveSpeedMax: 800
+  mouseMoveSpeedMin: 400
+  zoomSpeed: 600
   zoomMinDistFromTerrain: 15
   minDistFromTerrainBorder: 30
   smoothTime: 0.3

@@ -4,24 +4,25 @@ using UnityEngine;
 
 namespace Assets.Scripts.TerrainScripts
 {
-    public class MainGrid
+
+    public struct MainGrid
     {
         public TerrainResource[,] terrainResourceMap;
         public Vector2 cellSize;
         public Vector2Int size;
 
         private Vector3 terrainPos;
-        public MainGrid(int sizeX, int sizeY)
+        public MainGrid(Vector2Int size, Vector2 terrainSize)
         {
-            size = new Vector2Int(sizeX, sizeY);
-            terrainResourceMap = new TerrainResource[sizeX, sizeY];
+            this.size = size;
+            terrainResourceMap = new TerrainResource[size.x, size.y];
+            cellSize = terrainSize / size;
+            terrainPos = new Vector3(0, 0, 0);
         }
 
-        public void CalculateCellSize(Terrain terrain)
-        {
-            cellSize = new Vector2(terrain.terrainData.size.x/size.x, terrain.terrainData.size.z / size.y);
-            terrainPos = terrain.transform.position;
-        }
+        public MainGrid(int sizeX, int sizeY, Vector2 terrainSize) : this(new Vector2Int(sizeX, sizeY), terrainSize) { }
+
+        public MainGrid(int sizeX, int sizeY, float terrainSizeX, float terrainSizeY) : this(sizeX, sizeY, new Vector2(terrainSizeX, terrainSizeY)) {}
 
         public Vector2 GetWorldPosition(int x, int y)
         {

@@ -45,7 +45,7 @@ namespace Assets.Scripts.TerrainScripts.Details
         private bool canPlaceVein(Vector2Int pos)
         {
             return forestNoise.GetNoise(pos.x, pos.y) == 0 || 
-                !biomesManager.GetBiome(terrainGrid.GetCellAtWorldPos(mainGrid.GetWorldPosition(pos.x, pos.y)).biome).biomeData.resources;
+                !biomesManager.GetBiome(terrainGrid.GetCellAtWorldPos(mainGrid.GetWorldPosition(pos.x, pos.y))).biomeData.resources;
         }
         /// <param name="x">x on main grid</param>
         /// <param name="y">y on main grid</param>

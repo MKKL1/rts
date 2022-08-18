@@ -17,7 +17,6 @@ public class TerrainManager : MonoBehaviour
     public Transform detailsTransform;
     public TerrainGenSettings terrainGenSettings;
 
-    public static TerrainGrid terrainGrid;
     public static float waterLevel;
     public static Vector2 terrainCornerBottomLeft;
     public static Vector2 terrainCornerTopRight;
@@ -35,11 +34,8 @@ public class TerrainManager : MonoBehaviour
     {
         var watch = System.Diagnostics.Stopwatch.StartNew();
 
-        terrainGrid = new TerrainGrid(256, 256, terrain);
-        GameMain.instance.mainGrid = new MainGrid(256, 256);
-        GameMain.instance.mainGrid.CalculateCellSize(terrain);
-
-        TerrainGenerator terrainGenerator = new TerrainGenerator(ref terrainGrid, terrainGenSettings, seed);
+        TerrainGenerator terrainGenerator = new TerrainGenerator(257, 257, 4, terrainGenSettings, seed);
+        GameMain.instance.mainGrid = terrainGenerator.CreateMainGrid(257, 257);
         terrainGenerator.blendingMethod = BlendingMethod.LerpBlending; 
 
         //TODO move to client

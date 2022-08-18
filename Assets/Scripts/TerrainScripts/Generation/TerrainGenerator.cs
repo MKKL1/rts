@@ -9,8 +9,12 @@ using UnityEngine;
 
 namespace Assets.Scripts.TerrainScripts
 {
+    /// <summary>
+    /// Data that will be sent to clients
+    /// </summary>
     public struct TerrainGeneratorMsg
     {
+        public TerrainGrid terrainGrid;
         public byte[,] heightMap;
         public TerrainResourceNode[,] resourceMap;
     }
@@ -22,9 +26,8 @@ namespace Assets.Scripts.TerrainScripts
         public BlendingMethod blendingMethod = BlendingMethod.LerpBlending;
         public Transform detailTransform = null;     
 
-        private Vector2Int terrainSize;
         private TerrainGrid terrainGrid;
-        private MainGrid mainGrid = GameMain.instance.mainGrid;
+        private MainGrid mainGrid;
         private BiomesManager biomesManager;
         private BiomeWeightManager biomeWeightManager;
         private TerrainGenSettings generatorData;
@@ -35,15 +38,21 @@ namespace Assets.Scripts.TerrainScripts
         private readonly ParallelOptions parallelOptions = new ParallelOptions { MaxDegreeOfParallelism = 8 };
 
         private int seed;
-        public TerrainGenerator(ref TerrainGrid terrainGrid, TerrainGenSettings generatorData, int seed = 69)
+        public TerrainGenerator(int sizeX, int sizeY, float cellSize, TerrainGenSettings generatorData, int seed = 69)
         {
-            this.terrainGrid = terrainGrid;
+            terrainGrid = new TerrainGrid(sizeX, sizeY, cellSize, cellSize);
+
             this.generatorData = generatorData;
             this.seed = seed;
-            terrainSize = terrainGrid.gridSize;
-            heightmap = new float[terrainSize.x, terrainSize.y];
+            heightmap = new float[terrainGrid.gridSize.x, terrainGrid.gridSize.y];
 
             biomesManager = new BiomesManager(seed);
+        }
+
+        public MainGrid CreateMainGrid(int sizeX, int sizeY)
+        {
+            mainGrid = new MainGrid(sizeX, sizeY, terrainGrid.GetTerrainWorldSize());
+            return mainGrid;
         }
 
         private FastNoiseLite NewBiomeNoise(int _seed)
@@ -79,7 +88,7 @@ namespace Assets.Scripts.TerrainScripts
                 BiomeType currentbiome = biomesManager.GetBiomeType(biomeHeightMap[x, y]);
                 biomeWeightManager.SetWeight(currentbiome, x, y);
 
-                terrainGrid.grid[x, y].biome = currentbiome;
+                terrainGrid.biomeGrid[x, y] = currentbiome;
             });
 
             //Blending
@@ -105,7 +114,7 @@ namespace Assets.Scripts.TerrainScripts
                 for (int y = 1; y < mainGrid.size.y-1 ; y++)
                 {
                     Vector2 worldPosition = mainGrid.GetWorldPosition(x, y);
-                    BiomeType biomeType = terrainGrid.GetCellAtWorldPos(worldPosition).biome;
+                    BiomeType biomeType = terrainGrid.GetCellAtWorldPos(worldPosition);
                     if (biomesManager.GetBiome(biomeType).biomeData.resources)
                     {
                         float percentageSpawn = biomeWeightManager.GetWeight(biomeType, x, y);
@@ -142,6 +151,7 @@ namespace Assets.Scripts.TerrainScripts
             GenerateBiome();
             GenerateTerrain();
             GenerateFeatures();
+            terrainGeneratorMsg.terrainGrid = terrainGrid;
             return terrainGeneratorMsg;
         }
 

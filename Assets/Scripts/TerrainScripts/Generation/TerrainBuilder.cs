@@ -16,6 +16,7 @@ namespace Assets.Scripts.TerrainScripts
             this.mainGrid = mainGrid;
         }
 
+        //TODO can be async
         public void SetHeightMap(byte[,] heightMap)
         {
             float[,] floatHeightMap = new float[heightMap.GetLength(0), heightMap.GetLength(1)];
@@ -42,11 +43,18 @@ namespace Assets.Scripts.TerrainScripts
                     {
 
                         GameObject tmp = settings.resourceIDManager.GetDetailByID(resourceNode.prefabsList, resourceNode.resourceTypeID);
-                        Vector2 v1 = Utils.RandomMove(mainGrid.GetWorldPosition(i, j), mainGrid.cellSize.x * 0.5f, mainGrid.cellSize.y * 0.5f);
+                        Vector2 v1 = Utils.RandomMove(mainGrid.GetWorldPosition(i, j), mainGrid.cellSize.x * 0.25f, mainGrid.cellSize.y * 0.25f);
                         Vector3 pos = new Vector3(v1.x, terrain.SampleHeight(new Vector3(v1.x, 0, v1.y)), v1.y);
 
                         GameObject ins = Object.Instantiate(tmp, pos, Quaternion.Euler(0, Random.Range(0, 359), 0));
                         ins.transform.parent = featuresTransform;
+                        TerrainResource res = ins.GetComponent<TerrainResource>();
+                        if (res != null)
+                        {
+                            res.gridPosX = (short)i;
+                            res.gridPosY = (short)j;
+                            mainGrid.terrainResourceMap[i, j] = res;
+                        }
                     }
                 }
         }
