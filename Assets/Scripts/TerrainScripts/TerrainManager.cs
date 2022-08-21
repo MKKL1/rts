@@ -9,6 +9,8 @@ using Assets.Scripts.TerrainScripts.BiomeBlending;
 using Assets.Scripts.TerrainScripts.Biomes;
 using Assets.Scripts.TerrainScripts.Details;
 using Assets.Scripts.TerrainScripts.Generation.Noise;
+using Mirror;
+using Assets.Scripts.TerrainScripts.Generation;
 
 public class TerrainManager : MonoBehaviour
 {
@@ -40,17 +42,23 @@ public class TerrainManager : MonoBehaviour
         GameMain.instance.mainGrid = terrainGenerator.CreateMainGrid(257, 257);
         terrainGenerator.blendingMethod = BlendingMethod.LerpBlending; 
 
-        //TODO move to client
-        TerrainBuilder terrainBuilder = new TerrainBuilder(terrainGenSettings, terrain, GameMain.instance.mainGrid);
         //TODO use compression
-        TerrainGeneratorMsg msg = terrainGenerator.Generate();
-        terrainBuilder.BuildTerrain(msg, detailsTransform);
+        TerrainGeneratorResult msg = terrainGenerator.Generate();
+        NetworkServer.SendToAll(msg);
 
         watch.Stop();
         var elapsedMs = watch.ElapsedMilliseconds;
         Debug.Log(elapsedMs);
 
         walkable.material.SetTexture("_Buildable_Mask", GameMain.instance.mainGrid.GetWalkable());
+    }
+
+    [ClientRpc]
+    private void BuildTerrainClient(TerrainGeneratorResult msg)
+    {
+        GameMain.instance.mainGrid = msg.mainGrid;
+        TerrainBuilder terrainBuilder = new TerrainBuilder(terrainGenSettings, terrain, GameMain.instance.mainGrid);
+        terrainBuilder.BuildTerrain(msg, detailsTransform);
     }
     void Start()
     {

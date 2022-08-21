@@ -1,30 +1,22 @@
 ﻿using Assets.Scripts.TerrainScripts.BiomeBlending;
 using Assets.Scripts.TerrainScripts.Biomes;
 using Assets.Scripts.TerrainScripts.Details;
+using Mirror;
 using System.Collections;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using UnityEngine;
 
-namespace Assets.Scripts.TerrainScripts
+namespace Assets.Scripts.TerrainScripts.Generation
 {
-    /// <summary>
-    /// Data that will be sent to clients
-    /// </summary>
-    public struct TerrainGeneratorMsg
-    {
-        public TerrainGrid terrainGrid;
-        public byte[,] heightMap;
-        public TerrainResourceNode[,] resourceMap;
-    }
     public class TerrainGenerator
     {
         private readonly int chunksize = 128;
 
         public float[,] heightmap { get; }
         public BlendingMethod blendingMethod = BlendingMethod.LerpBlending;
-        public Transform detailTransform = null;     
+        public Transform detailTransform = null;
 
         private TerrainGrid terrainGrid;
         private MainGrid mainGrid;
@@ -32,7 +24,7 @@ namespace Assets.Scripts.TerrainScripts
         private BiomeWeightManager biomeWeightManager;
         private TerrainGenSettings generatorData;
 
-        private TerrainGeneratorMsg terrainGeneratorMsg = new TerrainGeneratorMsg();
+        
 
 
         private readonly ParallelOptions parallelOptions = new ParallelOptions { MaxDegreeOfParallelism = 8 };
@@ -78,6 +70,7 @@ namespace Assets.Scripts.TerrainScripts
 
             return biomeHeightMap;
         }
+
         private void GenerateBiome()
         {
             biomeWeightManager = new BiomeWeightManager(biomesManager, terrainGrid.gridSize);
@@ -106,9 +99,9 @@ namespace Assets.Scripts.TerrainScripts
             blendingAlgorithm.blendBiomes(ref biomeWeightManager);
         }
 
-        private void GenerateFeatures()
+        private TerrainResourceNode[,] GenerateFeatures()
         {
-            terrainGeneratorMsg.resourceMap = new TerrainResourceNode[mainGrid.size.x, mainGrid.size.y];
+            TerrainResourceNode[,] resourceMap = new TerrainResourceNode[mainGrid.size.x, mainGrid.size.y];
             ResourceGenerator resourceGenerator = new ResourceGenerator(generatorData, biomesManager, terrainGrid, seed);
             for(int x = 1; x < mainGrid.size.x-1; x++)
                 for (int y = 1; y < mainGrid.size.y-1 ; y++)
@@ -119,14 +112,16 @@ namespace Assets.Scripts.TerrainScripts
                     {
                         float percentageSpawn = biomeWeightManager.GetWeight(biomeType, x, y);
                         if(percentageSpawn == 1f || percentageSpawn > Random.value)
-                            terrainGeneratorMsg.resourceMap[x, y] = resourceGenerator.GetResourceID(x, y);
+                            resourceMap[x, y] = resourceGenerator.GetResourceID(x, y);
                     }
                 }
+
+            return resourceMap;
         }
 
-        private void GenerateTerrain()
+        private byte[,] GenerateTerrain()
         {
-            terrainGeneratorMsg.heightMap = new byte[terrainGrid.gridSize.x, terrainGrid.gridSize.y];
+            byte[,] heightMap = new byte[terrainGrid.gridSize.x, terrainGrid.gridSize.y];
             IterateChunks(chunksize, terrainGrid.gridSize.x, terrainGrid.gridSize.y, (x, y) =>
             {
                 float heightSum = 0f;
@@ -135,8 +130,10 @@ namespace Assets.Scripts.TerrainScripts
                     if (entry.Value != 0f)
                         heightSum += biomesManager.GetBiome(entry.Key).GetHeight(x, y) * entry.Value;
                 }
-                terrainGeneratorMsg.heightMap[y, x] = (byte)(heightSum * 255);
+                heightMap[y, x] = (byte)(heightSum * 255);
             });
+
+            return heightMap;
         }
 
         //TODO find big enough area for each player, if not generate area
@@ -146,12 +143,16 @@ namespace Assets.Scripts.TerrainScripts
             return null;
         }
 
-        public TerrainGeneratorMsg Generate()
+        public TerrainGeneratorResult Generate()
         {
             GenerateBiome();
-            GenerateTerrain();
-            GenerateFeatures();
-            terrainGeneratorMsg.terrainGrid = terrainGrid;
+            TerrainGeneratorResult terrainGeneratorMsg = new TerrainGeneratorResult()
+            {
+                heightMap = GenerateTerrain(),
+                resourceMap = GenerateFeatures(),
+                biomeGrid = terrainGrid.biomeGrid,
+                mainGrid = this.mainGrid
+            };
             return terrainGeneratorMsg;
         }
 

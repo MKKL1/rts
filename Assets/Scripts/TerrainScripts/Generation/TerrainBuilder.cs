@@ -2,7 +2,7 @@
 using System.Collections;
 using UnityEngine;
 
-namespace Assets.Scripts.TerrainScripts
+namespace Assets.Scripts.TerrainScripts.Generation
 {
     public class TerrainBuilder
     {
@@ -43,7 +43,7 @@ namespace Assets.Scripts.TerrainScripts
                     {
 
                         GameObject tmp = settings.resourceIDManager.GetDetailByID(resourceNode.prefabsList, resourceNode.resourceTypeID);
-                        Vector2 v1 = Utils.RandomMove(mainGrid.GetWorldPosition(i, j), mainGrid.cellSize.x * 0.25f, mainGrid.cellSize.y * 0.25f);
+                        Vector2 v1 = Utils.RandomMove(mainGrid.GetWorldPosition(i, j), mainGrid.cellSize.x * 0.4f, mainGrid.cellSize.y * 0.4f);
                         Vector3 pos = new Vector3(v1.x, terrain.SampleHeight(new Vector3(v1.x, 0, v1.y)), v1.y);
 
                         GameObject ins = Object.Instantiate(tmp, pos, Quaternion.Euler(0, Random.Range(0, 359), 0));
@@ -60,7 +60,7 @@ namespace Assets.Scripts.TerrainScripts
                 }
         }
 
-        public void BuildTerrain(TerrainGeneratorMsg terrainGenMsg, Transform featuresTransform)
+        public void BuildTerrain(TerrainGeneratorResult terrainGenMsg, Transform featuresTransform)
         {
             SetHeightMap(terrainGenMsg.heightMap);
             SetResources(terrainGenMsg.resourceMap, featuresTransform);

@@ -175,6 +175,11 @@ namespace Mirror
                 writeDelegate(this, value);
             }
         }
+
+        public void WriteUInt(int v)
+        {
+            throw new NotImplementedException();
+        }
     }
 
     /// <summary>Helper class that weaver populates with all writer types.</summary>
