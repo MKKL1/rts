@@ -11,6 +11,7 @@ using Assets.Scripts.TerrainScripts.Details;
 using Assets.Scripts.TerrainScripts.Generation.Noise;
 using Mirror;
 using Assets.Scripts.TerrainScripts.Generation;
+using System;
 
 public class TerrainManager : NetworkBehaviour
 {
@@ -22,10 +23,12 @@ public class TerrainManager : NetworkBehaviour
     //TODO remove
     public MeshRenderer walkable;
 
-    public static float waterLevel;
-    public static Vector2 terrainCornerBottomLeft;
-    public static Vector2 terrainCornerTopRight;
+    public float waterLevel;
+    public Vector2 terrainCornerBottomLeft;
+    public Vector2 terrainCornerTopRight = new Vector2(500, 500);
     public float gizmosHeight = 0f;
+
+    public event Action terrainGenerated;
 
     public int seed = 69;
 
@@ -57,15 +60,20 @@ public class TerrainManager : NetworkBehaviour
     [ClientRpc]
     private void BuildTerrainClient(TerrainGeneratorResult msg)
     {
+
         GameMain.instance.mainGrid = new MainGrid(msg.mainGridSize, msg.terrainSize);
         TerrainBuilder terrainBuilder = new TerrainBuilder(terrainGenSettings, terrain, GameMain.instance.mainGrid);
         terrainBuilder.BuildTerrain(msg, detailsTransform);
+
+        terrainCornerBottomLeft = new Vector2(terrain.transform.position.x, terrain.transform.position.z);
+        terrainCornerTopRight = terrainCornerBottomLeft + msg.terrainSize;
+
+        terrainGenerated.Invoke();
     }
 
     void Start()
     {
-        terrainCornerBottomLeft = new Vector2(terrain.transform.position.x, terrain.transform.position.z);
-        terrainCornerTopRight = new Vector2(terrainCornerBottomLeft.x + terrain.terrainData.size.x, terrainCornerBottomLeft.y + terrain.terrainData.size.z);
+        
         waterLevel = waterTransform.position.y;
     }
 

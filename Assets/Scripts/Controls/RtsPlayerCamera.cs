@@ -53,13 +53,14 @@ namespace Assets.Scripts
             //Set initial target position to current position, not (0,0,0)
             targetPosition = transform.position;
 
-            terrainPosY = terrain.transform.position.y;
-            terrainCornerBottomLeft = TerrainManager.terrainCornerBottomLeft;
-            terrainCornerTopRight = TerrainManager.terrainCornerTopRight;
+            //Setting event handler that updates terrain corners
+            OnTerrainGenerated();
+            TerrainManager.instance.terrainGenerated += OnTerrainGenerated;
+            
 
             //Camera can only go as height as placed at startup and as low as terrain
             maxCameraY = transform.position.y;
-            minCameraY = TerrainManager.waterLevel;
+            minCameraY = TerrainManager.instance.waterLevel;
 
             //Calculating proportion of speed change based on zoom
             keyboardSpeedEq = Utils.lineThruTwoPoints(minCameraY, keyboardMoveSpeedMin, maxCameraY, keyboardMoveSpeedMax);
@@ -107,10 +108,28 @@ namespace Assets.Scripts
                 zoomValue = height;
         }
 
+        private void OnTerrainGenerated()
+        {
+            terrainPosY = terrain.transform.position.y;
+            terrainCornerBottomLeft = TerrainManager.instance.terrainCornerBottomLeft;
+            terrainCornerTopRight = TerrainManager.instance.terrainCornerTopRight;
+        }
+
         private void FixTerrainBorder()
         {
-            targetPosition.x = Mathf.Clamp(targetPosition.x, terrainCornerBottomLeft.x + minDistFromTerrainBorder, terrainCornerTopRight.x - minDistFromTerrainBorder);
-            targetPosition.z = Mathf.Clamp(targetPosition.z, terrainCornerBottomLeft.y + minDistFromTerrainBorder, terrainCornerTopRight.y - minDistFromTerrainBorder);
+            targetPosition.x = ClampAdd(targetPosition.x, terrainCornerBottomLeft.x + minDistFromTerrainBorder, terrainCornerTopRight.x - minDistFromTerrainBorder, 5);
+            targetPosition.z = ClampAdd(targetPosition.z, terrainCornerBottomLeft.y + minDistFromTerrainBorder, terrainCornerTopRight.y - minDistFromTerrainBorder, 5);
+        }
+
+        //Clamping value to given min and max values and adding value to create force effect
+        //which keeps camera from going out of terrain bounds
+        private float ClampAdd(float value, float min, float max, float add)
+        {
+            if (value < min)
+                return value + add;
+            if(value > max) 
+                return value - add;
+            return value;
         }
 
         private void KeyboardControl()
@@ -129,6 +148,7 @@ namespace Assets.Scripts
             if(addPos != Vector3.zero)
             {
                 float _speed = keyboardSpeedEq.a * zoomValue + keyboardSpeedEq.b;
+                if (_speed < 0) _speed = 0;
                 targetPosition += Vector3.Normalize(addPos) * _speed * Time.deltaTime;
                 FixDistFromTerrain();
                 FixTerrainBorder();
@@ -157,6 +177,7 @@ namespace Assets.Scripts
             if (mousemovevector != Vector3.zero)
             {
                 float _speed = mouseSpeedEq.a * zoomValue + mouseSpeedEq.b;
+                if (_speed < 0) _speed = 0;
                 targetPosition -= mousemovevector * Time.deltaTime * _speed;
                 FixDistFromTerrain();
                 FixTerrainBorder();
