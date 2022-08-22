@@ -42,6 +42,13 @@ namespace Assets.Scripts.Networking
 
         public static void WriteArray<T>(this NetworkWriter networkWriter, T[,] array)
         {
+            //Checking if weaver has given writer before iterating
+            if (Writer<T>.write == null)
+            {
+                Debug.LogError("No writer found for " + typeof(T));
+                return;
+            }
+
             for (int i = 0; i < array.GetLength(0); i++)
                 for (int j = 0; j < array.GetLength(1); j++)
                 {
@@ -52,6 +59,13 @@ namespace Assets.Scripts.Networking
 
         public static T[,] ReadArray<T>(this NetworkReader networkReader, uint sizex, uint sizey)
         {
+            //Checking if weaver has given reader before iterating
+            if (Reader<T>.read == null)
+            {
+                Debug.LogError("No reader found for " + typeof(T));
+                return null;
+            }
+
             T[,] array = new T[sizex, sizey];
 
             for (int i = 0; i < array.GetLength(0); i++)
@@ -83,6 +97,17 @@ namespace Assets.Scripts.Networking
             value.heightMap = networkReader.ReadArray<byte>((uint)value.terrainGridSize.x, (uint)value.terrainGridSize.y);
             value.resourceMap = networkReader.ReadArray<TerrainResourceNode>((uint)value.terrainGridSize.x, (uint)value.terrainGridSize.y);
             return value;
+        }
+
+        //TODO for some reason enum has to be treated like custom type
+        public static void WriteBiomeType(this NetworkWriter networkWriter, BiomeType value)
+        {
+            networkWriter.WriteByte((byte)value);
+        }
+
+        public static BiomeType ReadBiomeType(this NetworkReader networkReader)
+        {
+            return (BiomeType)networkReader.ReadByte();
         }
     }
 }
