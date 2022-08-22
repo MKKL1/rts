@@ -39,7 +39,7 @@ namespace Assets.Scripts.TerrainScripts.Generation
                 for (int j = 0; j < terrainResourceMap.GetLength(1); j++)
                 {
                     TerrainResourceNode resourceNode = terrainResourceMap[i, j];
-                    if (resourceNode != null)
+                    if (!resourceNode.isEmpty())
                     {
 
                         GameObject tmp = settings.resourceIDManager.GetDetailByID(resourceNode.prefabsList, resourceNode.resourceTypeID);

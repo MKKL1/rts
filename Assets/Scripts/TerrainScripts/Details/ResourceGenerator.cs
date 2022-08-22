@@ -12,12 +12,17 @@ namespace Assets.Scripts.TerrainScripts.Details
         private VeinNoise rockVeins;
         private VeinNoise goldVeins;
         private System.Random rnd = new System.Random();
+        //TODO pass thru constructor
         private MainGrid mainGrid = GameMain.instance.mainGrid;
         //TODO remove?
         private BiomesManager biomesManager;
         private TerrainGrid terrainGrid;
         private int rockCount;
         private int goldOreCount;
+
+        /// <summary>
+        /// Handles generation of resource map from which resources can be placed on terrain
+        /// </summary>
         public ResourceGenerator(TerrainGenSettings data, BiomesManager biomesManager,TerrainGrid terrainGrid, int seed)
         {
             terrainGenSettings = data;
@@ -88,8 +93,12 @@ namespace Assets.Scripts.TerrainScripts.Details
                 };
             }
 
-            
-            return null;
+
+            return new TerrainResourceNode()
+            {
+                prefabsList = ResourcePrefabsList.NONE,
+                resourceTypeID = 0
+            };
         }
     }
 }
