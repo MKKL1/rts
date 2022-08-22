@@ -12,7 +12,7 @@ using Assets.Scripts.TerrainScripts.Generation.Noise;
 using Mirror;
 using Assets.Scripts.TerrainScripts.Generation;
 
-public class TerrainManager : MonoBehaviour
+public class TerrainManager : NetworkBehaviour
 {
     public Terrain terrain;
     public Transform waterTransform;
@@ -35,6 +35,7 @@ public class TerrainManager : MonoBehaviour
         instance = this;
     }
 
+    [Server]
     public void initTerrain()
     {
         var watch = System.Diagnostics.Stopwatch.StartNew();
@@ -44,7 +45,7 @@ public class TerrainManager : MonoBehaviour
 
         //TODO use compression
         TerrainGeneratorResult msg = terrainGenerator.Generate();
-        NetworkServer.SendToAll(msg);
+        BuildTerrainClient(msg);
 
         watch.Stop();
         var elapsedMs = watch.ElapsedMilliseconds;
@@ -56,14 +57,13 @@ public class TerrainManager : MonoBehaviour
     [ClientRpc]
     private void BuildTerrainClient(TerrainGeneratorResult msg)
     {
-        GameMain.instance.mainGrid = msg.mainGrid;
+        GameMain.instance.mainGrid = new MainGrid(msg.mainGridSize, msg.terrainSize);
         TerrainBuilder terrainBuilder = new TerrainBuilder(terrainGenSettings, terrain, GameMain.instance.mainGrid);
         terrainBuilder.BuildTerrain(msg, detailsTransform);
     }
+
     void Start()
     {
-        
-        initTerrain();
         terrainCornerBottomLeft = new Vector2(terrain.transform.position.x, terrain.transform.position.z);
         terrainCornerTopRight = new Vector2(terrainCornerBottomLeft.x + terrain.terrainData.size.x, terrainCornerBottomLeft.y + terrain.terrainData.size.z);
         waterLevel = waterTransform.position.y;

@@ -55,7 +55,7 @@ public class RTSNetworkManager : NetworkManager
         Debug.Log("OnServerAddPlayer" + data.name);
     }
 
-    
+    [Server]
     public void startGame(bool changescene)
     {
         if (gameState != GameState.LOBBY) return;
@@ -63,6 +63,8 @@ public class RTSNetworkManager : NetworkManager
         if (changescene) ServerChangeScene(gameScene);
         playerList.ForEach(x => x.state = PlayerState.PLAYING);
         gameState = GameState.GAME_ACTIVE;
+
+        GameMain.instance.terrainManager.initTerrain();
     }
 
 

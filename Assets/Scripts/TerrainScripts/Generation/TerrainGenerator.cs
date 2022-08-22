@@ -151,7 +151,9 @@ namespace Assets.Scripts.TerrainScripts.Generation
                 heightMap = GenerateTerrain(),
                 resourceMap = GenerateFeatures(),
                 biomeGrid = terrainGrid.biomeGrid,
-                mainGrid = this.mainGrid
+                mainGridSize = mainGrid.size,
+                terrainSize = terrainGrid.GetTerrainWorldSize(),
+                terrainGridSize = terrainGrid.gridSize
             };
             return terrainGeneratorMsg;
         }

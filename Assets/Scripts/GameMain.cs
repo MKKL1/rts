@@ -11,6 +11,7 @@ public class GameMain : MonoBehaviour
     public Terrain mainTerrain;
     public Camera localCamera;
     public SelectionTool localSelectionTool;
+    public TerrainManager terrainManager;
 
     public MainGrid mainGrid;
 

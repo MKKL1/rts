@@ -6,18 +6,13 @@ using UnityEngine;
 
 namespace Assets.Scripts.TerrainScripts.Generation
 {
-    public class TerrainGeneratorResult : NetworkMessage
+    public struct TerrainGeneratorResult : NetworkMessage
     {
-        //TODO temporary sending entire MainGrid
-        public MainGrid mainGrid;
+        public Vector2Int mainGridSize;
+        public Vector2 terrainSize;
+        public Vector2Int terrainGridSize;
         public BiomeType[,] biomeGrid;
         public byte[,] heightMap;
         public TerrainResourceNode[,] resourceMap;
-
-        public void Write(NetworkWriter networkWriter)
-        {
-            networkWriter.WriteVector2Int(mainGrid.size);
-            networkWriter.WriteArray(biomeGrid);
-        }
     }
 }
