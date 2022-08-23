@@ -76,38 +76,5 @@ namespace Assets.Scripts.Networking
 
             return array;
         }
-
-        public static void WriteTerrainGenResult(this NetworkWriter networkWriter, TerrainGeneratorResult value)
-        {
-            networkWriter.WriteVector2Int(value.mainGridSize);
-            networkWriter.WriteVector2(value.terrainSize);
-            networkWriter.WriteVector2Int(value.terrainGridSize);
-            networkWriter.WriteArray(value.biomeGrid);
-            networkWriter.WriteArray(value.heightMap);
-            networkWriter.WriteArray(value.resourceMap);
-        }
-
-        public static TerrainGeneratorResult ReadTerrainGenResult(this NetworkReader networkReader)
-        {
-            TerrainGeneratorResult value = new TerrainGeneratorResult();
-            value.mainGridSize = networkReader.ReadVector2Int();
-            value.terrainSize = networkReader.ReadVector2();
-            value.terrainGridSize = networkReader.ReadVector2Int();
-            value.biomeGrid = networkReader.ReadArray<BiomeType>((uint)value.terrainGridSize.x, (uint)value.terrainGridSize.y);
-            value.heightMap = networkReader.ReadArray<byte>((uint)value.terrainGridSize.x, (uint)value.terrainGridSize.y);
-            value.resourceMap = networkReader.ReadArray<TerrainResourceNode>((uint)value.terrainGridSize.x, (uint)value.terrainGridSize.y);
-            return value;
-        }
-
-        //TODO for some reason enum has to be treated like custom type
-        public static void WriteBiomeType(this NetworkWriter networkWriter, BiomeType value)
-        {
-            networkWriter.WriteByte((byte)value);
-        }
-
-        public static BiomeType ReadBiomeType(this NetworkReader networkReader)
-        {
-            return (BiomeType)networkReader.ReadByte();
-        }
     }
 }

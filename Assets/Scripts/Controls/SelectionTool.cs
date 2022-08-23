@@ -6,18 +6,16 @@ using Mirror;
 using UnityEngine.EventSystems;
 using Assets.Scripts.Controls;
 
-public class SelectionChangeEvent : UnityEvent<Transform> { }
-
 public class SelectionTool : MonoBehaviour
 {
     public float raycastMaxDistance = 500f;
     public Texture borderTexture;
 
     public List<Transform> selected;
-    public UnityEvent selectionChangeEvent = new UnityEvent();
-    public SelectionChangeEvent itemSelectedEvent = new SelectionChangeEvent();
-    public SelectionChangeEvent itemUnselectedEvent = new SelectionChangeEvent();
-    public UnityEvent selectionListClearEvent = new UnityEvent();
+    public event Action selectionChangeEvent;
+    public event Action<Transform> itemSelectedEvent;
+    public event Action<Transform> itemUnselectedEvent;
+    public event Action selectionListClearEvent;
     
     private byte maxSelectedItems = 25;
 
@@ -50,12 +48,16 @@ public class SelectionTool : MonoBehaviour
     private Func<Transform, bool> chooseSelectionAction()
     {
         Func<Transform, bool> action;
+
         bool shift = Input.GetKey(KeyCode.LeftShift);
         bool ctrl = Input.GetKey(KeyCode.LeftControl);
+
         if (!shift && !ctrl)
             clearSelectedList();
+
         if (ctrl) action = removeItem;
         else action = addSelectedItem;
+
         return action;
     }
 
@@ -123,6 +125,7 @@ public class SelectionTool : MonoBehaviour
         bounds.Encapsulate(b);
 
         List<Transform> transforms = new List<Transform>();
+        //TODO select only entities of owner
         gameMain.GetEntitiesInBounds(bounds).ForEach(entity => transforms.Add(entity.GetComponent<Transform>()));
 
         return transforms;
@@ -139,8 +142,6 @@ public class SelectionTool : MonoBehaviour
             itemSelectedEvent?.Invoke(transform);
             return true;
         }
-
-        Debug.Log("Max selection or selected");
         return false;
             
     }

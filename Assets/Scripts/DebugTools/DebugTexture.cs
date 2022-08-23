@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using Assets.Scripts.TerrainScripts.Details;
+using System.Collections;
 using System.IO;
 using UnityEngine;
 
@@ -25,6 +26,33 @@ namespace Assets.Scripts.DebugTools
                 {
                     float c = (float)bytes[i, j] / 255f;
                     colors[i, j] =  new Color(c, c, c);
+                }
+        }
+
+        public void SetFromArray(bool[,] bools)
+        {
+            for (int i = 0; i < xS; i++)
+                for (int j = 0; j < yS; j++)
+                {
+                    float c = bools[i, j] ? 1f : 0f;
+                    colors[i, j] = new Color(c, c, c);
+                }
+        }
+
+        public void SetFromArray(TerrainResourceNode[,] resource)
+        {
+            for (int i = 0; i < xS; i++)
+                for (int j = 0; j < yS; j++)
+                {
+                    Color c = Color.white;
+                    switch(resource[i,j].prefabsList)
+                    {
+                        case ResourcePrefabsList.NONE: c = Color.white; break;
+                        case ResourcePrefabsList.TREE: c = Color.green; break;
+                        case ResourcePrefabsList.GOLD: c = Color.yellow; break;
+                        case ResourcePrefabsList.ROCK: c = Color.gray; break;
+                    }
+                    colors[i, j] = c;
                 }
         }
 

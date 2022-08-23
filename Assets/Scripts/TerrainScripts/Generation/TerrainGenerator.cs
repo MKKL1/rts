@@ -24,6 +24,7 @@ namespace Assets.Scripts.TerrainScripts.Generation
         private BiomesManager biomesManager;
         private BiomeWeightManager biomeWeightManager;
         private TerrainGenSettings generatorData;
+        private bool[,] walkable;
 
         
 
@@ -59,6 +60,7 @@ namespace Assets.Scripts.TerrainScripts.Generation
 
         private float[,] GetBiomeAltitudeMap(int x, int y)
         {
+            DebugTexture biomeAltTexture = new DebugTexture(terrainGrid.gridSize.x, terrainGrid.gridSize.y);
             float[,] biomeHeightMap = new float[x,y];
 
             FastNoiseLite noise1 = NewBiomeNoise(seed);
@@ -68,6 +70,8 @@ namespace Assets.Scripts.TerrainScripts.Generation
             {
                 biomeHeightMap[x, y] = (noise1.GetNoise(x, y) + noise2.GetNoise(x, y) + 2) * 0.25f;
             });
+            biomeAltTexture.SetFromArray(biomeHeightMap);
+            biomeAltTexture.SaveToPath("DebugTexture/", "biomeAlt");
 
             return biomeHeightMap;
         }
@@ -108,20 +112,36 @@ namespace Assets.Scripts.TerrainScripts.Generation
         private TerrainResourceNode[,] GenerateFeatures()
         {
             TerrainResourceNode[,] resourceMap = new TerrainResourceNode[mainGrid.size.x, mainGrid.size.y];
+            walkable = new bool[mainGrid.size.x, mainGrid.size.y];
+            DebugTexture walkableTextureMap = new DebugTexture(mainGrid.size.x, mainGrid.size.y);
+            DebugTexture resourceTextureMap = new DebugTexture(mainGrid.size.x, mainGrid.size.y);
             ResourceGenerator resourceGenerator = new ResourceGenerator(generatorData, biomesManager, terrainGrid, seed);
             for(int x = 1; x < mainGrid.size.x-1; x++)
                 for (int y = 1; y < mainGrid.size.y-1 ; y++)
                 {
+                    bool walkableNode = true;
                     Vector2 worldPosition = mainGrid.GetWorldPosition(x, y);
                     BiomeType biomeType = terrainGrid.GetCellAtWorldPos(worldPosition);
-                    if (biomesManager.GetBiome(biomeType).biomeData.resources)
+                    Biome currentBiome = biomesManager.GetBiome(biomeType);
+                    if (currentBiome.biomeData.resources)
                     {
                         float percentageSpawn = biomeWeightManager.GetWeight(biomeType, x, y);
                         if(percentageSpawn == 1f || percentageSpawn > Random.value)
-                            resourceMap[x, y] = resourceGenerator.GetResourceID(x, y);
+                        {
+                            TerrainResourceNode resNode = resourceGenerator.GetResourceID(x, y);
+                            resourceMap[x, y] = resNode;
+                            if(resNode.prefabsList != ResourcePrefabsList.NONE) walkableNode = false;
+                        }
                     }
+                    if(walkableNode && !currentBiome.biomeData.walkable) walkableNode = false;
+                    walkable[x, y] = walkableNode;
                 }
 
+            walkableTextureMap.SetFromArray(walkable);
+            walkableTextureMap.SaveToPath("DebugTexture/", "walkable");
+
+            resourceTextureMap.SetFromArray(resourceMap);
+            resourceTextureMap.SaveToPath("DebugTexture/", "resource");
             return resourceMap;
         }
 
@@ -161,6 +181,7 @@ namespace Assets.Scripts.TerrainScripts.Generation
             {
                 heightMap = GenerateTerrain(),
                 resourceMap = GenerateFeatures(),
+                walkableMap = walkable,
                 biomeGrid = terrainGrid.biomeGrid,
                 mainGridSize = mainGrid.size,
                 terrainSize = terrainGrid.GetTerrainWorldSize(),

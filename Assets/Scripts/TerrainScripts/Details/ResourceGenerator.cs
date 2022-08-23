@@ -53,7 +53,6 @@ namespace Assets.Scripts.TerrainScripts.Details
         }
         /// <param name="x">x on main grid</param>
         /// <param name="y">y on main grid</param>
-        /// <returns>Returns null if no resource is on x and y</returns>
         public TerrainResourceNode GetResourceID(int x, int y)
         {
             int treeAge = forestNoise.GetNoise(x, y);

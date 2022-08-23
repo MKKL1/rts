@@ -20,7 +20,7 @@ public class UIManager : MonoBehaviour
         if (selectionTool == null) selectionTool = GameMain.instance.localSelectionTool;
         if (rtsNetworkManager == null) rtsNetworkManager = RTSNetworkManager.instance;
 
-        selectionTool.selectionChangeEvent.AddListener(updateList);
+        selectionTool.selectionChangeEvent += updateList;
         rtsNetworkManager.playerListChangeEvent.AddListener(updatePlayerList);
 
     }
