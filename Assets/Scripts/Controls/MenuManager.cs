@@ -17,7 +17,7 @@ public class MenuManager : MonoBehaviour
     void Start()
     {
         //networkManager = GameObject.Find("NetworkManager").GetComponent<NetworkManager>();
-        RTSNetworkManager.instance.playerListChangeEvent.AddListener(updatePlayerList);
+        GameMain.instance.playerListChangeEvent += updatePlayerList;
     }
     public void connect()
     {
@@ -48,7 +48,7 @@ public class MenuManager : MonoBehaviour
             GameObject.Destroy(child.gameObject);
         }
 
-        foreach (PlayerScript player in RTSNetworkManager.instance.playerList)
+        foreach (var player in GameMain.instance.playerList)
         {
             GameObject c = Instantiate(playerprefab, playerListObject.transform);
             c.GetComponent<RectTransform>().anchoredPosition -= new Vector2(0, count*120);

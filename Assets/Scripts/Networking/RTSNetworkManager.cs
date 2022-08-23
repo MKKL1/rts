@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
 using Mirror;
+using System;
 
 public enum GameState
 {
@@ -12,8 +13,8 @@ public enum GameState
 
 public class RTSNetworkManager : NetworkManager
 {
-    public List<PlayerScript> playerList = new List<PlayerScript>();
-    public UnityEvent playerListChangeEvent = new UnityEvent();
+    
+    
     public GameState gameState = GameState.LOBBY;
 
     [Scene]
@@ -26,21 +27,18 @@ public class RTSNetworkManager : NetworkManager
         base.Awake();
         instance = this;
     }
-    public void AddPlayer(PlayerScript playerScript)
-    {
-        playerList.Add(playerScript);
-        playerListChangeEvent?.Invoke();
-    }
-
-
     public override void OnServerAddPlayer(NetworkConnectionToClient conn)
     {
-        base.OnServerAddPlayer(conn);
+        Transform startPos = GetStartPosition();
+        GameObject player = startPos != null
+            ? Instantiate(playerPrefab, startPos.position, startPos.rotation)
+            : Instantiate(playerPrefab);
 
-        PlayerScript playerScript = conn.identity.GetComponent<PlayerScript>();
+        //Setting player data before sending it to clients
+        PlayerScript playerScript = player.GetComponent<PlayerScript>();
         var data = new InitialPlayerData();
         data.name = $"Player {conn.connectionId}";
-        switch(gameState)
+        switch (gameState)
         {
             case GameState.LOBBY:
                 data.state = PlayerState.IN_ROOM;
@@ -50,9 +48,11 @@ public class RTSNetworkManager : NetworkManager
                 data.state = PlayerState.OBSERVING;
                 break;
         }
+        playerScript.SetPlayerData(data);
 
-        playerScript.InitPlayer(data);
-        Debug.Log("OnServerAddPlayer" + data.name);
+
+        player.name = $"{playerPrefab.name} [connId={conn.connectionId}]";
+        NetworkServer.AddPlayerForConnection(conn, player);
     }
 
     [Server]
@@ -61,7 +61,10 @@ public class RTSNetworkManager : NetworkManager
         if (gameState != GameState.LOBBY) return;
 
         if (changescene) ServerChangeScene(gameScene);
-        playerList.ForEach(x => x.state = PlayerState.PLAYING);
+        //foreach(var player in GameMain.instance.playerList)
+        //{
+        //    player.state = PlayerState.PLAYING;
+        //}
         gameState = GameState.GAME_ACTIVE;
 
         GameMain.instance.terrainManager.initTerrain();

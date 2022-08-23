@@ -22,73 +22,26 @@ public class PlayerScript : NetworkBehaviour
 
     public Vector3 playerPosition;
 
-    [SyncVar(hook = nameof(onPlayerNameChange))]
-    public string playerName;
+    [SyncVar]
+    public string playerName = "default";
 
     [SyncVar]
     public PlayerState state;
 
-    //Run by server
-    public void InitPlayer(InitialPlayerData playerData)
+    public void SetPlayerData(InitialPlayerData data)
     {
-        Debug.Log("INIT PLAYER " + playerData.name);
-        playerName = playerData.name;
-        
+        playerName = data.name;
+        state = data.state;
     }
-
-    //public override void OnStartServer()
-    //{
-    //    base.OnStartServer();
-        
-
-    //}
 
     public override void OnStartClient()
     {
-        Debug.Log("OnStartClient" + playerName);
-        base.OnStartClient();
-        RTSNetworkManager.instance.AddPlayer(this);
+        GameMain.instance.AddPlayer(this);
     }
-
-    public void onPlayerNameChange(string oldname, string newname)
-    {
-        RTSNetworkManager.instance.playerListChangeEvent?.Invoke();
-    }
-
-    //DUPA DUPA DUPAAAAAAAAAAAAAAA DUPA DUPACZKA DUPA DUPA DUPA CHUJ CIPA CYCE WADOWICE JEBANE RUCHANIE
-    //public override void OnStartServer()
-    //{
-    //    Debug.Log("START SERVER");
-    //    base.OnStartServer();
-
-    //    Debug.Log("HERE" + UIManager.instance.selectionTool);
-
-    //}
-
-    //public override void OnStartClient()
-    //{
-    //    base.OnStartClient();
-    //    playerName = $"Player {connectionToClient.connectionId}";
-
-    //}
-
-    //public override void OnStartLocalPlayer()
-    //{
-    //    //UIManager.instance.updatePlayerList();
-    //}
-
-    //private void Start()
-    //{
-    //    Debug.Log("START NORMAL");
-
-    //    RTSNetworkManager.instance.addPlayer(this);
-    //    //if(isLocalPlayer)
-    //    //    UIManager.instance.updatePlayerList();
-    //}
 
     public override void OnStopServer()
     {
-        RTSNetworkManager.instance.playerList.Remove(this);
+        GameMain.instance.RemovePlayer(this);
     }
 }
 

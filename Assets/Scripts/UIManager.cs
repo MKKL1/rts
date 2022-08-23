@@ -6,7 +6,7 @@ using UnityEngine;
 public class UIManager : MonoBehaviour
 {
     public SelectionTool selectionTool;
-    public RTSNetworkManager rtsNetworkManager;
+    public GameMain gameMain;
     public TMP_Text list;
     public TMP_Text playerlist;
 
@@ -18,10 +18,10 @@ public class UIManager : MonoBehaviour
     void Start()
     {
         if (selectionTool == null) selectionTool = GameMain.instance.localSelectionTool;
-        if (rtsNetworkManager == null) rtsNetworkManager = RTSNetworkManager.instance;
+        if (gameMain == null) gameMain = GameMain.instance;
 
         selectionTool.selectionChangeEvent += updateList;
-        rtsNetworkManager.playerListChangeEvent.AddListener(updatePlayerList);
+        gameMain.playerListChangeEvent += updatePlayerList;
 
     }
 
@@ -39,10 +39,10 @@ public class UIManager : MonoBehaviour
     {
         Debug.Log("HERE ?????");
         string text = "Gracze: \n";
-        foreach (PlayerScript player in rtsNetworkManager.playerList)
+        foreach (var player in gameMain.playerList)
         {
             text += player.playerName + "\n";
-            Debug.Log(player.playerName);
+            //Debug.Log(player.playerName);
         }
         playerlist.SetText(text);
     }

@@ -391,10 +391,6 @@ MonoBehaviour:
   autoCreatePlayer: 1
   playerSpawnMethod: 0
   spawnPrefabs: []
-  playerList: []
-  playerListChangeEvent:
-    m_PersistentCalls:
-      m_Calls: []
   gameState: 0
   gameScene: 
 --- !u!1 &248857230
@@ -565,7 +561,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   selectionTool: {fileID: 0}
-  rtsNetworkManager: {fileID: 0}
+  gameMain: {fileID: 0}
   list: {fileID: 248857231}
   playerlist: {fileID: 1437449069}
 --- !u!114 &273780194
@@ -1353,6 +1349,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0688d70455d605a49bad8fa76dbeb201, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  syncMode: 0
+  syncInterval: 0.1
+  playerList: []
   entityList: []
   mainTerrain: {fileID: 107236307}
   localCamera: {fileID: 6605040748449310633}
@@ -1616,12 +1615,6 @@ MonoBehaviour:
   raycastMaxDistance: 500
   borderTexture: {fileID: 2800000, guid: ed5290d8df18488780e2996b9b882f01, type: 3}
   selected: []
-  selectionChangeEvent:
-    m_PersistentCalls:
-      m_Calls: []
-  selectionListClearEvent:
-    m_PersistentCalls:
-      m_Calls: []
   _camera: {fileID: 0}
   cameraTransform: {fileID: 0}
 --- !u!4 &1030442204
