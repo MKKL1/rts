@@ -20,7 +20,7 @@ MonoBehaviour:
   type: 1
   biomeAltitideMin: 0
   biomeAltitideMax: 0.35
-  blendingValueStart: 0.08
+  blendingValueStart: 0
   blendingValueEnd: 0.1
   heightMultiplier: 0.15
   baseHeight: -0.9

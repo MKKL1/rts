@@ -1377,8 +1377,11 @@ MonoBehaviour:
   detailsTransform: {fileID: 1145723806}
   terrainGenSettings: {fileID: 11400000, guid: 7c1043674e1e22744a9baef0efbe9fc4, type: 2}
   walkable: {fileID: 391970349}
+  waterLevel: 0
+  terrainCornerBottomLeft: {x: 0, y: 0}
+  terrainCornerTopRight: {x: 1000, y: 1000}
   gizmosHeight: 20
-  seed: 2095
+  seed: 50
 --- !u!4 &712011509
 Transform:
   m_ObjectHideFlags: 0
@@ -1610,7 +1613,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 389a1c5d754dc5f43bf87bdabf9fe5e3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  holdMinDistance: 3
   raycastMaxDistance: 500
   borderTexture: {fileID: 2800000, guid: ed5290d8df18488780e2996b9b882f01, type: 3}
   selected: []
@@ -1630,7 +1632,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1030442202}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 164.78, y: 0, z: 0}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -2276,8 +2278,8 @@ MonoBehaviour:
   opacity: 100
   passIndex: 1
   minMax: {x: 19.396551, y: 90}
-  minFalloff: 10
-  maxFalloff: 60.3
+  minFalloff: 9
+  maxFalloff: 90
 --- !u!81 &6605040748449310632
 AudioListener:
   m_ObjectHideFlags: 0
@@ -2358,7 +2360,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6605040748449310635}
   m_LocalRotation: {x: 0.546282, y: -0, z: -0, w: 0.83760136}
-  m_LocalPosition: {x: 150, y: 172.5, z: 65.9}
+  m_LocalPosition: {x: 337, y: 172.5, z: 157.9}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -2438,7 +2440,7 @@ MonoBehaviour:
   keyboardMoveSpeedMin: 60
   mouseMoveSpeedMax: 800
   mouseMoveSpeedMin: 400
-  zoomSpeed: 600
+  zoomSpeed: 1000
   zoomMinDistFromTerrain: 15
   minDistFromTerrainBorder: 30
   smoothTime: 0.3

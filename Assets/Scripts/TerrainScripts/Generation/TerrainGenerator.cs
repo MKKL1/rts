@@ -1,4 +1,5 @@
-﻿using Assets.Scripts.TerrainScripts.BiomeBlending;
+﻿using Assets.Scripts.DebugTools;
+using Assets.Scripts.TerrainScripts.BiomeBlending;
 using Assets.Scripts.TerrainScripts.Biomes;
 using Assets.Scripts.TerrainScripts.Details;
 using Mirror;
@@ -73,6 +74,8 @@ namespace Assets.Scripts.TerrainScripts.Generation
 
         private void GenerateBiome()
         {
+            DebugTexture biomeTexture = new DebugTexture(terrainGrid.gridSize.x, terrainGrid.gridSize.y);
+
             biomeWeightManager = new BiomeWeightManager(biomesManager, terrainGrid.gridSize);
             float[,] biomeHeightMap = GetBiomeAltitudeMap(terrainGrid.gridSize.x, terrainGrid.gridSize.y);
 
@@ -82,7 +85,10 @@ namespace Assets.Scripts.TerrainScripts.Generation
                 biomeWeightManager.SetWeight(currentbiome, x, y);
 
                 terrainGrid.biomeGrid[x, y] = currentbiome;
+                biomeTexture.SetPixel(x, y, biomesManager.GetBiome(currentbiome).biomeData.biomeColor);
             });
+
+            biomeTexture.SaveToPath("DebugTexture/", "biome");
 
             //Blending
             BiomeBlendingAlgorithm blendingAlgorithm = null;
@@ -121,6 +127,8 @@ namespace Assets.Scripts.TerrainScripts.Generation
 
         private byte[,] GenerateTerrain()
         {
+            DebugTexture biomeBlendingTexture = new DebugTexture(terrainGrid.gridSize.x, terrainGrid.gridSize.y);
+            DebugTexture height = new DebugTexture(terrainGrid.gridSize.x, terrainGrid.gridSize.y);
             byte[,] heightMap = new byte[terrainGrid.gridSize.x, terrainGrid.gridSize.y];
             IterateChunks(chunksize, terrainGrid.gridSize.x, terrainGrid.gridSize.y, (x, y) =>
             {
@@ -129,10 +137,13 @@ namespace Assets.Scripts.TerrainScripts.Generation
                 {
                     if (entry.Value != 0f)
                         heightSum += biomesManager.GetBiome(entry.Key).GetHeight(x, y) * entry.Value;
+                    if (entry.Key == BiomeType.WATER) biomeBlendingTexture.SetPixel(x, y, entry.Value);
                 }
-                heightMap[y, x] = (byte)(heightSum * 255);
+                heightMap[y, x] = (byte)(Mathf.Clamp(heightSum * 255, 0, 255));
+                height.SetPixel(x, y, heightSum);
             });
-
+            biomeBlendingTexture.SaveToPath("DebugTexture/", "waterbiome");
+            height.SaveToPath("DebugTexture/", "height");
             return heightMap;
         }
 
