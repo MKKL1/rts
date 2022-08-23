@@ -4,12 +4,12 @@ using UnityEngine;
 using UnityEngine.Events;
 using Mirror;
 using UnityEngine.EventSystems;
+using Assets.Scripts.Controls;
 
 public class SelectionChangeEvent : UnityEvent<Transform> { }
 
 public class SelectionTool : MonoBehaviour
 {
-    public float holdMinDistance = 2f;
     public float raycastMaxDistance = 500f;
     public Texture borderTexture;
 
@@ -19,64 +19,35 @@ public class SelectionTool : MonoBehaviour
     public SelectionChangeEvent itemUnselectedEvent = new SelectionChangeEvent();
     public UnityEvent selectionListClearEvent = new UnityEvent();
     
-    
-    private bool buttonHeld = false;
-
     private byte maxSelectedItems = 25;
 
     public Camera _camera;
     public Transform cameraTransform;
     private GameMain gameMain;
+    private DrawUIRect drawUIRect;
+    private MouseDragDetection mouseDrag;
 
     private Ray holdstartray;
     private Ray holdendray;
-
-    private Vector3 mousestartpos;
     private Vector3 holdstartpos;
+
+
     void Start()
     {
         gameMain = GameMain.instance;
         if(_camera == null) _camera = gameMain.localCamera;
         if(cameraTransform == null) cameraTransform = _camera.transform;
-        
+
+        drawUIRect = new DrawUIRect(borderTexture);
         selected = new List<Transform>(maxSelectedItems);
+        mouseDrag = new MouseDragDetection();
+
+        mouseDrag.clickEvent += onClick;
+        mouseDrag.holdEndEvent += onHoldEnd;
+        mouseDrag.holdStartEvent += onHoldStart;
     }
     
-    void Update()
-    {
-        if(Input.GetMouseButtonDown(0))
-        {
-            buttonHeld = false;
-            mousestartpos = Input.mousePosition;
-            onHoldStart();
-        }
-
-        if (Input.GetMouseButtonUp(0))
-        {
-            if (!buttonHeld)
-                onClick();
-            else
-            {
-                buttonHeld = false;
-                onHoldEnd();
-            }
-        }
-
-        if (Input.GetMouseButton(0))
-        {
-            if (!buttonHeld && manhattanDistance(mousestartpos, Input.mousePosition) > holdMinDistance)
-                buttonHeld = true;
-            if(buttonHeld)
-                onHold();
-        }
-    }
-
-    float manhattanDistance(Vector3 a, Vector3 b)
-    {
-        return Math.Abs(a.x - b.x) + Math.Abs(a.z - b.z);
-    }
-
-    private Func<Transform, bool> chooseAction()
+    private Func<Transform, bool> chooseSelectionAction()
     {
         Func<Transform, bool> action;
         bool shift = Input.GetKey(KeyCode.LeftShift);
@@ -88,13 +59,18 @@ public class SelectionTool : MonoBehaviour
         return action;
     }
 
+    private void Update()
+    {
+        mouseDrag.DragUpdate();
+    }
+
     private void onClick()
     {
 
         RaycastHit[] hits;
         if ((hits = Physics.RaycastAll(_camera.ScreenPointToRay(Input.mousePosition), raycastMaxDistance)) != null)
         {
-            Func<Transform, bool> action = chooseAction();
+            Func<Transform, bool> action = chooseSelectionAction();
             foreach (RaycastHit hit in hits)
             {
                 if (hit.transform.CompareTag("Selectable"))
@@ -113,10 +89,6 @@ public class SelectionTool : MonoBehaviour
         holdstartpos = cameraTransform.position;
     }
 
-    private void onHold()
-    {
-    }
-
     private void onHoldEnd()
     {
         Vector3 startpos = Vector3.zero, endpos = Vector3.zero;
@@ -129,62 +101,20 @@ public class SelectionTool : MonoBehaviour
         if (Physics.Raycast(holdendray, out hit2, raycastMaxDistance)) endpos = hit2.point;
         else return;
 
-        Func<Transform, bool> action = chooseAction();
+        Func<Transform, bool> action = chooseSelectionAction();
         findInSelectionRect(startpos, endpos).ForEach(x => action(x));
-    }
-    public static void DrawRect(Vector3 min, Vector3 max, Color color, float duration)
-    {
-        UnityEngine.Debug.DrawLine(new Vector3(min.x, 100, min.z), new Vector3(min.x, 100, max.z), color, duration);
-        UnityEngine.Debug.DrawLine(new Vector3(min.x, 100, max.z), new Vector3(max.x, 100, max.z), color, duration);
-        UnityEngine.Debug.DrawLine(new Vector3(max.x, 100, max.z), new Vector3(max.x, 100, min.z), color, duration);
-        UnityEngine.Debug.DrawLine(new Vector3(min.x, 100, min.z), new Vector3(max.x, 100, min.z), color, duration);
-
-        UnityEngine.Debug.DrawLine(new Vector3(min.x, 100, min.z), new Vector3(min.x, 0, min.z), color, duration);
-        UnityEngine.Debug.DrawLine(new Vector3(min.x, 100, max.z), new Vector3(min.x, 0, max.z), color, duration);
-        UnityEngine.Debug.DrawLine(new Vector3(max.x, 100, min.z), new Vector3(max.x, 0, min.z), color, duration);
-        UnityEngine.Debug.DrawLine(new Vector3(max.x, 100, max.z), new Vector3(max.x, 0, max.z), color, duration);
     }
 
     void OnGUI()
     {
-        if (buttonHeld)
+        if (mouseDrag.buttonHeld)
         {
-            Vector3 diff = cameraTransform.position - holdstartpos;
-            Rect rect = GetScreenRect(mousestartpos-new Vector3(diff.x, diff.z), Input.mousePosition);
-            DrawScreenRectBorder(rect, 2, Color.red);
+            Vector3 diff = cameraTransform.position - holdstartpos; //TODO not really working
+            drawUIRect.DrawRect(mouseDrag.mousestartpos - new Vector3(diff.x, diff.z), Input.mousePosition, 2, Color.red);
         }
     }
 
-    void DrawScreenRectBorder(Rect rect, float thickness, Color color)
-    {
-        // Top
-        DrawBorderRect(new Rect(rect.xMin, rect.yMin, rect.width, thickness), color);
-        // Left
-        DrawBorderRect(new Rect(rect.xMin, rect.yMin, thickness, rect.height), color);
-        // Right
-        DrawBorderRect(new Rect(rect.xMax - thickness, rect.yMin, thickness, rect.height), color);
-        // Bottom
-        DrawBorderRect(new Rect(rect.xMin, rect.yMax - thickness, rect.width, thickness), color);
-    }
 
-    void DrawBorderRect(Rect rect, Color color)
-    {
-        GUI.color = color;
-        GUI.DrawTexture(rect, borderTexture);
-        GUI.color = Color.white;
-    }
-
-    Rect GetScreenRect(Vector3 screenPosition1, Vector3 screenPosition2)
-    {
-        // Move origin from bottom left to top left
-        screenPosition1.y = Screen.height - screenPosition1.y;
-        screenPosition2.y = Screen.height - screenPosition2.y;
-        // Calculate corners
-        var topLeft = Vector3.Min(screenPosition1, screenPosition2);
-        var bottomRight = Vector3.Max(screenPosition1, screenPosition2);
-        // Create Rect
-        return Rect.MinMaxRect(topLeft.x, topLeft.y, bottomRight.x, bottomRight.y);
-    }
 
     public List<Transform> findInSelectionRect(Vector3 a, Vector3 b)
     {
