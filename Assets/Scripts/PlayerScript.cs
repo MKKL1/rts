@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using Mirror;
+using Assets.Scripts.Networking;
 
 public enum PlayerState
 {
@@ -12,6 +13,7 @@ public enum PlayerState
 
 public struct InitialPlayerData
 {
+    public PlayerIdentificator id;
     public string name;
     public PlayerState state;
 }
@@ -19,7 +21,8 @@ public struct InitialPlayerData
 public class PlayerScript : NetworkBehaviour
 {
     //public readonly static List<PlayerScript> playerList = new List<PlayerScript>();
-
+    [SyncVar]
+    public PlayerIdentificator playerID;
     public Vector3 playerPosition;
 
     [SyncVar]
@@ -30,12 +33,18 @@ public class PlayerScript : NetworkBehaviour
 
     public void SetPlayerData(InitialPlayerData data)
     {
+        playerID = data.id;
         playerName = data.name;
         state = data.state;
     }
 
     public override void OnStartClient()
     {
+        if (isLocalPlayer)
+        {
+            GameMain.instance.localPlayerScript = this;
+            GameMain.instance.localPlayerID = playerID;
+        }
         GameMain.instance.AddPlayer(this);
     }
 

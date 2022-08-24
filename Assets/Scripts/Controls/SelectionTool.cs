@@ -64,6 +64,7 @@ public class SelectionTool : MonoBehaviour
     private void Update()
     {
         mouseDrag.DragUpdate();
+        selected.ForEach(x => x.position += Vector3.up * 0.01f);
     }
 
     private void onClick()
@@ -126,7 +127,7 @@ public class SelectionTool : MonoBehaviour
 
         List<Transform> transforms = new List<Transform>();
         //TODO select only entities of owner
-        gameMain.GetEntitiesInBounds(bounds).ForEach(entity => transforms.Add(entity.GetComponent<Transform>()));
+        gameMain.entityManager.GetEntitiesInBounds(bounds).ForEach(entity => transforms.Add(entity.GetComponent<Transform>()));
 
         return transforms;
 

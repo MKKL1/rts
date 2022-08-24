@@ -23,17 +23,17 @@ namespace Assets.Scripts.Controls
             {
                 buttonHeld = false;
                 mousestartpos = Input.mousePosition;
-                InvokeActionIfExists(holdStartEvent);
+                holdStartEvent?.Invoke();
             }
 
             if (Input.GetMouseButtonUp(0))
             {
                 if (!buttonHeld)
-                    InvokeActionIfExists(clickEvent);
+                    clickEvent?.Invoke();
                 else
                 {
                     buttonHeld = false;
-                    InvokeActionIfExists(holdEndEvent);
+                    holdEndEvent?.Invoke();
                 }
             }
 
@@ -42,14 +42,10 @@ namespace Assets.Scripts.Controls
                 if (!buttonHeld && manhattanDistance2(mousestartpos, Input.mousePosition) > holdMinDistance)
                     buttonHeld = true;
                 if (buttonHeld)
-                    InvokeActionIfExists(holdUpdateEvent);
+                    holdUpdateEvent?.Invoke();
             }
         }
 
-        private void InvokeActionIfExists(Action action)
-        {
-            if (action != null) action.Invoke();
-        }
         private float manhattanDistance2(Vector3 a, Vector3 b)
         {
             return Math.Abs(a.x - b.x) + Math.Abs(a.z - b.z);

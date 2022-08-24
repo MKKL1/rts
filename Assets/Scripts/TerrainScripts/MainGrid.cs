@@ -27,9 +27,31 @@ namespace Assets.Scripts.TerrainScripts
 
         public MainGrid(int sizeX, int sizeY, float terrainSizeX, float terrainSizeY) : this(sizeX, sizeY, new Vector2(terrainSizeX, terrainSizeY)) {}
 
+        /// <summary>
+        /// World position of grid node given by x and y
+        /// </summary>
+        /// <param name="x">x of grid node</param>
+        /// <param name="y">y of grid node</param>
+        /// <returns>World position of grid node</returns>
         public Vector2 GetWorldPosition(int x, int y)
         {
             return new Vector2(terrainPos.x + (x * cellSize.x), terrainPos.y + (y * cellSize.y));
+        }
+
+        /// <summary>
+        /// Get position of grid node given by world position
+        /// </summary>
+        /// <param name="x">x in world position</param>
+        /// <param name="y">z in world position</param>
+        /// <returns>Position of main grid node</returns>
+        public Vector2Int GetGridPostion(float x, float y)
+        {
+            return new Vector2Int(Mathf.FloorToInt(x / cellSize.x), Mathf.FloorToInt(y / cellSize.y));
+        }
+
+        public Vector2Int GetGridPostion(Vector3 worldPosition)
+        {
+            return GetGridPostion(worldPosition.x, worldPosition.z);
         }
 
         public Texture2D GetWalkable()

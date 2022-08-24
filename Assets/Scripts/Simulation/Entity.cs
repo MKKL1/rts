@@ -1,3 +1,4 @@
+using Assets.Scripts.Networking;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -6,13 +7,14 @@ public class Entity : MonoBehaviour
 {
     public string entityName;
     public Bounds bounds;
+    public PlayerIdentificator ownerID = PlayerIdentificator.serverID;
 
     private Collider _collider;
     private void Start()
     {
         _collider = GetComponent<Collider>();
         bounds = _collider.bounds;
-        GameMain.instance.addEntity(this);
+        GameMain.instance.entityManager.addEntity(this);
     }
 
     public bool CollidesWith(Bounds _bounds)

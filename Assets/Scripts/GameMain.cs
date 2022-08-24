@@ -1,3 +1,5 @@
+using Assets.Scripts.Networking;
+using Assets.Scripts.Simulation;
 using Assets.Scripts.TerrainScripts;
 using Mirror;
 using System;
@@ -7,15 +9,18 @@ using UnityEngine;
 
 public class GameMain : NetworkBehaviour
 {
+    public PlayerIdentificator localPlayerID = PlayerIdentificator.serverID;
     public List<PlayerScript> playerList = new List<PlayerScript>();
     public event Action playerListChangeEvent;
-
-    //Synchronized by spawning and despawning entities
-    public List<Entity> entityList = new List<Entity>();
+    public PlayerScript localPlayerScript;
     
+    
+    
+    public EntityManager entityManager;
     public Terrain mainTerrain;
     public Camera localCamera;
     public SelectionTool localSelectionTool;
+    
     public TerrainManager terrainManager;
 
     public MainGrid mainGrid;
@@ -25,11 +30,6 @@ public class GameMain : NetworkBehaviour
     private void Awake()
     {
         instance = this;
-    }
-
-    public void addEntity(Entity entity)
-    {
-        entityList.Add(entity);
     }
 
     public void AddPlayer(PlayerScript playerScript)
@@ -44,8 +44,5 @@ public class GameMain : NetworkBehaviour
         playerListChangeEvent?.Invoke();
     }
 
-    public List<Entity> GetEntitiesInBounds(Bounds bounds)
-    {
-        return entityList.FindAll(x => x.CollidesWith(bounds));
-    }
+    
 }

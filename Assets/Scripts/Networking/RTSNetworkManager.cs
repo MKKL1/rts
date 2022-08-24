@@ -20,6 +20,8 @@ public class RTSNetworkManager : NetworkManager
     [Scene]
     public string gameScene;
 
+    private byte playerIterator = 1;
+
 
     public static RTSNetworkManager instance;
     public override void Awake()
@@ -38,6 +40,8 @@ public class RTSNetworkManager : NetworkManager
         PlayerScript playerScript = player.GetComponent<PlayerScript>();
         var data = new InitialPlayerData();
         data.name = $"Player {conn.connectionId}";
+        data.id = playerIterator;
+        playerIterator++;
         switch (gameState)
         {
             case GameState.LOBBY:
@@ -53,6 +57,8 @@ public class RTSNetworkManager : NetworkManager
 
         player.name = $"{playerPrefab.name} [connId={conn.connectionId}]";
         NetworkServer.AddPlayerForConnection(conn, player);
+
+        GameMain.instance.entityManager.visibleEntityList.ForEach(x => x.transform.GetComponent<NetworkIdentity>().AssignClientAuthority(conn));
     }
 
     [Server]
@@ -61,10 +67,10 @@ public class RTSNetworkManager : NetworkManager
         if (gameState != GameState.LOBBY) return;
 
         if (changescene) ServerChangeScene(gameScene);
-        //foreach(var player in GameMain.instance.playerList)
-        //{
-        //    player.state = PlayerState.PLAYING;
-        //}
+        foreach (var player in GameMain.instance.playerList)
+        {
+            player.state = PlayerState.PLAYING;
+        }
         gameState = GameState.GAME_ACTIVE;
 
         GameMain.instance.terrainManager.initTerrain();
@@ -76,26 +82,4 @@ public class RTSNetworkManager : NetworkManager
     {
         Debug.Log("Server start");
     }
-
-    //public override void OnServerAddPlayer(NetworkConnectionToClient conn)
-    //{
-    //    base.OnServerAddPlayer(conn);
-    //    ServerScript.instance.updatePlayerList();
-    //}
-    //Serverside
-    //public override void OnServerAddPlayer(NetworkConnectionToClient conn)
-    //{
-    //    Transform startPos = GetStartPosition();
-    //    GameObject player = startPos != null
-    //        ? Instantiate(playerPrefab, startPos.position, startPos.rotation)
-    //        : Instantiate(playerPrefab);
-
-    //    player.name = $"{playerPrefab.name} [connId={conn.connectionId}]";
-    //    string playername = $"Player {conn.connectionId}";
-
-    //    player.GetComponent<PlayerScript>().playerName = playername;
-    //    Debug.Log("added ? ");
-
-    //    NetworkServer.AddPlayerForConnection(conn, player);
-    //}
 }
