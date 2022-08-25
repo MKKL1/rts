@@ -7,15 +7,24 @@ namespace Assets.Scripts.TerrainScripts
 {
     public class BiomesManager
     {
-        public readonly byte biomeCount = 4;
-        public readonly Biome[] biomeList;
-        public BiomesManager(int seed)
+        public byte biomeCount { get; internal set; } = 0;
+        public Biome[] biomeList { get; internal set; }
+
+        private List<Biome> initialBiomeList = new List<Biome>();
+
+        public void addBiome(Biome biome)
+        {
+            biomeCount++;
+            initialBiomeList.Add(biome);
+        }
+
+        public void initBiomes()
         {
             biomeList = new Biome[biomeCount];
-            biomeList[(byte)BiomeType.PLAINS] = new Plains(seed);
-            biomeList[(byte)BiomeType.WATER] = new Water(seed);
-            biomeList[(byte)BiomeType.BEACH] = new Beach(seed);
-            biomeList[(byte)BiomeType.MOUNTAINS] = new Mountains(seed);
+            for(int i = 0; i < initialBiomeList.Count; i++)
+            {
+                biomeList[(byte)initialBiomeList[i].biomeData.type] = initialBiomeList[i];
+            }
         }
 
         public BiomeType GetBiomeType(float height)

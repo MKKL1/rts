@@ -10,12 +10,13 @@ namespace Assets.Scripts.TerrainScripts
     {
         public bool[,] walkableMap;
         public TerrainResourceNode[,] resourceMap;
+        public TerrainResource[,] spawnedResourceMap;
         public MainGridChunk(ushort chunkSizeX, ushort chunkSizeY)
             : base(chunkSizeX, chunkSizeY)
         {
             walkableMap = new bool[chunkSizeX, chunkSizeY];
-            
             resourceMap = new TerrainResourceNode[chunkSizeX, chunkSizeY];
+            spawnedResourceMap = new TerrainResource[chunkSizeX, chunkSizeY];
         }
     }
 

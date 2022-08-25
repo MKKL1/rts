@@ -44,29 +44,27 @@ public class TerrainManager : NetworkBehaviour
         var watch = System.Diagnostics.Stopwatch.StartNew();
         TerrainGenerator terrainGenerator = new TerrainGenerator(257, 257, 4, terrainGenSettings, seed);
         GameMain.instance.mainGrid = terrainGenerator.CreateMainGrid(257, 257);
-        terrainGenerator.blendingMethod = BlendingMethod.LerpBlending; 
 
-        //TODO use compression
-        TerrainGeneratorResult msg = terrainGenerator.Generate();
-        BuildTerrainClient(msg);
+        terrainGenerator.GenerateAll(GameMain.instance.mainGrid);
+
+        BuildTerrainClient(GameMain.instance.mainGrid, terrainGenerator.terrainGrid);
 
         watch.Stop();
         var elapsedMs = watch.ElapsedMilliseconds;
         Debug.Log(elapsedMs);
 
-        walkable.material.SetTexture("_Buildable_Mask", GameMain.instance.mainGrid.GetWalkable());
+        //walkable.material.SetTexture("_Buildable_Mask", GameMain.instance.mainGrid.GetWalkable());
     }
 
-    [ClientRpc]
-    private void BuildTerrainClient(TerrainGeneratorResult msg)
+    private void BuildTerrainClient(MainGrid mainGrid, TerrainGrid terrainGrid)
     {
 
-        GameMain.instance.mainGrid = new MainGrid(msg.mainGridSize, msg.terrainSize);
+        GameMain.instance.mainGrid = mainGrid;
         TerrainBuilder terrainBuilder = new TerrainBuilder(terrainGenSettings, terrain, GameMain.instance.mainGrid);
-        terrainBuilder.BuildTerrain(msg, detailsTransform);
+        terrainBuilder.BuildTerrain(terrainGrid, detailsTransform);
 
         terrainCornerBottomLeft = new Vector2(terrain.transform.position.x, terrain.transform.position.z);
-        terrainCornerTopRight = terrainCornerBottomLeft + msg.terrainSize;
+        terrainCornerTopRight = terrainCornerBottomLeft + terrainGrid.worldGridSize;
 
         terrainGenerated.Invoke();
     }

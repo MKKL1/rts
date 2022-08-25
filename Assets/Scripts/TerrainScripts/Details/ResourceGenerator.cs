@@ -12,10 +12,6 @@ namespace Assets.Scripts.TerrainScripts.Details
         private VeinNoise rockVeins;
         private VeinNoise goldVeins;
         private System.Random rnd = new System.Random();
-        //TODO pass thru constructor
-        private MainGrid mainGrid = GameMain.instance.mainGrid;
-        //TODO remove?
-        private BiomesManager biomesManager;
         private TerrainGrid terrainGrid;
         private int rockCount;
         private int goldOreCount;
@@ -23,33 +19,23 @@ namespace Assets.Scripts.TerrainScripts.Details
         /// <summary>
         /// Handles generation of resource map from which resources can be placed on terrain
         /// </summary>
-        public ResourceGenerator(TerrainGenSettings data, BiomesManager biomesManager,TerrainGrid terrainGrid, int seed)
+        public ResourceGenerator(Vector2Int size, TerrainGenSettings data, int seed)
         {
             terrainGenSettings = data;
             rockCount = terrainGenSettings.resourceIDManager.rocks.Count;
             goldOreCount = terrainGenSettings.resourceIDManager.goldOre.Count;
 
-            this.biomesManager = biomesManager;
-            this.terrainGrid = terrainGrid;
-            forestNoise = new ForestNoise(mainGrid.size.x, mainGrid.size.y, seed)
+            forestNoise = new ForestNoise(size.x, size.y, seed)
             {
                 forestAge = 10
             };
             forestNoise.Generate();
 
-            rockVeins = new VeinNoise(mainGrid.size.x, mainGrid.size.y, seed);
-            rockVeins.canPlaceVein = canPlaceVein;
+            rockVeins = new VeinNoise(size.x, size.y, seed);
             rockVeins.Generate(50);
 
-            goldVeins = new VeinNoise(mainGrid.size.x, mainGrid.size.y, seed+1);
-            goldVeins.canPlaceVein = canPlaceVein;
+            goldVeins = new VeinNoise(size.x, size.y, seed+1);
             goldVeins.Generate(50);
-        }
-
-        private bool canPlaceVein(Vector2Int pos)
-        {
-            return forestNoise.GetNoise(pos.x, pos.y) == 0 || 
-                !biomesManager.GetBiome(terrainGrid.GetCellAtWorldPos(mainGrid.GetWorldPosition(pos.x, pos.y))).biomeData.resources;
         }
         /// <param name="x">x on main grid</param>
         /// <param name="y">y on main grid</param>

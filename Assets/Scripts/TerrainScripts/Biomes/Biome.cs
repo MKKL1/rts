@@ -8,6 +8,7 @@ namespace Assets.Scripts.TerrainScripts.Biomes
         public BiomeData biomeData;
         public Biome(string biomeFileName)
         {
+            //TODO pass thru BiomesManager
             biomeData = (BiomeData)AssetDatabase.LoadAssetAtPath($"Assets/ScriptableObjects/BiomeDefinition/{biomeFileName}.asset", typeof(BiomeData));
         }
         public virtual float GetHeight(float x, float y)

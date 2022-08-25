@@ -5,6 +5,6 @@ namespace Assets.Scripts
 {
     public static class GlobalConfig
     {
-        public static ushort CHUNK_SIZE = 128;
+        public readonly static ushort CHUNK_SIZE = 128;
     }
 }

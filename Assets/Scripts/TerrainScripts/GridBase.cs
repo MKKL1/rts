@@ -1,8 +1,20 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.Threading;
+using System.Threading.Tasks;
 using UnityEngine;
 
 namespace Assets.Scripts.TerrainScripts
 {
+    public struct ChunkIteratorStep<T> where T : Chunk
+    {
+        public T currentChunk;
+        public int xInChunk;
+        public int yInChunk;
+        public int chunkX;
+        public int chunkY;
+    }
     public class GridBase<T> where T : Chunk
     {
         public T[,] chunks;
@@ -14,7 +26,7 @@ namespace Assets.Scripts.TerrainScripts
         /// Size of data that was split into chunks.
         /// Some chunks can be not fully filled with data
         /// </summary>
-        public Vector2Int chunkDataSize { get; internal set; }
+        public Vector2Int gridDataSize { get; internal set; }
         /// <summary>
         /// Size of single chunk in world space
         /// </summary>
@@ -33,10 +45,11 @@ namespace Assets.Scripts.TerrainScripts
         /// Size of single cell of grid in world space
         /// </summary>
         public Vector2 worldCellSize { get; internal set; }
+        public readonly int chunkSize = GlobalConfig.CHUNK_SIZE;
 
         public GridBase(Vector2Int chunkDataSize, Vector2 cellSize)
         {
-            this.chunkDataSize = chunkDataSize;
+            this.gridDataSize = chunkDataSize;
             this.worldCellSize = cellSize;
             this.chunkArrayLength = chunkDataSize / GlobalConfig.CHUNK_SIZE;
             chunks = new T[chunkArrayLength.x, chunkArrayLength.y];
@@ -53,12 +66,12 @@ namespace Assets.Scripts.TerrainScripts
         /// <returns>Chunk at x,y</returns>
         public T GetChunkAt(int x, int y)
         {
-            return chunks[x / GlobalConfig.CHUNK_SIZE, y / GlobalConfig.CHUNK_SIZE];
+            return chunks[x / chunkSize, y / chunkSize];
         }
 
         protected Vector2Int GetInChunkOffset(int x, int y)
         {
-            return new Vector2Int(x % GlobalConfig.CHUNK_SIZE, y % GlobalConfig.CHUNK_SIZE);
+            return new Vector2Int(x % chunkSize, y % chunkSize);
         }
         /// <param name="x">x in world space</param>
         /// <param name="y">z in world space</param>
@@ -66,15 +79,15 @@ namespace Assets.Scripts.TerrainScripts
         public T GetChunkAtWorldPos(float x, float y)
         {
             return chunks[
-                Mathf.FloorToInt(x / (GlobalConfig.CHUNK_SIZE * worldCellSize.x)),
-                Mathf.FloorToInt(y / (GlobalConfig.CHUNK_SIZE * worldCellSize.y))];
+                Mathf.FloorToInt(x / (chunkSize * worldCellSize.x)),
+                Mathf.FloorToInt(y / (chunkSize * worldCellSize.y))];
         }
 
         protected Vector2Int GetWorldPosInChunkOffset(float x, float y)
         {
             return new Vector2Int(
-                 Mathf.FloorToInt(x % (GlobalConfig.CHUNK_SIZE * worldCellSize.x)),
-                 Mathf.FloorToInt(y % (GlobalConfig.CHUNK_SIZE * worldCellSize.y)));
+                 Mathf.FloorToInt(x % (chunkSize * worldCellSize.x)),
+                 Mathf.FloorToInt(y % (chunkSize * worldCellSize.y)));
         }
 
         /// <summary>
@@ -107,5 +120,107 @@ namespace Assets.Scripts.TerrainScripts
         {
             return GetGridPostion(worldPosition.x, worldPosition.z);
         }
+
+        public Vector2Int GetChunkSizeAt(int x, int y)
+        {
+            int sizeX = chunkSize;
+            if (x == chunkArrayLength.x - 1)
+            {
+                sizeX = gridDataSize.x % chunkSize;
+                if (sizeX == 0) sizeX = chunkSize;
+            }
+
+            int sizeY = chunkSize;
+            if (y == chunkArrayLength.y - 1)
+            {
+                sizeY = gridDataSize.y % chunkSize;
+                if (sizeY == 0) sizeY = chunkSize;
+            }
+            return new Vector2Int(sizeX, sizeY);
+        }
+        ///// <summary>
+        ///// Iterates grid faster by accessing chunk then iterating inside it
+        ///// </summary>
+        //public void IterateGrid(Action<ChunkIteratorStep<T>> action, int xSize = -1, int ySize = -1)
+        //{
+        //    if (xSize == -1) xSize = chunkDataSize.x;
+        //    if (ySize == -1) ySize = chunkDataSize.y;
+        //    int chunkXSize = Mathf.CeilToInt(xSize / chunkArrayLength.x);
+        //    int chunkYSize = Mathf.CeilToInt(ySize / chunkArrayLength.y);
+
+        //    int lastX = xSize % GlobalConfig.CHUNK_SIZE;
+        //    if (lastX == 0) lastX = GlobalConfig.CHUNK_SIZE;
+
+        //    int lastY = ySize % GlobalConfig.CHUNK_SIZE;
+        //    if (lastY == 0) lastY = GlobalConfig.CHUNK_SIZE;
+
+        //    for (int chunkX = 0; chunkX < chunkXSize; chunkX++)
+        //        for (int chunkY = 0; chunkY < chunkYSize; chunkY++)
+        //        {
+        //            int currentXSize = chunkX == chunkXSize - 1 ? lastX : GlobalConfig.CHUNK_SIZE;
+        //            int currentYSize = chunkY == chunkYSize - 1 ? lastY : GlobalConfig.CHUNK_SIZE;
+
+        //            T currentChunk = chunks[chunkX, chunkY];
+        //            for (int inChunkX = 0; inChunkX < currentXSize; inChunkX++)
+        //                for (int inChunkY = 0; inChunkY < currentYSize; inChunkY++)
+        //                {
+        //                    action.Invoke(new ChunkIteratorStep<T>()
+        //                    {
+        //                        currentChunk = currentChunk,
+        //                        xInChunk = inChunkX,
+        //                        yInChunk = inChunkY,
+        //                        chunkX = chunkX,
+        //                        chunkY = chunkY
+        //                    });
+        //                }
+        //        }
+        //}
+
+        public void IterateChunks(Action<int, int> action)
+        {
+            for(int x = 0; x < chunkArrayLength.x; x++)
+                for(int y = 0; y < chunkArrayLength.y; y++)
+                {
+                    action.Invoke(x, y);
+                }
+        }
+
+        public void IterateChunks(Action<T> action)
+        {
+            IterateChunks(new Action<int, int>((x,y) => action.Invoke(chunks[x, y])));
+        }
+
+        public void IterateInChunk(T chunk, Action<int,int> action)
+        {
+            for(int x = 0; x < chunk.chunkSizeX; x++)
+                for(int y = 0; y < chunk.chunkSizeY; y++)
+                {
+                    action.Invoke(x, y);
+                }
+        }
+
+        public void IterateInChunk(int chunkX, int chunkY, Action<int, int> action)
+        {
+            T chunk = chunks[chunkX, chunkY];
+            IterateInChunk(chunk, action);
+        }
+
+        public Task[] IterateChunksAsync(Action<int, int> action)
+        {
+            List<Task> taskList = new List<Task>();
+            Action<int, int> newThreadAction = (x,y) =>
+            {
+                taskList.Add(Task.Factory.StartNew(() => action.Invoke(x,y)));
+            };
+            return taskList.ToArray();
+        }
+
+        public Task[] IterateChunksAsync(Action<T> action)
+        {
+            return IterateChunksAsync(new Action<int, int>((x, y) => action.Invoke(chunks[x, y])));
+        }
+
+        //TODO
+        //public void IterateGrid(Action<ChunkIteratorStep<T>> action) { }
     }
 }

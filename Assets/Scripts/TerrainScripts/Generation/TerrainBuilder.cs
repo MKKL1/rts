@@ -16,34 +16,30 @@ namespace Assets.Scripts.TerrainScripts.Generation
             this.mainGrid = mainGrid;
         }
 
-        //TODO can be async
-        public void SetHeightMap(byte[,] heightMap)
+        public void SetHeightMap(TerrainGrid terrainGrid)
         {
-            float[,] floatHeightMap = new float[heightMap.GetLength(0), heightMap.GetLength(1)];
-            for (int i = 0; i < heightMap.GetLength(0); i++)
-                for (int j = 0; j < heightMap.GetLength(1); j++)
-                {
-                    floatHeightMap[i,j] = heightMap[i,j] / 255f;
-                }
-            SetHeightMap(floatHeightMap);
+            terrainGrid.IterateChunks(new System.Action<int, int>((xChunk, yChunk) =>
+            {
+                terrain.terrainData.SetHeights(xChunk * terrainGrid.chunkSize, yChunk * terrainGrid.chunkSize, terrainGrid.chunks[xChunk, yChunk].heightMap);
+            }));
+            
         }
 
-        public void SetHeightMap(float[,] heightMap)
+        public void SetResources(Transform featuresTransform)
         {
-            terrain.terrainData.SetHeights(0, 0, heightMap);
-        }
-
-        public void SetResources(TerrainResourceNode[,] terrainResourceMap, Transform featuresTransform)
-        {
-            for (int i = 0; i < terrainResourceMap.GetLength(0); i++)
-                for (int j = 0; j < terrainResourceMap.GetLength(1); j++)
+            mainGrid.IterateChunks(new System.Action<int, int>((xChunk, yChunk) =>
+            {
+                MainGridChunk currentChunk = mainGrid.chunks[xChunk, yChunk];
+                mainGrid.IterateInChunk(xChunk, yChunk, new System.Action<int, int>((xInChunk, yInChunk) =>
                 {
-                    TerrainResourceNode resourceNode = terrainResourceMap[i, j];
+                    TerrainResourceNode resourceNode = currentChunk.resourceMap[xInChunk, yInChunk];
                     if (!resourceNode.isEmpty())
                     {
+                        int gridPosX = xInChunk + (xChunk * mainGrid.chunkSize);
+                        int gridPosY = yInChunk + (yChunk * mainGrid.chunkSize);
 
                         GameObject tmp = settings.resourceIDManager.GetDetailByID(resourceNode.prefabsList, resourceNode.resourceTypeID);
-                        Vector2 v1 = Utils.RandomMove(mainGrid.GetWorldPosition(i, j), mainGrid.cellSize.x * 0.4f, mainGrid.cellSize.y * 0.4f);
+                        Vector2 v1 = Utils.RandomMove(mainGrid.GetWorldPosition(gridPosX, gridPosY), mainGrid.worldCellSize.x * 0.4f, mainGrid.worldCellSize.y * 0.4f);
                         Vector3 pos = new Vector3(v1.x, terrain.SampleHeight(new Vector3(v1.x, 0, v1.y)), v1.y);
 
                         GameObject ins = Object.Instantiate(tmp, pos, Quaternion.Euler(0, Random.Range(0, 359), 0));
@@ -51,19 +47,21 @@ namespace Assets.Scripts.TerrainScripts.Generation
                         TerrainResource res = ins.GetComponent<TerrainResource>();
                         if (res != null)
                         {
-                            res.gridPosX = (short)i;
-                            res.gridPosY = (short)j;
-                            mainGrid.terrainResourceMap[i, j] = res;
+                            res.gridPosX = (short)gridPosX;
+                            res.gridPosY = (short)gridPosY;
+                            currentChunk.spawnedResourceMap[xInChunk, yInChunk] = res;
                         }
-                        mainGrid.walkable[i, j] = false;
                     }
-                }
+                }));
+                
+            }));
+                
         }
 
-        public void BuildTerrain(TerrainGeneratorResult terrainGenMsg, Transform featuresTransform)
+        public void BuildTerrain(TerrainGrid terrainGrid, Transform featuresTransform)
         {
-            SetHeightMap(terrainGenMsg.heightMap);
-            SetResources(terrainGenMsg.resourceMap, featuresTransform);
+            SetHeightMap(terrainGrid);
+            SetResources(featuresTransform);
         }
     }
 }

@@ -12,18 +12,16 @@ namespace Assets.Scripts.TerrainScripts.BiomeBlending
         public BiomeType maxBiome;
         public float a;
     }
-    public class LerpBlending : BiomeBlendingAlgorithm
+    public class LerpBlending
     {
         private Dictionary<RangeAttribute, BlendingValues> blendingRanges;
         private BiomesManager biomeManager;
-        private float[,] biomeAltitudeMap;
-        public LerpBlending(BiomesManager biomeManager, float[,] biomeAltitudeMap)
+        public LerpBlending(BiomesManager biomeManager)
         {
             this.biomeManager = biomeManager;
-            this.biomeAltitudeMap = biomeAltitudeMap;
         }
 
-        public void blendBiomes(ref BiomeWeightManager biomeWeightManager)
+        public void blendBiomes(ref BiomeWeightManager biomeWeightManager, float[,] biomeAltitudeMap)
         {
             createBlendingRanges();
             //TODO Can be async
