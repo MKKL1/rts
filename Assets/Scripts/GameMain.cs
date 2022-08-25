@@ -12,11 +12,10 @@ public class GameMain : NetworkBehaviour
     public PlayerIdentificator localPlayerID = PlayerIdentificator.serverID;
     public List<PlayerScript> playerList = new List<PlayerScript>();
     public event Action playerListChangeEvent;
+    public EntityManager entityManager = new EntityManager();
+
+
     public PlayerScript localPlayerScript;
-    
-    
-    
-    public EntityManager entityManager;
     public Terrain mainTerrain;
     public Camera localCamera;
     public SelectionTool localSelectionTool;

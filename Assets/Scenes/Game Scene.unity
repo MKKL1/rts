@@ -135,7 +135,7 @@ GameObject:
   - component: {fileID: 107236307}
   - component: {fileID: 107236306}
   - component: {fileID: 107236309}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: MainTerrain
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -222,6 +222,10 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: -3392208230153899015, guid: 2767f8591534dcd478c08ecd63633cae, type: 3}
+      propertyPath: clientAuthority
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 810568782961172254, guid: 2767f8591534dcd478c08ecd63633cae, type: 3}
       propertyPath: m_RootOrder
       value: 6
@@ -334,7 +338,7 @@ MonoBehaviour:
   ReliableMaxMessageSize: 298449
   UnreliableMaxMessageSize: 1199
   debugLog: 0
-  statisticsGUI: 0
+  statisticsGUI: 1
   statisticsLog: 0
 --- !u!4 &159468705
 Transform:
@@ -1352,7 +1356,7 @@ MonoBehaviour:
   syncMode: 0
   syncInterval: 0.1
   playerList: []
-  entityList: []
+  localPlayerScript: {fileID: 0}
   mainTerrain: {fileID: 107236307}
   localCamera: {fileID: 6605040748449310633}
   localSelectionTool: {fileID: 1030442203}
@@ -1593,6 +1597,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1030442204}
   - component: {fileID: 1030442203}
+  - component: {fileID: 1030442205}
   m_Layer: 0
   m_Name: LocalPlayer
   m_TagString: Untagged
@@ -1633,6 +1638,19 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 9
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1030442205
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1030442202}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 26645c7edfdeb1149a2333e06896359a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  raycastMaxDistance: 500
 --- !u!1 &1075746888
 GameObject:
   m_ObjectHideFlags: 0

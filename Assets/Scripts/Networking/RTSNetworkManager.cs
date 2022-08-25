@@ -55,9 +55,9 @@ public class RTSNetworkManager : NetworkManager
         playerScript.SetPlayerData(data);
 
 
+
         player.name = $"{playerPrefab.name} [connId={conn.connectionId}]";
         NetworkServer.AddPlayerForConnection(conn, player);
-
         GameMain.instance.entityManager.visibleEntityList.ForEach(x => x.transform.GetComponent<NetworkIdentity>().AssignClientAuthority(conn));
     }
 

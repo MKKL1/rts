@@ -11,6 +11,9 @@ public class SelectionTool : MonoBehaviour
     public float raycastMaxDistance = 500f;
     public Texture borderTexture;
 
+    //TODO only entities need list, so it would be better to make two variables for selected items
+    // 1 list of selected entities
+    // 2 transform variable of selected item that is not entity
     public List<Transform> selected;
     public event Action selectionChangeEvent;
     public event Action<Transform> itemSelectedEvent;
@@ -64,7 +67,6 @@ public class SelectionTool : MonoBehaviour
     private void Update()
     {
         mouseDrag.DragUpdate();
-        selected.ForEach(x => x.position += Vector3.up * 0.01f);
     }
 
     private void onClick()
@@ -127,8 +129,10 @@ public class SelectionTool : MonoBehaviour
 
         List<Transform> transforms = new List<Transform>();
         //TODO select only entities of owner
-        gameMain.entityManager.GetEntitiesInBounds(bounds).ForEach(entity => transforms.Add(entity.GetComponent<Transform>()));
-
+        foreach(var entity in gameMain.entityManager.GetEntitiesInBounds(bounds))
+        {
+            transforms.Add(entity.transform);
+        }
         return transforms;
 
     }
