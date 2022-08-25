@@ -13,21 +13,13 @@ namespace Assets.Scripts.TerrainScripts.Generation
 {
     public class TerrainGenerator
     {
-        private readonly int chunksize = 128;
-
-        public float[,] heightmap { get; }
         public BlendingMethod blendingMethod = BlendingMethod.LerpBlending;
-        public Transform detailTransform = null;
 
         private TerrainGrid terrainGrid;
-        private MainGrid mainGrid;
+        //private MainGrid mainGrid;
         private BiomesManager biomesManager;
-        private BiomeWeightManager biomeWeightManager;
         private TerrainGenSettings generatorData;
-        private bool[,] walkable;
-
-        
-
+        private BiomeWeightManager[,] biomeWeightManagers;
 
         private readonly ParallelOptions parallelOptions = new ParallelOptions { MaxDegreeOfParallelism = 8 };
 

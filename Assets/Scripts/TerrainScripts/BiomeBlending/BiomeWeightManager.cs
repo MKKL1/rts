@@ -19,8 +19,6 @@ namespace Assets.Scripts.TerrainScripts
             biomeCount = biomesManager.biomeCount;
             this.size = size;
             biomeWeightMap = new float[biomeCount,size.x, size.y];
-
-
         }
 
         public BiomeWeightManager(BiomesManager biomesManager, int xsize, int ysize) : this(biomesManager, new Vector2Int(xsize, ysize)) { }

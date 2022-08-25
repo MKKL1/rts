@@ -2,38 +2,25 @@
 
 namespace Assets.Scripts.TerrainScripts
 {
-    public struct TerrainGrid
+    public class TerrainGrid : GridBase<TerrainChunk>
     {
-        public BiomeType[,] biomeGrid;
-        public Vector2Int gridSize;
-        /// <summary>
-        /// Size of single cell in scene
-        /// </summary>
-        public Vector2 cellSize;
+        public TerrainGrid(int chunkDataSizeX, int chunkDataSizeY, float cellSizeX, float cellSizeY)
+            :base(chunkDataSizeX, chunkDataSizeY, cellSizeX, cellSizeY) {}
 
-
-        public TerrainGrid(int gridSizeX, int gridSizeY, float cellSizeX, float cellSizeY)
+        public BiomeType GetBiomeAt(int x, int y)
         {
-            gridSize = new Vector2Int(gridSizeX, gridSizeY);
-            biomeGrid = new BiomeType[gridSizeX, gridSizeY];
-            cellSize = new Vector2(cellSizeX, cellSizeY);
-
-            //cellSize = new Vector2(terrain.terrainData.size.x/terrainSizeX, terrain.terrainData.size.z / terrainSizeY);
+            Vector2Int offset = GetInChunkOffset(x, y);
+            return GetChunkAt(x, y).biomeGrid[offset.x, offset.y];
         }
 
-        public Vector2 GetTerrainWorldSize()
-        {
-            return gridSize * cellSize;
-        }
+        public BiomeType GetBiomeAt(Vector2Int vector) { return GetBiomeAt(vector.x, vector.y); }
 
-        public BiomeType GetCellAtWorldPos(float x, float y)
+        public BiomeType GetBiomeAtWorldPos(float x, float y)
         {
-            return biomeGrid[Mathf.CeilToInt(x / cellSize.x), Mathf.CeilToInt(y / cellSize.y)];
+            Vector2Int offset = GetWorldPosInChunkOffset(x, y);
+            return GetChunkAtWorldPos(x, y).biomeGrid[offset.x, offset.y];
         }
-
-        public BiomeType GetCellAtWorldPos(Vector2 vector)
-        {
-            return GetCellAtWorldPos(vector.x, vector.y);
-        }
+        public BiomeType GetBiomeAtWorldPos(Vector2 pos) { return GetBiomeAtWorldPos(pos.x, pos.y); }
+        public BiomeType GetBiomeAtWorldPos(Vector3 pos) { return GetBiomeAtWorldPos(pos.x, pos.z); }
     }
 }
