@@ -42,16 +42,5 @@ namespace Assets.Scripts.TerrainScripts.Generation
             value.resourceMap = networkReader.ReadArray<TerrainResourceNode>((uint)value.terrainGridSize.x, (uint)value.terrainGridSize.y);
             return value;
         }
-
-        //TODO for some reason enum has to be treated like custom type
-        public static void WriteBiomeType(this NetworkWriter networkWriter, BiomeType value)
-        {
-            networkWriter.WriteByte((byte)value);
-        }
-
-        public static BiomeType ReadBiomeType(this NetworkReader networkReader)
-        {
-            return (BiomeType)networkReader.ReadByte();
-        }
     }
 }
