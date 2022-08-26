@@ -108,6 +108,7 @@ namespace Assets.Scripts.TerrainScripts.Generation
                 {
                     int xAtGrid = (xChunk * terrainGrid.chunkSize) + xInChunk;
                     int yAtGrid = (yChunk * terrainGrid.chunkSize) + yInChunk;
+
                     float heightSum = 0f;
                     foreach (KeyValuePair<BiomeType, float> entry in biomeWeightManager.GetWeight(xInChunk, yInChunk))
                     {
@@ -126,7 +127,6 @@ namespace Assets.Scripts.TerrainScripts.Generation
 
         public void GenerateFeatures(MainGrid mainGrid)
         {
-            DebugTexture debugTexture = new DebugTexture(mainGrid.gridDataSize.x, mainGrid.gridDataSize.y);
             ResourceGenerator resourceGenerator = new ResourceGenerator(mainGrid.gridDataSize, generatorData, seed);
             Task[] tasks = mainGrid.IterateChunksAsync(new Action<int, int>((xChunk, yChunk) =>
             {
@@ -154,11 +154,6 @@ namespace Assets.Scripts.TerrainScripts.Generation
                             if (percentageSpawn == 100 || rnd.Next(0, 100) < percentageSpawn)
                             {
                                 TerrainResourceNode resNode = resourceGenerator.GetResourceID(xAtGrid, yAtGrid);
-                                Color c = Color.white;
-                                if (resNode.prefabsList == ResourcePrefabsList.TREE) c = Color.green;
-                                else if (resNode.prefabsList == ResourcePrefabsList.ROCK) c = Color.gray;
-                                else if (resNode.prefabsList == ResourcePrefabsList.GOLD) c = Color.yellow;
-                                debugTexture.SetPixel(xAtGrid, yAtGrid, c);
                                 currentChunk.resourceMap[xInChunk, yInChunk] = resNode;
                                 if (resNode.prefabsList != ResourcePrefabsList.NONE) walkableNode = false;
                             }
@@ -171,7 +166,6 @@ namespace Assets.Scripts.TerrainScripts.Generation
                 }));
             }));
             Task.WaitAll(tasks);
-            debugTexture.SaveToPath("DebugTextures/", "resources");
         }
 
         //TODO find big enough area for each player, if not generate area
@@ -186,7 +180,5 @@ namespace Assets.Scripts.TerrainScripts.Generation
             Generate();
             GenerateFeatures(mainGrid);
         }
-
-        
     }
 }

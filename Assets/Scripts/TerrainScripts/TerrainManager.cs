@@ -12,6 +12,7 @@ using Assets.Scripts.TerrainScripts.Generation.Noise;
 using Mirror;
 using Assets.Scripts.TerrainScripts.Generation;
 using System;
+using System.Threading.Tasks;
 
 public class TerrainManager : NetworkBehaviour
 {
@@ -33,6 +34,9 @@ public class TerrainManager : NetworkBehaviour
     public int seed = 69;
 
     public static TerrainManager instance;
+
+    private TerrainGrid terrainGrid;
+    private MainGrid mainGrid;
     private void Awake()
     {
         instance = this;
@@ -41,26 +45,60 @@ public class TerrainManager : NetworkBehaviour
     [Server]
     public void initTerrain()
     {
+        mainGrid = GameMain.instance.mainGrid;
         var watch = System.Diagnostics.Stopwatch.StartNew();
         TerrainGenerator terrainGenerator = new TerrainGenerator(257, 257, 4, terrainGenSettings, seed);
-        GameMain.instance.mainGrid = terrainGenerator.CreateMainGrid(257, 257);
+        terrainGrid = terrainGenerator.terrainGrid;
+        mainGrid = terrainGenerator.CreateMainGrid(257, 257);
 
-        terrainGenerator.GenerateAll(GameMain.instance.mainGrid);
+        terrainGenerator.GenerateAll(mainGrid);
 
         
 
         watch.Stop();
         var elapsedMs = watch.ElapsedMilliseconds;
         Debug.Log(elapsedMs);
-        BuildTerrainClient(GameMain.instance.mainGrid, terrainGenerator.terrainGrid);
+
+        SendGridInfoRpc(mainGrid.GetInitialData(), terrainGrid.GetInitialData());
+
+        terrainGrid.IterateChunks(new Action<int, int>((x, y) =>
+        {
+            SendTerrainChunkRpc(terrainGrid.chunks[x, y], x, y);
+        }));
+
+        mainGrid.IterateChunks(new Action<int, int>((x, y) =>
+        {
+            SendMainChunkRpc(mainGrid.chunks[x, y], x, y);
+        }));
+
+        BuildTerrainClient();
         //walkable.material.SetTexture("_Buildable_Mask", GameMain.instance.mainGrid.GetWalkable());
     }
 
-    private void BuildTerrainClient(MainGrid mainGrid, TerrainGrid terrainGrid)
+    [ClientRpc(includeOwner = false)]
+    public void SendGridInfoRpc(InitialDataMainGrid initmain, InitialDataTerrainGrid initTerr)
+    {
+        mainGrid = new MainGrid(initmain.gridDataSize.x, initmain.gridDataSize.y, initmain.cellSize.x);
+        terrainGrid = new TerrainGrid(initTerr.gridDataSize.x, initTerr.gridDataSize.y, initTerr.cellSize.x, initTerr.cellSize.y);
+    }
+
+    [ClientRpc(includeOwner = false)]
+    public void SendTerrainChunkRpc(TerrainChunk terrainChunk, int xChunk, int yChunk)
+    {
+        terrainGrid.chunks[xChunk, yChunk] = terrainChunk;
+    }
+
+    [ClientRpc(includeOwner = false)]
+    public void SendMainChunkRpc(MainGridChunk mainGridChunk, int xChunk, int yChunk)
+    {
+        mainGrid.chunks[xChunk, yChunk] = mainGridChunk;
+    }
+
+    [ClientRpc]
+    private void BuildTerrainClient()
     {
 
-        GameMain.instance.mainGrid = mainGrid;
-        TerrainBuilder terrainBuilder = new TerrainBuilder(terrainGenSettings, terrain, GameMain.instance.mainGrid);
+        TerrainBuilder terrainBuilder = new TerrainBuilder(terrainGenSettings, terrain, mainGrid);
         terrainBuilder.BuildTerrain(terrainGrid, detailsTransform);
 
         terrainCornerBottomLeft = new Vector2(terrain.transform.position.x, terrain.transform.position.z);

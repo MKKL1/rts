@@ -47,19 +47,19 @@ namespace Assets.Scripts.TerrainScripts
         public Vector2 worldCellSize { get; internal set; }
         public readonly int chunkSize = GlobalConfig.CHUNK_SIZE;
 
-        public GridBase(Vector2Int chunkDataSize, Vector2 cellSize)
+        public GridBase(Vector2Int gridDataSize, Vector2 cellSize)
         {
-            this.gridDataSize = chunkDataSize;
+            this.gridDataSize = gridDataSize;
             this.worldCellSize = cellSize;
             //TODO WTF
             this.chunkArrayLength = new Vector2Int(
-                Mathf.CeilToInt((float)chunkDataSize.x / chunkSize),
-                Mathf.CeilToInt((float)chunkDataSize.y / chunkSize));
+                Mathf.CeilToInt((float)gridDataSize.x / chunkSize),
+                Mathf.CeilToInt((float)gridDataSize.y / chunkSize));
             chunks = new T[chunkArrayLength.x, chunkArrayLength.y];
         }
 
-        public GridBase(int chunkDataSizeX, int chunkDataSizeY, float cellSizeX, float cellSizeY)
-            : this(new Vector2Int(chunkDataSizeX, chunkDataSizeY), new Vector2(cellSizeX, cellSizeY)) { }
+        public GridBase(int gridDataSizeX, int gridDataSizeY, float cellSizeX, float cellSizeY)
+            : this(new Vector2Int(gridDataSizeX, gridDataSizeY), new Vector2(cellSizeX, cellSizeY)) { }
         /// <summary>
         /// Returns chunk relative to grid coordinates
         /// E.g. if chunk array size is 4x4 and chunk size is 100 then GetChunkAt(150, 50) will return chunkArray[1,0]
