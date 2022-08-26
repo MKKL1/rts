@@ -215,6 +215,7 @@ namespace Assets.Scripts.TerrainScripts
             {
                 taskList.Add(Task.Factory.StartNew(() => action.Invoke(x,y)));
             };
+            IterateChunks(newThreadAction);
             return taskList.ToArray();
         }
 

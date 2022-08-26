@@ -77,7 +77,7 @@ namespace Assets.Scripts.TerrainScripts.Generation
             FastNoiseLite noise2 = NewBiomeNoise(seed + 1);
 
             biomeWeightManagers = new BiomeWeightManager[terrainGrid.chunkArrayLength.x, terrainGrid.chunkArrayLength.y];
-            terrainGrid.IterateChunks(new Action<int, int>((xChunk, yChunk) =>
+            Task[] tasks = terrainGrid.IterateChunksAsync(new Action<int, int>((xChunk, yChunk) =>
             {
                 TerrainChunk currentChunk = terrainGrid.chunks[xChunk, yChunk];
                 float[,] biomeHeightMap = new float[currentChunk.chunkSizeX, currentChunk.chunkSizeY];
@@ -117,7 +117,10 @@ namespace Assets.Scripts.TerrainScripts.Generation
                     currentChunk.heightMap[xInChunk, yInChunk] = heightSum;
                 }));
                 biomeWeightManagers[xChunk, yChunk] = biomeWeightManager;
+                Debug.Log($"[Generation] Chunk({xChunk},{yChunk}) heightmap generated");
             }));
+            Task.WaitAll(tasks);
+            Debug.Log($"[Generation] All chunks heightmaps generated");
         }
 
 
@@ -125,7 +128,7 @@ namespace Assets.Scripts.TerrainScripts.Generation
         {
             DebugTexture debugTexture = new DebugTexture(mainGrid.gridDataSize.x, mainGrid.gridDataSize.y);
             ResourceGenerator resourceGenerator = new ResourceGenerator(mainGrid.gridDataSize, generatorData, seed);
-            mainGrid.IterateChunks(new Action<int, int>((xChunk, yChunk) =>
+            Task[] tasks = mainGrid.IterateChunksAsync(new Action<int, int>((xChunk, yChunk) =>
             {
                 MainGridChunk currentChunk = mainGrid.chunks[xChunk, yChunk];
                 BiomeWeightManager biomeWeightManager = biomeWeightManagers[xChunk, yChunk];
@@ -167,6 +170,7 @@ namespace Assets.Scripts.TerrainScripts.Generation
                     currentChunk.walkableMap[xInChunk, yInChunk] = walkableNode;
                 }));
             }));
+            Task.WaitAll(tasks);
             debugTexture.SaveToPath("DebugTextures/", "resources");
         }
 
