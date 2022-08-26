@@ -17,6 +17,7 @@ namespace Assets.Scripts.TerrainScripts
 
         public BiomeType GetBiomeAtWorldPos(float x, float y)
         {
+            
             Vector2Int offset = GetWorldPosInChunkOffset(x, y);
             return GetChunkAtWorldPos(x, y).biomeGrid[offset.x, offset.y];
         }

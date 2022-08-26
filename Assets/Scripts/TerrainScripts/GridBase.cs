@@ -89,8 +89,8 @@ namespace Assets.Scripts.TerrainScripts
         protected Vector2Int GetWorldPosInChunkOffset(float x, float y)
         {
             return new Vector2Int(
-                 Mathf.FloorToInt(x % (chunkSize * worldCellSize.x)),
-                 Mathf.FloorToInt(y % (chunkSize * worldCellSize.y)));
+                 Mathf.FloorToInt((x % (chunkSize * worldCellSize.x)) / worldCellSize.x),
+                 Mathf.FloorToInt((y % (chunkSize * worldCellSize.y)) / worldCellSize.y));
         }
 
         /// <summary>
@@ -131,7 +131,6 @@ namespace Assets.Scripts.TerrainScripts
             {
                 sizeX = gridDataSize.x % chunkSize;
                 if (sizeX == 0) sizeX = chunkSize;
-                sizeX--;
             }
 
             int sizeY = chunkSize;
@@ -139,7 +138,6 @@ namespace Assets.Scripts.TerrainScripts
             {
                 sizeY = gridDataSize.y % chunkSize;
                 if (sizeY == 0) sizeY = chunkSize;
-                sizeY--;
             }
             return new Vector2Int(sizeX, sizeY);
         }

@@ -131,32 +131,39 @@ namespace Assets.Scripts.TerrainScripts.Generation
                 BiomeWeightManager biomeWeightManager = biomeWeightManagers[xChunk, yChunk];
                 mainGrid.IterateInChunk(currentChunk, new Action<int, int>((xInChunk, yInChunk) =>
                 {
-
+                    
                     int xAtGrid = (xChunk * mainGrid.chunkSize) + xInChunk;
                     int yAtGrid = (yChunk * mainGrid.chunkSize) + yInChunk;
 
-
-                    bool walkableNode = true;
-                    Vector2 worldPosition = mainGrid.GetWorldPosition(xAtGrid, yAtGrid);
-                    BiomeType biomeType = terrainGrid.GetBiomeAtWorldPos(worldPosition);
-                    Biome currentBiome = biomesManager.GetBiome(biomeType);
-                    if (currentBiome.biomeData.resources)
+                    bool walkableNode = false;
+                    //TODO better way to not spawn resources at edges of terrain
+                    if (!(xAtGrid == 0 || xAtGrid == mainGrid.worldGridSize.x-1 
+                        ||yAtGrid == 0 || yAtGrid == mainGrid.worldGridSize.y - 1)) 
                     {
-                        //TODO xInChunk is from terrainGrid not mainGrid
-                        int percentageSpawn = (int)(biomeWeightManager.GetWeight(biomeType, xInChunk, yInChunk) * 100);
-                        if (percentageSpawn == 100 || rnd.Next(0, 100) < percentageSpawn)
+                        walkableNode = true;
+                        Vector2 worldPosition = mainGrid.GetWorldPosition(xAtGrid, yAtGrid);
+                        BiomeType biomeType = terrainGrid.GetBiomeAtWorldPos(worldPosition);
+                        Biome currentBiome = biomesManager.GetBiome(biomeType);
+                        if (currentBiome.biomeData.resources)
                         {
-                            TerrainResourceNode resNode = resourceGenerator.GetResourceID(xAtGrid, yAtGrid);
-                            Color c = Color.white;
-                            if (resNode.prefabsList == ResourcePrefabsList.TREE) c = Color.green;
-                            else if (resNode.prefabsList == ResourcePrefabsList.ROCK) c = Color.gray;
-                            else if (resNode.prefabsList == ResourcePrefabsList.GOLD) c = Color.yellow;
-                            debugTexture.SetPixel(xAtGrid, yAtGrid, c);
-                            currentChunk.resourceMap[xInChunk, yInChunk] = resNode;
-                            if (resNode.prefabsList != ResourcePrefabsList.NONE) walkableNode = false;
+                            //TODO xInChunk is from terrainGrid not mainGrid
+                            int percentageSpawn = (int)(biomeWeightManager.GetWeight(biomeType, xInChunk, yInChunk) * 100);
+                            if (percentageSpawn == 100 || rnd.Next(0, 100) < percentageSpawn)
+                            {
+                                TerrainResourceNode resNode = resourceGenerator.GetResourceID(xAtGrid, yAtGrid);
+                                Color c = Color.white;
+                                if (resNode.prefabsList == ResourcePrefabsList.TREE) c = Color.green;
+                                else if (resNode.prefabsList == ResourcePrefabsList.ROCK) c = Color.gray;
+                                else if (resNode.prefabsList == ResourcePrefabsList.GOLD) c = Color.yellow;
+                                debugTexture.SetPixel(xAtGrid, yAtGrid, c);
+                                currentChunk.resourceMap[xInChunk, yInChunk] = resNode;
+                                if (resNode.prefabsList != ResourcePrefabsList.NONE) walkableNode = false;
+                            }
                         }
+
+                        if (walkableNode && !currentBiome.biomeData.walkable)
+                            walkableNode = false;
                     }
-                    if (walkableNode && !currentBiome.biomeData.walkable) walkableNode = false;
                     currentChunk.walkableMap[xInChunk, yInChunk] = walkableNode;
                 }));
             }));
