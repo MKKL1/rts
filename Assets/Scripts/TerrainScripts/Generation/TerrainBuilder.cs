@@ -1,4 +1,5 @@
-﻿using Assets.Scripts.TerrainScripts.Details;
+﻿using Assets.Scripts.DebugTools;
+using Assets.Scripts.TerrainScripts.Details;
 using System.Collections;
 using UnityEngine;
 
@@ -18,11 +19,24 @@ namespace Assets.Scripts.TerrainScripts.Generation
 
         public void SetHeightMap(TerrainGrid terrainGrid)
         {
+            float[,] reversedHeightMap = new float[terrainGrid.gridDataSize.x, terrainGrid.gridDataSize.y];
+            DebugTexture debugTexture = new DebugTexture(terrainGrid.gridDataSize.x, terrainGrid.gridDataSize.y);
             terrainGrid.IterateChunks(new System.Action<int, int>((xChunk, yChunk) =>
             {
-                terrain.terrainData.SetHeights(xChunk * terrainGrid.chunkSize, yChunk * terrainGrid.chunkSize, terrainGrid.chunks[xChunk, yChunk].heightMap);
+                TerrainChunk currentChunk = terrainGrid.chunks[xChunk, yChunk];
+                terrainGrid.IterateInChunk(currentChunk, new System.Action<int, int>((xInChunk, yInChunk) =>
+                {
+                    int xOnGrid = (xChunk * terrainGrid.chunkSize) + xInChunk;
+                    int yOnGrid = (yChunk * terrainGrid.chunkSize) + yInChunk;
+
+                    reversedHeightMap[yOnGrid, xOnGrid] = currentChunk.heightMap[xInChunk, yInChunk];
+                    debugTexture.SetPixel(xOnGrid, yOnGrid, currentChunk.heightMap[xInChunk, yInChunk]);
+                }));
             }));
-            
+
+            debugTexture.SaveToPath("DebugTexture/", "height");
+
+            terrain.terrainData.SetHeights(0,0,reversedHeightMap);
         }
 
         public void SetResources(Transform featuresTransform)

@@ -39,7 +39,7 @@ namespace Assets.Scripts.TerrainScripts
         /// </summary>
         public Vector2 worldGridSize
         {
-            get { return chunkArrayLength * worldChunkSize; }
+            get { return gridDataSize * worldCellSize; }
         }
         /// <summary>
         /// Size of single cell of grid in world space
@@ -51,7 +51,10 @@ namespace Assets.Scripts.TerrainScripts
         {
             this.gridDataSize = chunkDataSize;
             this.worldCellSize = cellSize;
-            this.chunkArrayLength = chunkDataSize / GlobalConfig.CHUNK_SIZE;
+            //TODO WTF
+            this.chunkArrayLength = new Vector2Int(
+                Mathf.CeilToInt((float)chunkDataSize.x / chunkSize),
+                Mathf.CeilToInt((float)chunkDataSize.y / chunkSize));
             chunks = new T[chunkArrayLength.x, chunkArrayLength.y];
         }
 
@@ -128,6 +131,7 @@ namespace Assets.Scripts.TerrainScripts
             {
                 sizeX = gridDataSize.x % chunkSize;
                 if (sizeX == 0) sizeX = chunkSize;
+                sizeX--;
             }
 
             int sizeY = chunkSize;
@@ -135,6 +139,7 @@ namespace Assets.Scripts.TerrainScripts
             {
                 sizeY = gridDataSize.y % chunkSize;
                 if (sizeY == 0) sizeY = chunkSize;
+                sizeY--;
             }
             return new Vector2Int(sizeX, sizeY);
         }

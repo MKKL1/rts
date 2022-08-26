@@ -47,12 +47,12 @@ public class TerrainManager : NetworkBehaviour
 
         terrainGenerator.GenerateAll(GameMain.instance.mainGrid);
 
-        BuildTerrainClient(GameMain.instance.mainGrid, terrainGenerator.terrainGrid);
+        
 
         watch.Stop();
         var elapsedMs = watch.ElapsedMilliseconds;
         Debug.Log(elapsedMs);
-
+        BuildTerrainClient(GameMain.instance.mainGrid, terrainGenerator.terrainGrid);
         //walkable.material.SetTexture("_Buildable_Mask", GameMain.instance.mainGrid.GetWalkable());
     }
 

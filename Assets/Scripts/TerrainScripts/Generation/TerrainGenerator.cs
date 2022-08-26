@@ -69,9 +69,8 @@ namespace Assets.Scripts.TerrainScripts.Generation
             terrainGrid.IterateChunks(new Action<int, int> ((xChunk, yChunk) =>
             {
                 Vector2Int chunkSize = terrainGrid.GetChunkSizeAt(xChunk, yChunk);
-                terrainGrid.chunks[xChunk, xChunk] = new TerrainChunk((ushort)chunkSize.x, (ushort)chunkSize.y);
+                terrainGrid.chunks[xChunk, yChunk] = new TerrainChunk((ushort)chunkSize.x, (ushort)chunkSize.y);
             }));
-
 
             //TODO generate biome altitude map in new class
             FastNoiseLite noise1 = NewBiomeNoise(seed);
@@ -83,6 +82,10 @@ namespace Assets.Scripts.TerrainScripts.Generation
                 TerrainChunk currentChunk = terrainGrid.chunks[xChunk, yChunk];
                 float[,] biomeHeightMap = new float[currentChunk.chunkSizeX, currentChunk.chunkSizeY];
 
+                BiomeWeightManager biomeWeightManager = biomeWeightManagers[xChunk, yChunk];
+                biomeWeightManager = new BiomeWeightManager(biomesManager, currentChunk.chunkSizeX, currentChunk.chunkSizeY);
+
+
                 //Generate biomes
                 terrainGrid.IterateInChunk(currentChunk, new Action<int, int>((xInChunk, yInChunk) =>
                 {
@@ -91,41 +94,38 @@ namespace Assets.Scripts.TerrainScripts.Generation
 
                     float biomeHeight = (noise1.GetNoise(xAtGrid, yAtGrid) + noise2.GetNoise(xAtGrid, yAtGrid) + 2) * 0.25f;
                     biomeHeightMap[xInChunk, yInChunk] = biomeHeight;
-
-                    currentChunk.biomeGrid[xInChunk, yInChunk] = biomesManager.GetBiomeType(biomeHeight);
+                    BiomeType biomeType = biomesManager.GetBiomeType(biomeHeight);
+                    currentChunk.biomeGrid[xInChunk, yInChunk] = biomeType;
+                    biomeWeightManager.SetWeight(biomeType, xInChunk, yInChunk);
                 }));
 
                 //Blend biomes
-                BiomeWeightManager biomeWeightManager = biomeWeightManagers[xChunk, yChunk];
-                biomeWeightManager = new BiomeWeightManager(biomesManager, currentChunk.chunkSizeX, currentChunk.chunkSizeY);
-
                 LerpBlending lerpBlending = new LerpBlending(biomesManager);
                 lerpBlending.blendBiomes(ref biomeWeightManager, biomeHeightMap);
-
-
 
                 //Generate terrain heightmap
                 terrainGrid.IterateInChunk(currentChunk, new Action<int, int>((xInChunk, yInChunk) =>
                 {
-
+                    int xAtGrid = (xChunk * terrainGrid.chunkSize) + xInChunk;
+                    int yAtGrid = (yChunk * terrainGrid.chunkSize) + yInChunk;
                     float heightSum = 0f;
                     foreach (KeyValuePair<BiomeType, float> entry in biomeWeightManager.GetWeight(xInChunk, yInChunk))
                     {
                         if (entry.Value != 0f)
-                            heightSum += biomesManager.GetBiome(entry.Key).GetHeight(xInChunk, yInChunk) * entry.Value;
+                            heightSum += biomesManager.GetBiome(entry.Key).GetHeight(xAtGrid, yAtGrid) * entry.Value;
                     }
                     currentChunk.heightMap[xInChunk, yInChunk] = heightSum;
                 }));
+                biomeWeightManagers[xChunk, yChunk] = biomeWeightManager;
             }));
-
-            //Task.WaitAll(tasks);
         }
 
 
         public void GenerateFeatures(MainGrid mainGrid)
         {
+            DebugTexture debugTexture = new DebugTexture(mainGrid.gridDataSize.x, mainGrid.gridDataSize.y);
             ResourceGenerator resourceGenerator = new ResourceGenerator(mainGrid.gridDataSize, generatorData, seed);
-            Task[] tasks = mainGrid.IterateChunksAsync(new Action<int, int>((xChunk, yChunk) =>
+            mainGrid.IterateChunks(new Action<int, int>((xChunk, yChunk) =>
             {
                 MainGridChunk currentChunk = mainGrid.chunks[xChunk, yChunk];
                 BiomeWeightManager biomeWeightManager = biomeWeightManagers[xChunk, yChunk];
@@ -147,6 +147,11 @@ namespace Assets.Scripts.TerrainScripts.Generation
                         if (percentageSpawn == 100 || rnd.Next(0, 100) < percentageSpawn)
                         {
                             TerrainResourceNode resNode = resourceGenerator.GetResourceID(xAtGrid, yAtGrid);
+                            Color c = Color.white;
+                            if (resNode.prefabsList == ResourcePrefabsList.TREE) c = Color.green;
+                            else if (resNode.prefabsList == ResourcePrefabsList.ROCK) c = Color.gray;
+                            else if (resNode.prefabsList == ResourcePrefabsList.GOLD) c = Color.yellow;
+                            debugTexture.SetPixel(xAtGrid, yAtGrid, c);
                             currentChunk.resourceMap[xInChunk, yInChunk] = resNode;
                             if (resNode.prefabsList != ResourcePrefabsList.NONE) walkableNode = false;
                         }
@@ -155,6 +160,7 @@ namespace Assets.Scripts.TerrainScripts.Generation
                     currentChunk.walkableMap[xInChunk, yInChunk] = walkableNode;
                 }));
             }));
+            debugTexture.SaveToPath("DebugTextures/", "resources");
         }
 
         //TODO find big enough area for each player, if not generate area
