@@ -13,11 +13,11 @@ MonoBehaviour:
   m_Name: Default Detail
   m_EditorClassIdentifier: 
   trees:
-  - {fileID: 166966, guid: 78c29697749a6d44e964f9a0cf83d77a, type: 3}
-  - {fileID: 152404, guid: 5037d6ea184d2f640bf78dcf9894a269, type: 3}
-  - {fileID: 115020, guid: a0c53a09e4a37b5409b1248ebce2c376, type: 3}
-  - {fileID: 166856, guid: 99a48108c5a1932488c06e519f6097f4, type: 3}
-  - {fileID: 184622, guid: c7bcf19bbfa57ed4ea9147dff66d5542, type: 3}
+  - {fileID: 6107411330363033139, guid: 01f51761449d6f34fa22e42b67b824e8, type: 3}
+  - {fileID: 9034597241320595594, guid: c28b8ea14558ee04fbf1d4ca8326f720, type: 3}
+  - {fileID: 6526018064496161148, guid: 1099d919767948d4e85c93126a2eb91a, type: 3}
+  - {fileID: 5719985962568112381, guid: 5a6bf87f68eb80744a055aaf1c07a3d0, type: 3}
+  - {fileID: 613105441645318651, guid: b126d4d8f3bea9646a3a794cab73716b, type: 3}
   rocks:
   - {fileID: 108756, guid: 2d521608fcf07c346b5e2ed4049aa717, type: 3}
   - {fileID: 174596, guid: 41dcf1459594f434a8a9bae6ae03eab0, type: 3}
