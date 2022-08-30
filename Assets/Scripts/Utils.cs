@@ -86,5 +86,12 @@ namespace Assets.Scripts
             for (int i = 0; i < arr.GetLength(0); i++)
                 arr[i] = value;
         }
+
+        public static Vector3 GetOnTopOfTerrain(Vector2 pos, Terrain terrain)
+        {
+            Vector3 onTop = new Vector3(pos.x, 0, pos.y);
+            onTop.y = terrain.SampleHeight(onTop);
+            return onTop;
+        }
     }
 }

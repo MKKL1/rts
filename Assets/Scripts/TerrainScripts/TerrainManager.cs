@@ -99,11 +99,12 @@ public class TerrainManager : NetworkBehaviour
         terrainCornerTopRight = terrainCornerBottomLeft + terrainGrid.worldGridSize;
 
         terrainGenerated?.Invoke();
+        //TODO remove
+        GameMain.instance.mainGrid = mainGrid;
     }
 
     void Start()
     {
-        
         waterLevel = waterTransform.position.y;
     }
 

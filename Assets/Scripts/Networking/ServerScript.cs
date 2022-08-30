@@ -3,21 +3,26 @@ using System.Collections.Generic;
 using UnityEngine;
 
 using Mirror;
+using Assets.Scripts.Simulation;
 
-public class ServerScript : NetworkBehaviour
+namespace Assets.Scripts.Networking
 {
-    //TODO playerlist has to be sent to clients only when player leaves or joins, use RPCclient ?
-    //[SyncVar(hook = nameof(onPlayerListChange))]
-    
+    /// <summary>
+    /// Server only script
+    /// </summary>
+    public class ServerScript : NetworkBehaviour
+    {
+        public EntityMovement entityMovement;
 
+        public static ServerScript instance;
+        private void Awake()
+        {
+            instance = this;
+        }
 
-
-    //[ServerCallback]
-
-    //TODO better way to call this function
-    //private void onPlayerListChange(List<PlayerScript> oldList, List<PlayerScript> newList)
-    //{
-    //    playerList = newList;
-    //    playerListChangeEvent.Invoke();
-    //}
+        private void Start()
+        {
+            entityMovement = new EntityMovement();
+        }
+    }
 }

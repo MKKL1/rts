@@ -1,4 +1,5 @@
-﻿using Mirror;
+﻿using Assets.Scripts.Networking;
+using Mirror;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -6,7 +7,9 @@ using UnityEngine;
 
 namespace Assets.Scripts.Simulation
 {
-
+    /// <summary>
+    /// 
+    /// </summary>
     public class EntityManager
     {
         //Synchronized by spawning and despawning entities
@@ -32,17 +35,9 @@ namespace Assets.Scripts.Simulation
         }
 
         [Command]
-        public void SetGoal(uint[] netIds, Vector2Int goal)
+        public void CmdSetEntityGoal(uint[] netIds, Vector2Int goal)
         {
-            GameMain gamemain = GameMain.instance;
-            foreach (var id in netIds)
-            {
-                Entity entity = NetworkServer.spawned[id].transform.GetComponent<Entity>();
-                //if(entityTransform.GetComponent<Entity>().ownerID == )
-                //TODO easier method for placing objects on top of terrain
-                Vector2 goalpos = gamemain.mainGrid.GetWorldPosition(goal.x, goal.y);
-                entity.Move(new Vector3(goalpos.x, gamemain.mainTerrain.SampleHeight(new Vector3(goalpos.x, 0, goalpos.y)), goalpos.y));
-            }
+            ServerScript.instance.entityMovement.SetEntitiesGoal(netIds, goal);
         }
     }
 }

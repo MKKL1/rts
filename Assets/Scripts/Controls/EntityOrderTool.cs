@@ -39,8 +39,7 @@ namespace Assets.Scripts.Controls
                                 networkIdentity.Add(tra.GetComponent<Entity>().netId);
                             }
 
-                            GameMain.instance.entityManager.SetGoal(networkIdentity.ToArray(), GameMain.instance.mainGrid.GetGridPostion(hit.point));
-                            Debug.Log($"HIT {hit.point}, GRID {GameMain.instance.mainGrid.GetGridPostion(hit.point)}");
+                            GameMain.instance.entityManager.CmdSetEntityGoal(networkIdentity.ToArray(), GameMain.instance.mainGrid.GetGridPostion(hit.point));
                             break;
                         }
                     }
