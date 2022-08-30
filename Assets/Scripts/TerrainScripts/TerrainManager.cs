@@ -33,14 +33,8 @@ public class TerrainManager : NetworkBehaviour
 
     public int seed = 69;
 
-    public static TerrainManager instance;
-
     private TerrainGrid terrainGrid;
     private MainGrid mainGrid;
-    private void Awake()
-    {
-        instance = this;
-    }
 
     [Server]
     public void initTerrain()
@@ -104,7 +98,7 @@ public class TerrainManager : NetworkBehaviour
         terrainCornerBottomLeft = new Vector2(terrain.transform.position.x, terrain.transform.position.z);
         terrainCornerTopRight = terrainCornerBottomLeft + terrainGrid.worldGridSize;
 
-        terrainGenerated.Invoke();
+        terrainGenerated?.Invoke();
     }
 
     void Start()

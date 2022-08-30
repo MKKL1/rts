@@ -15,14 +15,10 @@ namespace Assets.Scripts.TerrainScripts.Generation
     public class TerrainGenerator
     {
         public TerrainGrid terrainGrid;
-        //private MainGrid mainGrid;
-        private BiomesManager biomesManager;
+        private BiomeManager biomesManager;
         private TerrainGenSettings generatorData;
         private BiomeWeightManager[,] biomeWeightManagers;
         private System.Random rnd;
-
-        //private readonly ParallelOptions parallelOptions = new ParallelOptions { MaxDegreeOfParallelism = 8 };
-
         private int seed;
         public TerrainGenerator(int sizeX, int sizeY, float cellSize, TerrainGenSettings generatorData, int seed = 69)
         {
@@ -36,11 +32,11 @@ namespace Assets.Scripts.TerrainScripts.Generation
 
         private void InitBiomeManager()
         {
-            biomesManager = new BiomesManager();
-            biomesManager.addBiome(new Plains(seed));
-            biomesManager.addBiome(new Water(seed));
-            biomesManager.addBiome(new Beach(seed));
-            biomesManager.addBiome(new Mountains(seed));
+            biomesManager = new BiomeManager();
+            biomesManager.addBiome(new Plains(seed, generatorData.plainsData));
+            biomesManager.addBiome(new Water(seed, generatorData.waterData));
+            biomesManager.addBiome(new Beach(seed, generatorData.beachData));
+            biomesManager.addBiome(new Mountains(seed, generatorData.mountainsData));
             biomesManager.initBiomes();
         }
 

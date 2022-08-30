@@ -5,7 +5,7 @@ using UnityEngine;
 
 namespace Assets.Scripts.TerrainScripts
 {
-    public class BiomesManager
+    public class BiomeManager
     {
         public byte biomeCount { get; internal set; } = 0;
         public Biome[] biomeList { get; internal set; }

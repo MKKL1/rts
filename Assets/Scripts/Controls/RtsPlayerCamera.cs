@@ -15,6 +15,7 @@ namespace Assets.Scripts
         public float smoothTime = 0.3f;
 
         private UnityEngine.Terrain terrain;
+        private TerrainManager terrainManager;
 
         private Vector3 targetPosition;
         private Vector3 cameraVelocity;
@@ -46,7 +47,7 @@ namespace Assets.Scripts
         private void Start()
         {
             terrain = GameMain.instance.mainTerrain;
-
+            terrainManager = GameMain.instance.terrainManager;
             if (transform.position.y < terrain.transform.position.y) 
                 Debug.LogError("Camera should be positioned above terrain");
 
@@ -55,12 +56,12 @@ namespace Assets.Scripts
 
             //Setting event handler that updates terrain corners
             OnTerrainGenerated();
-            TerrainManager.instance.terrainGenerated += OnTerrainGenerated;
+            terrainManager.terrainGenerated += OnTerrainGenerated;
             
 
             //Camera can only go as height as placed at startup and as low as terrain
             maxCameraY = transform.position.y;
-            minCameraY = TerrainManager.instance.waterLevel;
+            minCameraY = terrainManager.waterLevel;
 
             //Calculating proportion of speed change based on zoom
             keyboardSpeedEq = Utils.lineThruTwoPoints(minCameraY, keyboardMoveSpeedMin, maxCameraY, keyboardMoveSpeedMax);
@@ -111,8 +112,8 @@ namespace Assets.Scripts
         private void OnTerrainGenerated()
         {
             terrainPosY = terrain.transform.position.y;
-            terrainCornerBottomLeft = TerrainManager.instance.terrainCornerBottomLeft;
-            terrainCornerTopRight = TerrainManager.instance.terrainCornerTopRight;
+            terrainCornerBottomLeft = terrainManager.terrainCornerBottomLeft;
+            terrainCornerTopRight = terrainManager.terrainCornerTopRight;
         }
 
         private void FixTerrainBorder()

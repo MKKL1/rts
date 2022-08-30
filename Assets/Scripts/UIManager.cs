@@ -6,7 +6,7 @@ using UnityEngine;
 public class UIManager : MonoBehaviour
 {
     public SelectionTool selectionTool;
-    public GameMain gameMain;
+    private GameMain gameMain;
     public TMP_Text list;
     public TMP_Text playerlist;
 
@@ -17,8 +17,8 @@ public class UIManager : MonoBehaviour
     }
     void Start()
     {
-        if (selectionTool == null) selectionTool = GameMain.instance.localSelectionTool;
-        if (gameMain == null) gameMain = GameMain.instance;
+        gameMain = GameMain.instance;
+        if (selectionTool == null) selectionTool = gameMain.localSelectionTool;
 
         selectionTool.selectionChangeEvent += updateList;
         gameMain.playerListChangeEvent += updatePlayerList;

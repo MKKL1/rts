@@ -7,7 +7,7 @@ namespace Assets.Scripts.TerrainScripts.Biomes
     {
         
         private FastNoiseLite terrainNoise;
-        public Mountains(int seed) : base("Mountains")
+        public Mountains(int seed, BiomeData biomeData) : base(biomeData)
         {
             terrainNoise = new FastNoiseLite(seed+3);
             terrainNoise.SetNoiseType(FastNoiseLite.NoiseType.OpenSimplex2S);

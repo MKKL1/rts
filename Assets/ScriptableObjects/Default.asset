@@ -13,4 +13,8 @@ MonoBehaviour:
   m_Name: Default
   m_EditorClassIdentifier: 
   biomeAltitudeFrequency: 0.006
+  waterData: {fileID: 11400000, guid: 2b9e84f65fe8ac04fb8a1936aa685eb8, type: 2}
+  beachData: {fileID: 11400000, guid: 56b72facb0a3bce4791bebb805ba3d24, type: 2}
+  plainsData: {fileID: 11400000, guid: 900e061163ff670418cc659253712b1c, type: 2}
+  mountainsData: {fileID: 11400000, guid: af9afececed0e7a4bbde410e5aa8ffb1, type: 2}
   resourceIDManager: {fileID: 11400000, guid: 4c173b9d5a068c84a929788b44095186, type: 2}

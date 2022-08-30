@@ -6,7 +6,7 @@ namespace Assets.Scripts.TerrainScripts.Biomes
     public class Beach : Biome
     {
         private FastNoiseLite terrainNoise;
-        public Beach(int seed) : base("Beach")
+        public Beach(int seed, BiomeData biomeData) : base(biomeData)
         {
             terrainNoise = new FastNoiseLite(seed + 2);
             terrainNoise.SetNoiseType(FastNoiseLite.NoiseType.OpenSimplex2);

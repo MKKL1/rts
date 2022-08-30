@@ -7,7 +7,7 @@ namespace Assets.Scripts.TerrainScripts.Biomes
     {
         
         private FastNoiseLite terrainNoise;
-        public Plains(int seed):base("Plains")
+        public Plains(int seed, BiomeData biomeData) : base(biomeData)
         {
             
 

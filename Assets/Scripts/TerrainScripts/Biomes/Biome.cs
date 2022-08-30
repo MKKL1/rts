@@ -6,10 +6,9 @@ namespace Assets.Scripts.TerrainScripts.Biomes
     public class Biome
     {
         public BiomeData biomeData;
-        public Biome(string biomeFileName)
+        public Biome(BiomeData biomeData)
         {
-            //TODO pass thru BiomesManager
-            biomeData = Resources.Load<BiomeData>($"Assets/ScriptableObjects/BiomeDefinition/{biomeFileName}.asset");
+            this.biomeData = biomeData;
         }
         public virtual float GetHeight(float x, float y)
         {

@@ -7,7 +7,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class GameMain : NetworkBehaviour
+public class GameMain : MonoBehaviour
 {
     public PlayerIdentificator localPlayerID = PlayerIdentificator.serverID;
     public List<PlayerScript> playerList = new List<PlayerScript>();

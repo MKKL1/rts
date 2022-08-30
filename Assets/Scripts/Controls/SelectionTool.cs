@@ -36,7 +36,7 @@ public class SelectionTool : MonoBehaviour
     void Start()
     {
         gameMain = GameMain.instance;
-        if(_camera == null) _camera = gameMain.localCamera;
+        if (_camera == null) _camera = gameMain.localCamera;
         if(cameraTransform == null) cameraTransform = _camera.transform;
 
         drawUIRect = new DrawUIRect(borderTexture);

@@ -15,8 +15,8 @@ namespace Assets.Scripts.TerrainScripts.BiomeBlending
     public class LerpBlending
     {
         private Dictionary<RangeAttribute, BlendingValues> blendingRanges;
-        private BiomesManager biomeManager;
-        public LerpBlending(BiomesManager biomeManager)
+        private BiomeManager biomeManager;
+        public LerpBlending(BiomeManager biomeManager)
         {
             this.biomeManager = biomeManager;
         }

@@ -565,7 +565,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   selectionTool: {fileID: 0}
-  gameMain: {fileID: 0}
   list: {fileID: 248857231}
   playerlist: {fileID: 1437449069}
 --- !u!114 &273780194
@@ -983,7 +982,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 616231785}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a87f19baa791b044786e368558742375, type: 3}
   m_Name: 
@@ -1330,10 +1329,8 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 712011509}
-  - component: {fileID: 712011508}
   - component: {fileID: 712011507}
   - component: {fileID: 712011510}
-  - component: {fileID: 712011511}
   m_Layer: 0
   m_Name: GameMain
   m_TagString: Untagged
@@ -1353,38 +1350,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0688d70455d605a49bad8fa76dbeb201, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  syncMode: 0
-  syncInterval: 0.1
   playerList: []
   localPlayerScript: {fileID: 0}
   mainTerrain: {fileID: 107236307}
   localCamera: {fileID: 6605040748449310633}
   localSelectionTool: {fileID: 1030442203}
-  terrainManager: {fileID: 712011508}
---- !u!114 &712011508
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 712011506}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 934af09a24c21fa44abb00cc0b5afa2f, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  syncMode: 0
-  syncInterval: 0.1
-  terrain: {fileID: 107236307}
-  waterTransform: {fileID: 1532452277}
-  detailsTransform: {fileID: 1145723806}
-  terrainGenSettings: {fileID: 11400000, guid: 7c1043674e1e22744a9baef0efbe9fc4, type: 2}
-  walkable: {fileID: 391970349}
-  waterLevel: 0
-  terrainCornerBottomLeft: {x: 0, y: 0}
-  terrainCornerTopRight: {x: 1000, y: 1000}
-  gizmosHeight: 20
-  seed: 50
+  terrainManager: {fileID: 1075746890}
 --- !u!4 &712011509
 Transform:
   m_ObjectHideFlags: 0
@@ -1436,23 +1407,6 @@ MonoBehaviour:
     m_Center: {x: 514, y: 50, z: 514}
     m_Extent: {x: 514, y: 50, z: 514}
   filterShader: {fileID: 4800000, guid: 0f44df78e3d64d9cb2616cac3d84cb77, type: 3}
---- !u!114 &712011511
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 712011506}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9b91ecbcc199f4492b9a91e820070131, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  sceneId: 1456412645
-  serverOnly: 0
-  visible: 0
-  m_AssetId: 
-  hasSpawned: 0
 --- !u!1 &882451578
 GameObject:
   m_ObjectHideFlags: 0
@@ -1660,6 +1614,8 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1075746889}
+  - component: {fileID: 1075746891}
+  - component: {fileID: 1075746890}
   m_Layer: 0
   m_Name: Terrain
   m_TagString: Untagged
@@ -1687,6 +1643,47 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 11
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1075746890
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1075746888}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 934af09a24c21fa44abb00cc0b5afa2f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  syncMode: 0
+  syncInterval: 0.1
+  terrain: {fileID: 107236307}
+  waterTransform: {fileID: 1532452277}
+  detailsTransform: {fileID: 1145723806}
+  terrainGenSettings: {fileID: 11400000, guid: 7c1043674e1e22744a9baef0efbe9fc4, type: 2}
+  walkable: {fileID: 391970349}
+  waterLevel: 0
+  terrainCornerBottomLeft: {x: 0, y: 0}
+  terrainCornerTopRight: {x: 1000, y: 1000}
+  gizmosHeight: 20
+  seed: 50
+--- !u!114 &1075746891
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1075746888}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9b91ecbcc199f4492b9a91e820070131, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  sceneId: 4098372440
+  serverOnly: 0
+  visible: 0
+  m_AssetId: 
+  hasSpawned: 0
 --- !u!1 &1145723805
 GameObject:
   m_ObjectHideFlags: 0

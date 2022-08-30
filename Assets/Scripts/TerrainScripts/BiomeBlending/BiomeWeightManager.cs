@@ -9,11 +9,11 @@ namespace Assets.Scripts.TerrainScripts
         public float[,,] biomeWeightMap;
         public readonly byte biomeCount;
         public readonly Vector2Int size;
-        private BiomesManager biomesManager;
+        private BiomeManager biomesManager;
 
 
 
-        public BiomeWeightManager(BiomesManager biomesManager, Vector2Int size)
+        public BiomeWeightManager(BiomeManager biomesManager, Vector2Int size)
         {
             this.biomesManager = biomesManager;
             biomeCount = biomesManager.biomeCount;
@@ -21,7 +21,7 @@ namespace Assets.Scripts.TerrainScripts
             biomeWeightMap = new float[biomeCount,size.x, size.y];
         }
 
-        public BiomeWeightManager(BiomesManager biomesManager, int xsize, int ysize) : this(biomesManager, new Vector2Int(xsize, ysize)) { }
+        public BiomeWeightManager(BiomeManager biomesManager, int xsize, int ysize) : this(biomesManager, new Vector2Int(xsize, ysize)) { }
 
         public void SetWeight(BiomeType biomeType, int x, int y, float weight = 1f)
         {
