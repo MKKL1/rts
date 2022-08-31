@@ -7,26 +7,25 @@ using UnityEngine;
 public class Entity : NetworkBehaviour
 {
     public string entityName;
-    public Bounds bounds;
+    public Bounds bounds {get { return _collider.bounds; }}
     public PlayerIdentificator ownerID = PlayerIdentificator.serverID;
 
     private Collider _collider;
     private void Start()
     {
         _collider = GetComponent<Collider>();
-        bounds = _collider.bounds;
         GameMain.instance.entityManager.addEntity(this);
     }
 
     public bool CollidesWith(Bounds _bounds)
     {
-        return (bounds.min.x <= _bounds.max.x) && (bounds.max.x >= _bounds.min.x) &&
-            (bounds.min.z <= _bounds.max.z) && (bounds.max.z >= _bounds.min.z);
+        Bounds thisbounds = bounds;
+        return (thisbounds.min.x <= _bounds.max.x) && (thisbounds.max.x >= _bounds.min.x) &&
+            (bounds.min.z <= _bounds.max.z) && (thisbounds.max.z >= _bounds.min.z);
     }
 
     public void Move(Vector3 pos)
     {
         transform.position = pos;
-        bounds = _collider.bounds;
     }
 }

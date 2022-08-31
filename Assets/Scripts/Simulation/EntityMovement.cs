@@ -1,15 +1,21 @@
 ﻿using Mirror;
 using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace Assets.Scripts.Simulation
 {
     public class EntityMovement
     {
+        public int tickPerSecond = 30;
+        public List<Entity> movingEntities = new List<Entity>();
+
         private GameMain gameMain;
+        private PathFinding pathFinding;
         public EntityMovement()
         {
             gameMain = GameMain.instance;
+            pathFinding = new PathFinding(gameMain.mainGrid);
         }
         public void SetEntityGoal(Entity entity, Vector2Int goal)
         {
@@ -33,6 +39,21 @@ namespace Assets.Scripts.Simulation
             {
                 SetEntityGoal(entity, goal);
             }
+        }
+
+        private float nextTickTime = 0;
+        public void Update()
+        {
+            if(Time.time > nextTickTime)
+            {
+                nextTickTime = Time.time + (1f / (float)tickPerSecond);
+                OnMovementTick();
+            }
+        }
+
+        public virtual void OnMovementTick()
+        {
+            
         }
     }
 }
