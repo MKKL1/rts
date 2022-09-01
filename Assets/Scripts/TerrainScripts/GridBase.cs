@@ -72,7 +72,7 @@ namespace Assets.Scripts.TerrainScripts
             return chunks[x / chunkSize, y / chunkSize];
         }
 
-        protected Vector2Int GetInChunkOffset(int x, int y)
+        public Vector2Int GetInChunkOffset(int x, int y)
         {
             return new Vector2Int(x % chunkSize, y % chunkSize);
         }
@@ -141,43 +141,6 @@ namespace Assets.Scripts.TerrainScripts
             }
             return new Vector2Int(sizeX, sizeY);
         }
-        ///// <summary>
-        ///// Iterates grid faster by accessing chunk then iterating inside it
-        ///// </summary>
-        //public void IterateGrid(Action<ChunkIteratorStep<T>> action, int xSize = -1, int ySize = -1)
-        //{
-        //    if (xSize == -1) xSize = chunkDataSize.x;
-        //    if (ySize == -1) ySize = chunkDataSize.y;
-        //    int chunkXSize = Mathf.CeilToInt(xSize / chunkArrayLength.x);
-        //    int chunkYSize = Mathf.CeilToInt(ySize / chunkArrayLength.y);
-
-        //    int lastX = xSize % GlobalConfig.CHUNK_SIZE;
-        //    if (lastX == 0) lastX = GlobalConfig.CHUNK_SIZE;
-
-        //    int lastY = ySize % GlobalConfig.CHUNK_SIZE;
-        //    if (lastY == 0) lastY = GlobalConfig.CHUNK_SIZE;
-
-        //    for (int chunkX = 0; chunkX < chunkXSize; chunkX++)
-        //        for (int chunkY = 0; chunkY < chunkYSize; chunkY++)
-        //        {
-        //            int currentXSize = chunkX == chunkXSize - 1 ? lastX : GlobalConfig.CHUNK_SIZE;
-        //            int currentYSize = chunkY == chunkYSize - 1 ? lastY : GlobalConfig.CHUNK_SIZE;
-
-        //            T currentChunk = chunks[chunkX, chunkY];
-        //            for (int inChunkX = 0; inChunkX < currentXSize; inChunkX++)
-        //                for (int inChunkY = 0; inChunkY < currentYSize; inChunkY++)
-        //                {
-        //                    action.Invoke(new ChunkIteratorStep<T>()
-        //                    {
-        //                        currentChunk = currentChunk,
-        //                        xInChunk = inChunkX,
-        //                        yInChunk = inChunkY,
-        //                        chunkX = chunkX,
-        //                        chunkY = chunkY
-        //                    });
-        //                }
-        //        }
-        //}
 
         public void IterateChunks(Action<int, int> action)
         {

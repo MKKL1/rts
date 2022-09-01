@@ -18,8 +18,9 @@ namespace Assets.Scripts.Controls
 
         private void OnValidate()
         {
-            shaderCube.transform.localScale = Vector3.one * visibleGridSize;
+            Debug.Log("A");
             shaderCube.SetActive(showGrid);
+            shaderCube.transform.localScale = Vector3.one * visibleGridSize;
         }
 
         private void Update()
