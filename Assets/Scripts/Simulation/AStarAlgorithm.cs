@@ -63,6 +63,7 @@ namespace Assets.Scripts.Simulation
         //Algorithm from wikipedia
         public Stack<Vector2Int> FindPath(Vector2Int start, Vector2Int goal)
         {
+            Debug.Log($"[A*] start {start}, goal {goal}");
             C5.IntervalHeap<Node> openSet = new C5.IntervalHeap<Node>();
             closedSet = new List<Vector2Int>();
             Node startNode = new Node(start.x, start.y, null, 0f);
@@ -72,6 +73,7 @@ namespace Assets.Scripts.Simulation
             while(!openSet.IsEmpty)
             {
                 Node currentNode = openSet.FindMin();
+                Debug.Log($"[A*] Node {currentNode.asVector()} current");
                 if(currentNode.asVector() == goal)
                 {
                     Stack<Vector2Int> path = new Stack<Vector2Int>();
