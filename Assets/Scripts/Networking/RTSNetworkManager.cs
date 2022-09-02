@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEngine.Events;
 using Mirror;
 using System;
+using Assets.Scripts.Networking;
 
 public enum GameState
 {
@@ -73,7 +74,7 @@ public class RTSNetworkManager : NetworkManager
         }
         gameState = GameState.GAME_ACTIVE;
 
-        GameMain.instance.terrainManager.initTerrain();
+        ServerScript.instance.InitServer();
     }
 
 

@@ -24,19 +24,25 @@ namespace Assets.Scripts.Simulation
             gameMain = GameMain.instance;
             pathFinding = new PathFinding(gameMain.mainGrid);
         }
-        public void SetEntityGoal(Entity entity, Vector2Int goal)
+        public void SetEntityGoal(Entity entity, Vector2 goal)
         {
             movingEntities.RemoveAll(e => e.entity == entity);
             //TODO remove temporary pathfinding to center of grid cell
-            Vector2 goalpos = gameMain.mainGrid.GetWorldPosition(goal.x, goal.y) + gameMain.mainGrid.worldCellSize * 0.5f;
+            MovementPath enpath = pathFinding.GetPath(entity.transform.position, goal);
+            //TODO indicator to player that path was not found
+            if(enpath == null)
+            {
+                Debug.Log("Path not found");
+                return;
+            }
             movingEntities.Add(new MovingEntity()
             {
                 entity = entity,
-                path = pathFinding.GetPath(entity.transform.position, goalpos)
+                path = enpath
             });
         }
 
-        public void SetEntitiesGoal(uint[] netIds, Vector2Int goal)
+        public void SetEntitiesGoal(uint[] netIds, Vector2 goal)
         {
             foreach (var id in netIds)
             {
@@ -45,7 +51,7 @@ namespace Assets.Scripts.Simulation
             }
         }
 
-        public void SetEntitiesGoal(Entity[] entities, Vector2Int goal)
+        public void SetEntitiesGoal(Entity[] entities, Vector2 goal)
         {
             foreach(Entity entity in entities)
             {
@@ -81,7 +87,9 @@ namespace Assets.Scripts.Simulation
                     if(movingEntity.path.ShouldGetNext())
                     {
                         //Rotate to look at point
-                        movingEntity.path.GetNextPoint();
+                        Vector2 pathPoint = movingEntity.path.GetNextPoint();
+                        Vector3 pathPoint3 = new Vector3(pathPoint.x, 0, pathPoint.y);
+                        entityTransform.rotation = Quaternion.LookRotation(pathPoint3 - entityTransform.position, Vector3.up);
                     }
                     else
                     {

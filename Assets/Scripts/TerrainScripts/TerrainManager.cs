@@ -88,19 +88,21 @@ public class TerrainManager : NetworkBehaviour
         mainGrid.chunks[xChunk, yChunk] = mainGridChunk;
     }
 
-    [ClientRpc]
+    //Building terrain on client and host
+    [ClientRpc(includeOwner = true)]
     private void BuildTerrainClient()
     {
-
         TerrainBuilder terrainBuilder = new TerrainBuilder(terrainGenSettings, terrain, mainGrid);
         terrainBuilder.BuildTerrain(terrainGrid, detailsTransform);
 
+        //Terrain corners for player camera
         terrainCornerBottomLeft = new Vector2(terrain.transform.position.x, terrain.transform.position.z);
         terrainCornerTopRight = terrainCornerBottomLeft + terrainGrid.worldGridSize;
-
-        terrainGenerated?.Invoke();
+        
         //TODO remove
         GameMain.instance.mainGrid = mainGrid;
+
+        terrainGenerated?.Invoke();
     }
 
     void Start()

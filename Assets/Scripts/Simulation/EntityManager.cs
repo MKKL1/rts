@@ -35,7 +35,7 @@ namespace Assets.Scripts.Simulation
         }
 
         [Command]
-        public void CmdSetEntityGoal(uint[] netIds, Vector2Int goal)
+        public void CmdSetEntityGoal(uint[] netIds, Vector2 goal)
         {
             ServerScript.instance.entityMovement.SetEntitiesGoal(netIds, goal);
         }

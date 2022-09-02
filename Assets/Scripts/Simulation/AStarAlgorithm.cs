@@ -26,15 +26,15 @@ namespace Assets.Scripts.Simulation
             return this.fScore.CompareTo(other.fScore);
         }
 
-        public static bool operator ==(Node node, Vector2Int vector)
-        {
-            return node.x == vector.x && node.y == vector.y;
-        }
+        //public static bool operator ==(Node node, Vector2Int vector)
+        //{
+        //    return node.x == vector.x && node.y == vector.y;
+        //}
 
-        public static bool operator !=(Node node, Vector2Int vector)
-        {
-            return node.x != vector.x || node.y != vector.y;
-        }
+        //public static bool operator !=(Node node, Vector2Int vector)
+        //{
+        //    return node.x != vector.x || node.y != vector.y;
+        //}
 
         public Vector2Int asVector()
         {
@@ -47,7 +47,7 @@ namespace Assets.Scripts.Simulation
     {
         private MainGrid mainGrid;
         private Vector2Int gridDataSize;
-        private List<Vector2Int> closedSet = new List<Vector2Int>();
+        private List<Vector2Int> closedSet;
 
         private float h(Vector2Int current, Vector2Int goal)
         {
@@ -64,6 +64,7 @@ namespace Assets.Scripts.Simulation
         public Stack<Vector2Int> FindPath(Vector2Int start, Vector2Int goal)
         {
             C5.IntervalHeap<Node> openSet = new C5.IntervalHeap<Node>();
+            closedSet = new List<Vector2Int>();
             Node startNode = new Node(start.x, start.y, null, 0f);
             startNode.fScore = 0f;
             openSet.Add(startNode);
@@ -71,7 +72,7 @@ namespace Assets.Scripts.Simulation
             while(!openSet.IsEmpty)
             {
                 Node currentNode = openSet.FindMin();
-                if(currentNode == goal)
+                if(currentNode.asVector() == goal)
                 {
                     Stack<Vector2Int> path = new Stack<Vector2Int>();
                     path.Push(currentNode.asVector());
@@ -86,7 +87,7 @@ namespace Assets.Scripts.Simulation
                 }
                 //Delete current node, which is min. In short
                 openSet.DeleteMin();
-                    
+
                 closedSet.Add(new Vector2Int(currentNode.x, currentNode.y));
                 foreach(Node neighbourNode in getNeighbours(currentNode))
                 {
@@ -96,6 +97,7 @@ namespace Assets.Scripts.Simulation
                         neighbourNode.previousNode = currentNode;
                         neighbourNode.gScore = tentative_gScore;
                         neighbourNode.fScore = tentative_gScore + h(currentNode.asVector(), goal);
+                        openSet.Add(neighbourNode);
                     }
                 }
             }

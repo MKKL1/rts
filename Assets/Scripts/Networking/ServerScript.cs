@@ -20,9 +20,14 @@ namespace Assets.Scripts.Networking
             instance = this;
         }
 
-        private void Start()
+        public void InitServer()
         {
-            entityMovement = new EntityMovement();
+            //TODO wait for terrain to generate synchronously
+            GameMain.instance.terrainManager.terrainGenerated += () =>
+            {
+                entityMovement = new EntityMovement();
+            };
+            GameMain.instance.terrainManager.initTerrain();
         }
     }
 }
