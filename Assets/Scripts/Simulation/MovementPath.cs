@@ -6,6 +6,7 @@ namespace Assets.Scripts.Simulation
 {
     public class MovementPath
     {
+        private bool firstPoint = true;
         private Vector2 nextPoint;
         public Queue<Vector2> points;
 
@@ -17,6 +18,11 @@ namespace Assets.Scripts.Simulation
 
         public Vector2 GetNextPoint()
         {
+            if (firstPoint)
+            {
+                firstPoint = false;
+                return nextPoint;
+            }
             points.Dequeue();
             nextPoint = points.Peek();
             return nextPoint;
@@ -24,7 +30,8 @@ namespace Assets.Scripts.Simulation
 
         public bool ShouldChangeDirection(Vector2 currentPosition)
         {
-            return Utils.ManhattanDistance(nextPoint, currentPosition) < 0.2f;
+            if (firstPoint) return true;
+            return Utils.ManhattanDistance(nextPoint, currentPosition) < 0.4f;
         }
 
         public bool ShouldGetNext()

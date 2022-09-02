@@ -29,5 +29,14 @@ namespace Assets.Scripts.Networking
             };
             GameMain.instance.terrainManager.initTerrain();
         }
+
+        private void FixedUpdate()
+        {
+            //TODO better way to start updating entityMovement
+            if(entityMovement != null)
+            {
+                entityMovement.FixedUpdate();
+            }
+        }
     }
 }

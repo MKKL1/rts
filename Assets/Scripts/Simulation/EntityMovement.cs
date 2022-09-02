@@ -19,16 +19,19 @@ namespace Assets.Scripts.Simulation
 
         private GameMain gameMain;
         private PathFinding pathFinding;
+        private Terrain terrain;
         public EntityMovement()
         {
             gameMain = GameMain.instance;
+            terrain = gameMain.mainTerrain;
             pathFinding = new PathFinding(gameMain.mainGrid);
         }
         public void SetEntityGoal(Entity entity, Vector2 goal)
         {
+            var watch = System.Diagnostics.Stopwatch.StartNew();
             movingEntities.RemoveAll(e => e.entity == entity);
             //TODO remove temporary pathfinding to center of grid cell
-            MovementPath enpath = pathFinding.GetPath(entity.transform.position, goal);
+            MovementPath enpath = pathFinding.GetPath(entity.transform.position.GetWithoutY(), goal);
             //TODO indicator to player that path was not found
             if(enpath == null)
             {
@@ -40,6 +43,10 @@ namespace Assets.Scripts.Simulation
                 entity = entity,
                 path = enpath
             });
+
+            watch.Stop();
+            var elapsedMs = watch.ElapsedMilliseconds;
+            Debug.Log(elapsedMs);
         }
 
         public void SetEntitiesGoal(uint[] netIds, Vector2 goal)
@@ -82,7 +89,7 @@ namespace Assets.Scripts.Simulation
             {
                 MovingEntity movingEntity = movingEntities.ElementAt(i);
                 Transform entityTransform = movingEntity.entity.transform;
-                if(movingEntity.path.ShouldChangeDirection(new Vector2(entityTransform.position.x, entityTransform.position.z)))
+                if(movingEntity.path.ShouldChangeDirection(entityTransform.position.GetWithoutY()))
                 {
                     if(movingEntity.path.ShouldGetNext())
                     {
@@ -90,6 +97,7 @@ namespace Assets.Scripts.Simulation
                         Vector2 pathPoint = movingEntity.path.GetNextPoint();
                         Vector3 pathPoint3 = new Vector3(pathPoint.x, 0, pathPoint.y);
                         entityTransform.rotation = Quaternion.LookRotation(pathPoint3 - entityTransform.position, Vector3.up);
+                        entityTransform.eulerAngles = new Vector3(0, entityTransform.eulerAngles.y, 0);
                     }
                     else
                     {
@@ -98,7 +106,10 @@ namespace Assets.Scripts.Simulation
                         continue;
                     }
                 }
-                entityTransform.position += entityTransform.forward * tickDeltaTime * movingEntity.entity.movementSpeed;
+                Vector3 newPos = entityTransform.position;
+                newPos += entityTransform.forward * tickDeltaTime * movingEntity.entity.movementSpeed;
+                newPos.y = terrain.SampleHeight(entityTransform.position);
+                entityTransform.position = newPos;
             }
             
         }

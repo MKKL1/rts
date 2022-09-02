@@ -63,7 +63,6 @@ namespace Assets.Scripts.Simulation
         //Algorithm from wikipedia
         public Stack<Vector2Int> FindPath(Vector2Int start, Vector2Int goal)
         {
-            Debug.Log($"[A*] start {start}, goal {goal}");
             C5.IntervalHeap<Node> openSet = new C5.IntervalHeap<Node>();
             closedSet = new List<Vector2Int>();
             Node startNode = new Node(start.x, start.y, null, 0f);
@@ -73,17 +72,19 @@ namespace Assets.Scripts.Simulation
             while(!openSet.IsEmpty)
             {
                 Node currentNode = openSet.FindMin();
-                Debug.Log($"[A*] Node {currentNode.asVector()} current");
                 if(currentNode.asVector() == goal)
                 {
                     Stack<Vector2Int> path = new Stack<Vector2Int>();
                     path.Push(currentNode.asVector());
-                    Node previousNode = currentNode.previousNode;
-                    while(true)
+                    Node iteratorNode = currentNode.previousNode;
+                    int limit = 255;
+                    while(limit >= 0)
                     {
-                        path.Push(previousNode.asVector());
-                        previousNode = currentNode.previousNode;
-                        if (previousNode == null) break;
+                        path.Push(iteratorNode.asVector());
+                        iteratorNode = iteratorNode.previousNode;
+                        if (iteratorNode == null) break;
+                        limit--;
+                        
                     }
                     return path;
                 }
@@ -99,7 +100,16 @@ namespace Assets.Scripts.Simulation
                         neighbourNode.previousNode = currentNode;
                         neighbourNode.gScore = tentative_gScore;
                         neighbourNode.fScore = tentative_gScore + h(currentNode.asVector(), goal);
-                        openSet.Add(neighbourNode);
+
+                        if (!closedSet.Contains(new Vector2Int(neighbourNode.x, neighbourNode.y)))
+                        {
+                            Vector2Int inChunk = mainGrid.GetInChunkOffset(neighbourNode.x, neighbourNode.y);
+                            //TODO may cause performance issues
+                            if (mainGrid.GetChunkAt(neighbourNode.x, neighbourNode.y).walkableMap[inChunk.x, inChunk.y])
+                            {
+                                openSet.Add(neighbourNode);
+                            }
+                        }
                     }
                 }
             }
@@ -117,13 +127,7 @@ namespace Assets.Scripts.Simulation
                 int yn = centerNode.y - neighbours[i, 1];
                 if (xn > 0 && xn < gridDataSize.x && yn > 0 && yn < gridDataSize.y)
                 {
-                    Vector2Int inChunk = mainGrid.GetInChunkOffset(xn, yn);
-                    //TODO may cause performance issues
-                    if (mainGrid.GetChunkAt(xn, yn).walkableMap[inChunk.x, inChunk.y])
-                    {
-                        if (!closedSet.Contains(new Vector2Int(xn, yn)))
-                            neighbourNodes.Add(new Node(xn, yn, null));
-                    }
+                    neighbourNodes.Add(new Node(xn, yn, null));
                 }
             }
             return neighbourNodes;

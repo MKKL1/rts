@@ -9,5 +9,10 @@ namespace Assets.Scripts
         {
             return new Vector2(vector3.x, vector3.z);
         }
+
+        public static Vector2Int GetWithoutY(this Vector3Int vector3)
+        {
+            return new Vector2Int(vector3.x, vector3.z);
+        }
     }
 }

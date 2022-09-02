@@ -38,8 +38,7 @@ namespace Assets.Scripts.Controls
                             {
                                 networkIdentity.Add(tra.GetComponent<Entity>().netId);
                             }
-                            Debug.Log($"point {hit.point} on grid {GameMain.instance.mainGrid.GetGridPostion(new Vector2(hit.point.x, hit.point.z))}");
-                            GameMain.instance.entityManager.CmdSetEntityGoal(networkIdentity.ToArray(), new Vector2(hit.point.x, hit.point.z));
+                            GameMain.instance.entityManager.CmdSetEntityGoal(networkIdentity.ToArray(), hit.point.GetWithoutY());
                             break;
                         }
                     }

@@ -9,7 +9,7 @@ public class Entity : NetworkBehaviour
     public string entityName;
     public Bounds bounds {get { return _collider.bounds; }}
     public PlayerIdentificator ownerID = PlayerIdentificator.serverID;
-    public float movementSpeed = 2f;
+    public float movementSpeed = 20f;
 
     private Collider _collider;
     private void Start()
