@@ -1,6 +1,7 @@
 ﻿using Assets.Scripts.TerrainScripts;
 using System.Collections;
 using System.Collections.Generic;
+using Unity.Collections;
 using UnityEngine;
 
 namespace Assets.Scripts.Simulation
@@ -10,10 +11,12 @@ namespace Assets.Scripts.Simulation
     {
         private MainGrid mainGrid;
         private AStarAlgorithm aStarAlgorithm;
+        private NativeArray<bool> walkableMap;
         public PathFinding(MainGrid mainGrid)
         {
             this.mainGrid = mainGrid;
-            aStarAlgorithm = new AStarAlgorithm(mainGrid);
+            walkableMap = new NativeArray<bool>(mainGrid.gridDataSize.x * mainGrid.gridDataSize.y, Allocator.Temp);
+            aStarAlgorithm = new AStarAlgorithm(walkableMap, new Unity.Mathematics.int2(mainGrid.gridDataSize.x, mainGrid.gridDataSize.y));
         }
 
         /// <summary>

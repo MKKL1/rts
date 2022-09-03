@@ -2,135 +2,129 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Unity.Collections;
+using Unity.Mathematics;
 using UnityEngine;
 
 namespace Assets.Scripts.Simulation
 {
-    public class Node : IComparable<Node>
+
+    public struct OffsetWithCost
+    {
+        public int2 offset;
+        public ushort cost;
+        public OffsetWithCost(int2 offset, ushort cost)
+        {
+            this.offset = offset;
+            this.cost = cost;
+        }
+    }
+
+    public unsafe struct Node : IComparer<Node>
     {
         public int x;
         public int y;
-        public Node previousNode;
-        public float gScore;
-        public float fScore = float.MaxValue;
-        public Node(int x, int y, Node prev, float gScore = float.MaxValue)
+        public int fScore;
+        public Node* cameFromNodeId;
+
+        public int Compare(Node x, Node y)
         {
-            this.x = x;
-            this.y = y;
-            previousNode = prev;
-            this.gScore = gScore;
+            return x.fScore.CompareTo(y.fScore);
         }
-
-        public int CompareTo(Node other)
+        public bool isEqual(Vector2Int vector)
         {
-            return this.fScore.CompareTo(other.fScore);
+            return x == vector.x && y == vector.y;
         }
-
-        //public static bool operator ==(Node node, Vector2Int vector)
-        //{
-        //    return node.x == vector.x && node.y == vector.y;
-        //}
-
-        //public static bool operator !=(Node node, Vector2Int vector)
-        //{
-        //    return node.x != vector.x || node.y != vector.y;
-        //}
-
-        public Vector2Int asVector()
-        {
-            return new Vector2Int(x, y);
-        }
-
     }
 
-    public class AStarAlgorithm
+    public unsafe class AStarAlgorithm
     {
-        private MainGrid mainGrid;
-        private Vector2Int gridDataSize;
-        private List<Vector2Int> closedSet;
+        private NativeArray<bool> walkableMap;
+        private int2 gridDataSize;
 
-        private float h(Vector2Int current, Vector2Int goal)
+        private int h(int x0, int y0, int x1, int y1)
         {
-            return Mathf.Abs(current.x - goal.x) + Mathf.Abs(current.y - goal.y);
+            return Math.Abs(x0-x1) + Math.Abs(y0 - y1) * 10;
         }
 
-        public AStarAlgorithm(MainGrid mainGrid)
+        private int GetInArrayId(int x, int y)
         {
-            this.mainGrid = mainGrid;
-            gridDataSize = mainGrid.gridDataSize;
+            return y * gridDataSize.x + x;
         }
+
+        public AStarAlgorithm(NativeArray<bool> walkableMap, int2 gridSize)
+        {
+            this.walkableMap = walkableMap;
+            gridDataSize = gridSize;
+        }
+
 
         //Algorithm from wikipedia
         public Stack<Vector2Int> FindPath(Vector2Int start, Vector2Int goal)
         {
-            C5.IntervalHeap<Node> openSet = new C5.IntervalHeap<Node>();
-            closedSet = new List<Vector2Int>();
-            Node startNode = new Node(start.x, start.y, null, 0f);
-            startNode.fScore = 0f;
-            openSet.Add(startNode);
-
-            while(!openSet.IsEmpty)
-            {
-                Node currentNode = openSet.FindMin();
-                if(currentNode.asVector() == goal)
+            NativeArray<int> gScoreArray = new NativeArray<int>(gridDataSize.x * gridDataSize.y, Allocator.Temp);
+            NativeHeap<Node, Node> openList = new NativeHeap<Node, Node>(Allocator.Temp);
+            for(int i = 0; i < gridDataSize.x; i++)
+                for(int j = 0; j < gridDataSize.y; j++)
                 {
-                    Stack<Vector2Int> path = new Stack<Vector2Int>();
-                    path.Push(currentNode.asVector());
-                    Node iteratorNode = currentNode.previousNode;
-                    int limit = 255;
-                    while(limit >= 0)
-                    {
-                        path.Push(iteratorNode.asVector());
-                        iteratorNode = iteratorNode.previousNode;
-                        if (iteratorNode == null) break;
-                        limit--;
-                        
-                    }
-                    return path;
+                    gScoreArray[GetInArrayId()] = int.MaxValue;
                 }
-                //Delete current node, which is min. In short
-                openSet.DeleteMin();
-
-                closedSet.Add(new Vector2Int(currentNode.x, currentNode.y));
-                foreach(Node neighbourNode in getNeighbours(currentNode))
+            NativeList<Node> closedList = new NativeList<Node>(Allocator.Temp);
+            openList.Capacity = 65565;
+            openList.Insert(new Node()
+            {
+                x = start.x,
+                y = start.y,
+                fScore = h(start.x, start.y, goal.x, goal.y),
+                cameFromNodeId = null
+            });
+            gScoreArray[start.x, start.y] = 0;
+            while (openList.Count > 0)
+            {
+                Node currentNode = openList.Pop();
+                if (currentNode.isEqual(goal))
                 {
-                    float tentative_gScore = currentNode.gScore + 1f;
-                    if(tentative_gScore < neighbourNode.gScore)
-                    {
-                        neighbourNode.previousNode = currentNode;
-                        neighbourNode.gScore = tentative_gScore;
-                        neighbourNode.fScore = tentative_gScore + h(currentNode.asVector(), goal);
+                    //Reconstruct path
+                }
 
-                        if (!closedSet.Contains(new Vector2Int(neighbourNode.x, neighbourNode.y)))
+                for(int i = 0; i < neighbourOffsets.Length; i++)
+                {
+                    int2 neighourPos = new int2(currentNode.x + neighbourOffsets[i].offset.x, currentNode.y + neighbourOffsets[i].offset.y);
+                    if(neighourPos.x > 0 && neighourPos.x < gridDataSize.x && neighourPos.y > 0 && neighourPos.y < gridDataSize.y)
+                    {
+                        if (walkableMap[GetInArrayId(neighourPos.x, neighourPos.y)])
                         {
-                            Vector2Int inChunk = mainGrid.GetInChunkOffset(neighbourNode.x, neighbourNode.y);
-                            //TODO may cause performance issues
-                            if (mainGrid.GetChunkAt(neighbourNode.x, neighbourNode.y).walkableMap[inChunk.x, inChunk.y])
+                            int tentative_gScore = gScoreArray[neighourPos.x, neighourPos.y] + neighbourOffsets[i].cost;
+                            //TODO searching in heap
+                            if(tentative_gScore < gScoreArray[neighourPos.x, neighourPos.y])
                             {
-                                openSet.Add(neighbourNode);
+                                Node neighbourNode = new Node();
+                                neighbourNode.x = neighourPos.x;
+                                neighbourNode.y = neighourPos.y;
+                                gScoreArray[neighbourNode.x, neighbourNode.y] = tentative_gScore;
+                                neighbourNode.fScore = tentative_gScore + h(neighbourNode.x, neighbourNode.y, goal.x, goal.y);
+                                if()
                             }
                         }
                     }
                 }
             }
 
+            openList.Dispose();
+            closedList.Dispose();
             return null;
         }
 
-        private static readonly int[,] neighbours = new int[4, 2] { { 0, 1 }, { 0, -1 }, { 1, 0 }, { -1, 0 } };
-        private List<Node> getNeighbours(Node centerNode)
+        private NativeArray<OffsetWithCost> neighbourOffsets = new NativeArray<OffsetWithCost>(new OffsetWithCost[]
         {
-            List<Node> neighbourNodes = new List<Node>();
-            for(int i = 0; i < neighbours.GetLength(0); i++)
-            {
-                int xn = centerNode.x - neighbours[i, 0];
-                int yn = centerNode.y - neighbours[i, 1];
-                if (xn > 0 && xn < gridDataSize.x && yn > 0 && yn < gridDataSize.y)
-                {
-                    neighbourNodes.Add(new Node(xn, yn, null));
-                }
-            }
-            return neighbourNodes;
-        }
+            new OffsetWithCost(new int2(-1, 0), 10), //Left
+            new OffsetWithCost(new int2(1, 0), 10), //Right
+            new OffsetWithCost(new int2(0, -1), 10), //Bottom
+            new OffsetWithCost(new int2(0, 1), 10), //Top
+            new OffsetWithCost(new int2(-1, -1), 14), //Bottom Left
+            new OffsetWithCost(new int2(1, -1), 14), //Bottom Right
+            new OffsetWithCost(new int2(-1, 1), 14), //Top Left
+            new OffsetWithCost(new int2(1, 1), 14), //Top Right
+        }, Allocator.Temp);
     }
 }
