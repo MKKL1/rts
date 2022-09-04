@@ -44,7 +44,7 @@ namespace Unity.Collections {
     [DebuggerDisplay("Count = {Count}")]
     [StructLayout(LayoutKind.Sequential)]
     public struct NativeHeap<T, U> : IDisposable
-        where T : unmanaged
+        where T : unmanaged, IEquatable<T>
         where U : unmanaged, IComparer<T> {
 
         #region API
@@ -422,6 +422,25 @@ namespace Unity.Collections {
 
                 return toRemove.Item;
             }
+        }
+
+        public bool Contains(T item)
+        {
+            unsafe
+            {
+#if NHEAP_SAFE
+                AtomicSafetyHandle.CheckWriteAndThrow(m_Safety);
+#endif
+                for (int i = 0; i < _data->Count; i++)
+                {
+                    var node = ReadArrayElement<HeapNode>(_data->Heap, i);
+                    if (item.Equals(node.Item))
+                    {
+                        return true;
+                    }
+                }
+            }
+            return false;
         }
 
         #endregion
