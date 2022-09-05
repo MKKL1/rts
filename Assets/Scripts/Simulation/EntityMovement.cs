@@ -88,12 +88,13 @@ namespace Assets.Scripts.Simulation
             foreach(var movingEntity in movingEntities)
             {
                 Queue<Vector2> copiedPath = new Queue<Vector2>(movingEntity.path.points);
-                Vector2 lastPos = movingEntity.entity.transform.position.GetWithoutY();
+                Vector3 lastPos = movingEntity.entity.transform.position;
 
                 while(copiedPath.Count > 0)
                 {
-                    Debug.Log(lastPos.GetWithY(50));
-                    Gizmos.DrawLine(lastPos.GetWithY(50), copiedPath.Dequeue().GetWithY(50));
+                    Vector3 newPos = copiedPath.Dequeue().GetWithY(lastPos.y);
+                    Gizmos.DrawLine(lastPos, newPos);
+                    lastPos = newPos;
                 }
             }
         }

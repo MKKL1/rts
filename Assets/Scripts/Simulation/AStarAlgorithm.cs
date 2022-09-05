@@ -3,20 +3,24 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using Unity.Collections;
+using Unity.Collections.LowLevel.Unsafe;
 using Unity.Mathematics;
 using UnityEngine;
 
 namespace Assets.Scripts.Simulation
 {
     //Based partly on https://github.com/manuelsalvadori/PathfindingUnity/blob/master/Assets/Scripts/AStarSystem.cs
-    public struct OffsetWithCost
+
+    public struct DiagonalOffset
     {
         public int2 offset;
-        public ushort cost;
-        public OffsetWithCost(int2 offset, ushort cost)
+        public byte condition1;
+        public byte condition2;
+        public DiagonalOffset(int2 offset, byte c1, byte c2)
         {
             this.offset = offset;
-            this.cost = cost;
+            this.condition1 = c1;
+            this.condition2 = c2;
         }
     }
 
@@ -63,7 +67,9 @@ namespace Assets.Scripts.Simulation
 
         private int h(int x0, int y0, int x1, int y1)
         {
-            return Math.Abs(x0-x1) + Math.Abs(y0 - y1) * 10;
+            int dx = Math.Abs(x0 - x1);
+            int dy = Math.Abs(y0 - y1);
+            return 10 * (dx + dy) - 6 * Math.Min(dx, dy);
         }
 
         private int GetInArrayId(int x, int y)
@@ -91,22 +97,12 @@ namespace Assets.Scripts.Simulation
             unsafe
             {
                 int _iterationLimit = iterationLimit;
-                //TODO move outside of this method and make static
-                NativeArray<OffsetWithCost> neighbourOffsets = new NativeArray<OffsetWithCost>(new OffsetWithCost[]
-                {
-                    new OffsetWithCost(new int2(-1, 0), 10), //Left
-                    new OffsetWithCost(new int2(1, 0), 10), //Right
-                    new OffsetWithCost(new int2(0, -1), 10), //Bottom
-                    new OffsetWithCost(new int2(0, 1), 10), //Top
-                    new OffsetWithCost(new int2(-1, -1), 14), //Bottom Left
-                    new OffsetWithCost(new int2(1, -1), 14), //Bottom Right
-                    new OffsetWithCost(new int2(-1, 1), 14), //Top Left
-                    new OffsetWithCost(new int2(1, 1), 14), //Top Right
-                }, Allocator.Temp);
+                NativeArray<int2> neighbours = new NativeArray<int2>(8, Allocator.Temp);
 
                 NativeArray<int> gScoreCosts = new NativeArray<int>(gridDataSize.x * gridDataSize.y, Allocator.Temp);
                 NativeHeap<Node, Node> openList = new NativeHeap<Node, Node>(Allocator.Temp);
                 NativeArray<Node> closedSet = new NativeArray<Node>(gridDataSize.x * gridDataSize.y, Allocator.Temp);
+
                 openList.Capacity = 65565;
                 openList.Insert(new Node()
                 {
@@ -131,39 +127,33 @@ namespace Assets.Scripts.Simulation
                         int pathNodeID = currendID;
 
                         //TODO estimate maximal path length
+                        //Go until next parentID is -1 which means it is goal node
                         while (true)
                         {
                             Node pn = closedSet[pathNodeID];
                             path.Push(new Vector2Int(pn.x, pn.y));
                             pathNodeID = pn.parentID;
-
                             if (pathNodeID == -1) break;
                         }
                         break;
                     }
 
                     //Iterate thru neighbours of current node
-                    for (int i = 0; i < neighbourOffsets.Length; i++)
+                    int neighbourCount = GetNeighbours(new int2(currentNode.x, currentNode.y), ref neighbours);
+                    for (int i = 0; i < neighbourCount; i++)
                     {
-                        
-                        //Position of neighbour node
-                        int2 neigbhourPos = new int2(currentNode.x + neighbourOffsets[i].offset.x, currentNode.y + neighbourOffsets[i].offset.y);
-                        if (neigbhourPos.x < 0 || neigbhourPos.x >= gridDataSize.x || neigbhourPos.y < 0 || neigbhourPos.y >= gridDataSize.y)
-                            continue;
+                        int2 neighbourPos = neighbours[i];
+                        int arrId = GetInArrayId(neighbourPos.x, neighbourPos.y);
+                        if (closedSet[arrId].closed) continue;
 
-                        int arrId = GetInArrayId(neigbhourPos.x, neigbhourPos.y);
-
-                        if (closedSet[arrId].closed || !walkableMap[arrId])
-                            continue;
-
-                        int moveCostToNeigbour = gScoreCosts[GetInArrayId(currentNode.x, currentNode.y)] + neighbourOffsets[i].cost;
+                        int moveCostToNeigbour = gScoreCosts[GetInArrayId(currentNode.x, currentNode.y)] + 10;
                         int neighbourGCost = gScoreCosts[arrId];
                         if (neighbourGCost == 0 || moveCostToNeigbour < neighbourGCost)
                         {
                             gScoreCosts[arrId] = moveCostToNeigbour;
                             Node neighbourNode = new Node();
-                            neighbourNode.x = neigbhourPos.x;
-                            neighbourNode.y = neigbhourPos.y;
+                            neighbourNode.x = neighbourPos.x;
+                            neighbourNode.y = neighbourPos.y;
                             neighbourNode.fScore = moveCostToNeigbour + h(neighbourNode.x, neighbourNode.y, goal.x, goal.y);
                             neighbourNode.parentID = currendID;
 
@@ -175,13 +165,77 @@ namespace Assets.Scripts.Simulation
                     }
                     _iterationLimit--;
                 }
-
                 openList.Dispose();
                 closedSet.Dispose();
                 gScoreCosts.Dispose();
-                neighbourOffsets.Dispose();
+                neighbours.Dispose();
             }
             return path;
+        }
+
+        private static readonly int2[] straightOffsets = new int2[]
+        {
+            new int2(-1, 0), //Left
+            new int2(1, 0), //Right
+            new int2(0, -1), //Bottom
+            new int2(0, 1), //Top
+        };
+
+        private static readonly DiagonalOffset[] diagonalOffsets = new DiagonalOffset[]
+        {
+            new DiagonalOffset(new int2(-1, -1), 2, 0), //Bottom Left
+            new DiagonalOffset(new int2(1, -1), 2, 1), //Bottom Right
+            new DiagonalOffset(new int2(-1, 1), 3, 0), //Top Left
+            new DiagonalOffset(new int2(1, 1), 3, 1), //Top Right
+        };
+
+        private int GetNeighbours(int2 pos, ref NativeArray<int2> neighbours)
+        {
+            int neighboursCount = 0;
+            //Array of positions that could be moved to
+            //Saved by giving proper id of movement like so
+            //viableNeighbours[0 for left] <- if true we can move to left
+            bool[] viableNeighbours = new bool[straightOffsets.Length];
+
+            //Iterate thru positions left, right, bottom, top in this exact order
+            for(int i = 0; i < straightOffsets.Length; i++)
+            {
+                int2 neighbourPos = pos + straightOffsets[i];
+                //Checking if position can be moved to
+                if (!isWalkable(neighbourPos)) continue;
+                //Saving for later use in diagonal movement
+                viableNeighbours[i] = true;
+                //Setting to first free space in array
+                neighbours[neighboursCount] = neighbourPos;
+                neighboursCount++;
+            }
+
+            //Bottom left, bottom right, top left, top right
+            for (int i = 0; i < diagonalOffsets.Length; i++)
+            {
+                DiagonalOffset diagonallOffset = diagonalOffsets[i];
+                //Checking if we can move to diagonal position
+                //for example if we want to move to bottom right we should check bottom and right so 2 and 1 in positions array
+                if (viableNeighbours[diagonallOffset.condition1] && viableNeighbours[diagonallOffset.condition2])
+                {
+                    //Copied from above
+                    int2 neighbourPos = pos + diagonallOffset.offset;
+                    if (!isWalkable(neighbourPos)) continue;
+                    neighbours[neighboursCount] = neighbourPos;
+                    neighboursCount++;
+                }
+            }
+
+
+            return neighboursCount;
+        }
+
+        private bool isWalkable(int2 pos)
+        {
+            if (pos.x < 0 || pos.x >= gridDataSize.x || pos.y < 0 || pos.y >= gridDataSize.y)
+                return false;
+
+            return walkableMap[GetInArrayId(pos.x, pos.y)];
         }
     }
 }
