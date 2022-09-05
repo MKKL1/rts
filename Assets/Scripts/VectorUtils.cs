@@ -14,5 +14,10 @@ namespace Assets.Scripts
         {
             return new Vector2Int(vector3.x, vector3.z);
         }
+
+        public static Vector3 GetWithY(this Vector2 vector2, float height)
+        {
+            return new Vector3(vector2.x, height, vector2.y);
+        }
     }
 }

@@ -23,20 +23,8 @@ namespace Assets.Scripts.Networking
         public void InitServer()
         {
             //TODO wait for terrain to generate synchronously
-            GameMain.instance.terrainManager.terrainGenerated += () =>
-            {
-                entityMovement = new EntityMovement();
-            };
+            GameMain.instance.terrainManager.terrainGenerated += entityMovement.OnTerrainGenerated;
             GameMain.instance.terrainManager.initTerrain();
-        }
-
-        private void FixedUpdate()
-        {
-            //TODO better way to start updating entityMovement
-            if(entityMovement != null)
-            {
-                entityMovement.FixedUpdate();
-            }
         }
     }
 }

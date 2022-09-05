@@ -809,7 +809,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!65 &391970348
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -1682,7 +1682,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3fd98a4b759cbb040970120af24b07a3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  showGrid: 0
+  showGrid: 1
   visibleGridSize: 20
   raycastMaxDistance: 200
   shaderCube: {fileID: 391970347}

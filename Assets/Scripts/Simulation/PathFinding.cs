@@ -1,4 +1,5 @@
-﻿using Assets.Scripts.TerrainScripts;
+﻿using Assets.Scripts.DebugTools;
+using Assets.Scripts.TerrainScripts;
 using System.Collections;
 using System.Collections.Generic;
 using Unity.Collections;
@@ -18,14 +19,14 @@ namespace Assets.Scripts.Simulation
             walkableMap = new NativeArray<bool>(mainGrid.gridDataSize.x * mainGrid.gridDataSize.y, Allocator.Persistent);
             mainGrid.IterateChunks(new System.Action<int, int>((xChunk, yChunk) =>
             {
-                MainGridChunk chunk = mainGrid.GetChunkAt(xChunk, yChunk);
+                MainGridChunk chunk = mainGrid.chunks[xChunk, yChunk];
                 mainGrid.IterateInChunk(chunk, new System.Action<int, int>((xInChunk, yInChunk) =>
                 {
-                    walkableMap[xInChunk + (yInChunk * mainGrid.gridDataSize.y)] = chunk.walkableMap[xInChunk, yInChunk];
+                    int xInGrid = (xChunk * mainGrid.chunkSize) + xInChunk;
+                    int yInGrid = (yChunk * mainGrid.chunkSize) + yInChunk;
+                    walkableMap[xInGrid + (yInGrid * mainGrid.gridDataSize.y)] = chunk.walkableMap[xInChunk, yInChunk];
                 }));
             }));
-
-
         }
 
         /// <summary>
@@ -41,10 +42,11 @@ namespace Assets.Scripts.Simulation
             aStarAlgorithm = new AStarAlgorithm(walkableMap, new Unity.Mathematics.int2(mainGrid.gridDataSize.x, mainGrid.gridDataSize.y));
             Stack<Vector2Int> pathInt = aStarAlgorithm.FindPath(startInt, goalInt);
             if (pathInt == null) return null;
+            Debug.Log($"Path generated with length of {pathInt.Count}");
             Queue<Vector2> points = new Queue<Vector2>(pathInt.Count);
             for(int i = 0;pathInt.Count > 0; i++)
             {
-                points.Enqueue(pathInt.Pop() * mainGrid.worldCellSize);
+                points.Enqueue((pathInt.Pop() + new Vector2(0.5f, 0.5f)) * mainGrid.worldCellSize);
             }
             return new MovementPath(points);
         }

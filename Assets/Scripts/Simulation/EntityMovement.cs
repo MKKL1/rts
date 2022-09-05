@@ -12,7 +12,7 @@ namespace Assets.Scripts.Simulation
         public MovementPath path;
     }
 
-    public class EntityMovement
+    public class EntityMovement : MonoBehaviour
     {
         public int tickPerSecond = 30;
         public List<MovingEntity> movingEntities = new List<MovingEntity>();
@@ -20,7 +20,7 @@ namespace Assets.Scripts.Simulation
         private GameMain gameMain;
         private PathFinding pathFinding;
         private Terrain terrain;
-        public EntityMovement()
+        public void OnTerrainGenerated()
         {
             gameMain = GameMain.instance;
             terrain = gameMain.mainTerrain;
@@ -78,9 +78,24 @@ namespace Assets.Scripts.Simulation
         //    }
         //}
 
-        public void FixedUpdate()
+        private void FixedUpdate()
         {
             OnMovementTick(Time.fixedDeltaTime);
+        }
+
+        private void OnDrawGizmos()
+        {
+            foreach(var movingEntity in movingEntities)
+            {
+                Queue<Vector2> copiedPath = new Queue<Vector2>(movingEntity.path.points);
+                Vector2 lastPos = movingEntity.entity.transform.position.GetWithoutY();
+
+                while(copiedPath.Count > 0)
+                {
+                    Debug.Log(lastPos.GetWithY(50));
+                    Gizmos.DrawLine(lastPos.GetWithY(50), copiedPath.Dequeue().GetWithY(50));
+                }
+            }
         }
 
         public virtual void OnMovementTick(float tickDeltaTime)
